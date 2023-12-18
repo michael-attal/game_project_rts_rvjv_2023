@@ -7,11 +7,8 @@ public class CameraController : MonoBehaviour
     public Camera camera;
     public float speed;
 
-    private float angleAroundFocusPoint;
     private Vector3 movementInput;
-    private Vector2 mouseInput;
     private float scrollInput;
-    private bool lookingAround;
 
     private float lookX = 0;
     private float lookY = 0;
@@ -21,7 +18,6 @@ public class CameraController : MonoBehaviour
         // Get basic movement inputs
         movementInput.x = Input.GetAxisRaw("Horizontal");
         movementInput.z = Input.GetAxisRaw("Vertical");
-        movementInput.Normalize();
 
         scrollInput = Input.mouseScrollDelta.y;
         
@@ -43,12 +39,11 @@ public class CameraController : MonoBehaviour
     private void FixedUpdate()
     {
         Transform thisTransform = transform;
-        
-        // TODO: This isn't properly moving with rotations. Have to find a way to make movement inputs local somehow
-        Vector3 movement = movementInput * speed;
-        movement += thisTransform.forward * (scrollInput * speed);
 
-        thisTransform.Translate(movement * Time.fixedDeltaTime, Space.World);
+        Vector3 up = transform.worldToLocalMatrix.MultiplyVector(Vector3.up);
+        Vector3 movement = Vector3.ProjectOnPlane(movementInput, up).normalized * speed;
+
+        thisTransform.Translate(movement * Time.fixedDeltaTime);
         transform.rotation = Quaternion.Euler(lookX, lookY, thisTransform.rotation.z);
     }
 }
