@@ -32,6 +32,13 @@ public class CameraController : MonoBehaviour
         movementInput.z = Input.GetAxisRaw("Vertical");
 
         scrollInput = Input.mouseScrollDelta.y;
+
+        targetY += scrollInput * scrollSpeed * Time.fixedDeltaTime;
+        targetY = Mathf.Clamp(targetY, minYPosition, maxYPosition);
+
+        var position = transform.position;
+        transform.position = new Vector3(position.x, Mathf.SmoothDamp(position.y, targetY, ref yVelocity, 0.1f), position.z);
+        transform.rotation = Quaternion.Euler(GetCurrentAngle(), 0, transform.rotation.z);
     }
 
     private void FixedUpdate()
@@ -40,16 +47,8 @@ public class CameraController : MonoBehaviour
 
         Vector3 up = transform.worldToLocalMatrix.MultiplyVector(Vector3.up);
         Vector3 movement = Vector3.ProjectOnPlane(movementInput, up).normalized * speed;
-        
+
         thisTransform.Translate(movement * Time.fixedDeltaTime);
-
-        targetY += scrollInput * scrollSpeed * Time.fixedDeltaTime;
-        targetY = Mathf.Clamp(targetY, minYPosition, maxYPosition);
-
-        var position = transform.position;
-        transform.position = new Vector3(position.x, Mathf.SmoothDamp(position.y, targetY, ref yVelocity, 0.1f), position.z);
-        
-        transform.rotation = Quaternion.Euler(GetCurrentAngle(), 0, thisTransform.rotation.z);
     }
 
     private float GetCurrentAngle()
