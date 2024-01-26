@@ -1,18 +1,30 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Camera))]
 public class CameraController : MonoBehaviour
 {
+    // Editable Data
     public float speed;
     public float scrollSpeed;
-    public float maxYPosition;
-    public float minYPosition;
-    public float maxAngle;
-    public float minAngle;
+    public float maxYPosition = 5;
+    public float minYPosition = 1;
+    public float maxAngle = 75f;
+    public float minAngle = 5f;
 
+    // Inputs
     private Vector3 movementInput;
     private float scrollInput;
     
+    // Internal variables
+    private float targetY;
+    private float yVelocity;
+
+    private void Start()
+    {
+        targetY = transform.position.y;
+    }
+
     void Update()
     {
         // Get basic movement inputs
@@ -27,14 +39,15 @@ public class CameraController : MonoBehaviour
         Transform thisTransform = transform;
 
         Vector3 up = transform.worldToLocalMatrix.MultiplyVector(Vector3.up);
-        Vector3 movement = scrollInput * scrollSpeed * up + Vector3.ProjectOnPlane(movementInput, up).normalized * speed;
+        Vector3 movement = Vector3.ProjectOnPlane(movementInput, up).normalized * speed;
         
         thisTransform.Translate(movement * Time.fixedDeltaTime);
 
-        // Clamp the y position
+        targetY += scrollInput * scrollSpeed * Time.fixedDeltaTime;
+        targetY = Mathf.Clamp(targetY, minYPosition, maxYPosition);
+
         var position = transform.position;
-        float yPos = Mathf.Clamp(position.y , minYPosition, maxYPosition);
-        transform.position = new Vector3(position.x, yPos, position.z);
+        transform.position = new Vector3(position.x, Mathf.SmoothDamp(position.y, targetY, ref yVelocity, 0.1f), position.z);
         
         transform.rotation = Quaternion.Euler(GetCurrentAngle(), 0, thisTransform.rotation.z);
     }
