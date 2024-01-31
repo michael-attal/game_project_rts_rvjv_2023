@@ -187,13 +187,15 @@ MonoBehaviour:
   NumberOfBaseSpawnerForPlayerTwo: 1
   StartPositionBaseSpawnerPlayerOne:
     x: 0
-    y: 0
+    y: 1
+    z: 1
   StartPositionBaseSpawnerPlayerTwo:
     x: 0
-    y: -26
+    y: 1
+    z: -26
   SpawnUnitWhenPressEnter: 0
-  BasicSlimeUnitPerBaseSpawner: 1000
-  BasicMecaUnitPerBaseSpawner: 1000
+  BasicSlimeUnitPerBaseSpawner: 100000
+  BasicMecaUnitPerBaseSpawner: 100000
   SlimeBaseSpawnerBuildingPrefab: {fileID: 2216618471874645061, guid: 888243f85db11483baf93363ac285d84, type: 3}
   MecaBaseSpawnerBuildingPrefab: {fileID: 6851779870681047773, guid: c11a9cb22bf814101a676687080166dd, type: 3}
   BasicSlimeUnitPrefab: {fileID: 5157904157934955495, guid: 0b855b23c046046b6bdf14d22c6838d9, type: 3}
