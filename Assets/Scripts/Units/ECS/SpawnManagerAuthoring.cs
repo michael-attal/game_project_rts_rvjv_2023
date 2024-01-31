@@ -10,8 +10,8 @@ public class SpawnManagerAuthoring : MonoBehaviour
     public Species PlayerTwoSpecies;
     public int NumberOfBaseSpawnerForPlayerOne;
     public int NumberOfBaseSpawnerForPlayerTwo;
-    public float2 StartPositionBaseSpawnerPlayerOne;
-    public float2 StartPositionBaseSpawnerPlayerTwo;
+    public float3 StartPositionBaseSpawnerPlayerOne;
+    public float3 StartPositionBaseSpawnerPlayerTwo;
     public bool SpawnUnitWhenPressEnter;
 
     public int BasicSlimeUnitPerBaseSpawner;
@@ -63,8 +63,8 @@ public struct SpawnManager : IComponentData
     public Species PlayerTwoSpecies;
     public int NumberOfBaseSpawnerForPlayerOne;
     public int NumberOfBaseSpawnerForPlayerTwo;
-    public float2 StartPositionBaseSpawnerPlayerOne;
-    public float2 StartPositionBaseSpawnerPlayerTwo;
+    public float3 StartPositionBaseSpawnerPlayerOne;
+    public float3 StartPositionBaseSpawnerPlayerTwo;
     public bool SpawnUnitWhenPressEnter;
 
     public int BasicSlimeUnitPerBaseSpawner;

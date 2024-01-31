@@ -132,6 +132,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 598344972}
+  - component: {fileID: 598344973}
   m_Layer: 0
   m_Name: SpawnManagerWithoutECS
   m_TagString: Untagged
@@ -154,6 +155,30 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &598344973
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 598344971}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5db07dbdc9b3449ecbcb65ec96a3a9bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerOneSpecies: 0
+  PlayerTwoSpecies: 1
+  NumberOfBaseSpawnerForPlayerOne: 1
+  NumberOfBaseSpawnerForPlayerTwo: 1
+  StartPositionBaseSpawnerPlayerOne: {x: 0, y: 1, z: 1}
+  StartPositionBaseSpawnerPlayerTwo: {x: 0, y: 1, z: -26}
+  BasicSlimeUnitPerBaseSpawner: 100000
+  BasicMecaUnitPerBaseSpawner: 100000
+  SlimeBaseSpawnerBuildingPrefab: {fileID: 2216618471874645061, guid: 6d58af59aabf3464fb7b379d81d38dde, type: 3}
+  MecaBaseSpawnerBuildingPrefab: {fileID: 6851779870681047773, guid: 25d1bec5325f64559827081cc0417e53, type: 3}
+  BasicSlimeUnitPrefab: {fileID: 5157904157934955495, guid: abad47f87610c455a91b4f0f199be00b, type: 3}
+  BasicMecaUnitPrefab: {fileID: 6087196481752196242, guid: afbe06673ec5b448cbde2a73ca1db79b, type: 3}
 --- !u!1 &1160458871
 GameObject:
   m_ObjectHideFlags: 0
@@ -262,8 +287,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 10
   scrollSpeed: 50
-  maxYPosition: 10
-  minYPosition: 1
+  maxYPosition: 40
+  minYPosition: 5
   maxAngle: 75
   minAngle: 5
 --- !u!114 &1160458876
@@ -529,7 +554,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 5, y: 1, z: 5}
+  m_LocalScale: {x: 20, y: 1, z: 20}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}

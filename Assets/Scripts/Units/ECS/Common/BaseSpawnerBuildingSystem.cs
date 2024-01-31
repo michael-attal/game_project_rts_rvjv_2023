@@ -28,8 +28,8 @@ public partial struct BaseSpawnerBuildingSystem : ISystem
         var randMeca = new Random(456);
         var scale = 1;
 
-        // FIXME: Later do only one loop for for player one and player two
-        // Instantiate player one slime base unit spawners (the bases that will produce the units, like BasicSlime).
+        // TODO: [REFACTOR] Later, streamline the code by combining the loops for player one and player two. Add necessary information, such as the number of base spawners, to the Player : IComponentData. Then, use a system query to retrieve each player component and execute the code within a single loop.
+        // Instantiate player one slime base unit spawners (the bases that will produce the units, like BasicSlimeUnit).
         var offsetPlayerOne = spawnManager.NumberOfBaseSpawnerForPlayerOne == 1
             ? 0
             : randSlime.NextFloat(spawnManager.NumberOfBaseSpawnerForPlayerOne);
@@ -49,8 +49,8 @@ public partial struct BaseSpawnerBuildingSystem : ISystem
                 Position = new float3
                 {
                     x = spawnManager.StartPositionBaseSpawnerPlayerOne.x + offsetPlayerOne,
-                    y = 1,
-                    z = spawnManager.StartPositionBaseSpawnerPlayerOne.y + offsetPlayerOne
+                    y = spawnManager.StartPositionBaseSpawnerPlayerOne.y,
+                    z = spawnManager.StartPositionBaseSpawnerPlayerOne.z + offsetPlayerOne
                 },
                 Scale = scale,
                 Rotation = quaternion.identity
@@ -62,7 +62,7 @@ public partial struct BaseSpawnerBuildingSystem : ISystem
             });
         }
 
-        // Instantiate player two meca base unit spawners (the bases that will produce the units, like BasicMeca).
+        // Instantiate player two meca base unit spawners (the bases that will produce the units, like BasicMecaUnit).
         var offsetPlayerTwo = spawnManager.NumberOfBaseSpawnerForPlayerTwo == 1
             ? 0
             : randSlime.NextFloat(spawnManager.NumberOfBaseSpawnerForPlayerTwo);
@@ -78,8 +78,8 @@ public partial struct BaseSpawnerBuildingSystem : ISystem
                 Position = new float3
                 {
                     x = spawnManager.StartPositionBaseSpawnerPlayerTwo.x + offsetPlayerTwo,
-                    y = 1,
-                    z = spawnManager.StartPositionBaseSpawnerPlayerTwo.y + offsetPlayerTwo
+                    y = spawnManager.StartPositionBaseSpawnerPlayerTwo.y,
+                    z = spawnManager.StartPositionBaseSpawnerPlayerTwo.z + offsetPlayerTwo
                 },
                 Scale = scale,
                 Rotation = quaternion.identity
