@@ -10,8 +10,6 @@ public class BuildingAuthoring : MonoBehaviour
             var entity = GetEntity(TransformUsageFlags.Dynamic);
 
             AddComponent<Building>(entity);
-
-            AddComponent<Player>(entity);
         }
     }
 }

@@ -1,4 +1,5 @@
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class PlayerAuthoring : MonoBehaviour
@@ -10,17 +11,8 @@ public class PlayerAuthoring : MonoBehaviour
             var entity = GetEntity(TransformUsageFlags.Dynamic);
 
             AddComponent<Player>(entity);
-
-            AddComponent<Winner>(entity);
-            SetComponentEnabled<Winner>(entity, false);
         }
     }
-}
-
-public enum PlayerNumber
-{
-    One,
-    Two
 }
 
 public enum Species
@@ -31,10 +23,9 @@ public enum Species
 
 public struct Player : IComponentData
 {
-    public PlayerNumber playerNumber;
-    public Species species;
-}
-
-public struct Winner : IComponentData, IEnableableComponent
-{
+    public uint PlayerNumber;
+    public Species Species;
+    public int NbOfBaseSpawnerBuilding;
+    public float3 StartPosition;
+    public bool Winner; // NOTE: Create a component or use a data ?
 }

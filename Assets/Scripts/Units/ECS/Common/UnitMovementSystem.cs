@@ -9,6 +9,7 @@ public partial struct UnitMovementSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<Unit>();
+        state.RequireForUpdate<UnitMovement>();
     }
 
     [BurstCompile]
