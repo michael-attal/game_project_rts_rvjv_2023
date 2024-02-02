@@ -17,7 +17,6 @@ public class UnitAuthoring : MonoBehaviour
             AddComponent<UnitDamage>(entity);
             AddComponent<UnitAttack>(entity);
             AddComponent<Velocity>(entity);
-            AddComponent<Player>(entity);
         }
     }
 }
@@ -31,10 +30,6 @@ public struct Unit : IComponentData
 public struct Velocity : IComponentData
 {
     public float2 Value;
-}
-
-public struct UnitSpawner : IComponentData
-{
 }
 
 public struct UnitSelectable : IComponentData

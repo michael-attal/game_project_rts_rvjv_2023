@@ -17,6 +17,8 @@ public class SpawnManagerAuthoring : MonoBehaviour
     public int BasicSlimeUnitPerBaseSpawner;
     public int BasicMecaUnitPerBaseSpawner;
 
+    public GameObject SlimePlayerHandPrefab;
+    public GameObject MecaPlayerHandPrefab;
     public GameObject SlimeBaseSpawnerBuildingPrefab;
     public GameObject MecaBaseSpawnerBuildingPrefab;
     public GameObject BasicSlimeUnitPrefab;
@@ -46,6 +48,10 @@ public class SpawnManagerAuthoring : MonoBehaviour
                 // BasicMecaUnitAttack = authoring.BasicMecaUnitAttack,
 
                 // GetEntity() bakes a GameObject prefab into its entity equivalent.
+                SlimePlayerHandPrefab =
+                    GetEntity(authoring.SlimePlayerHandPrefab, TransformUsageFlags.Dynamic),
+                MecaPlayerHandPrefab =
+                    GetEntity(authoring.MecaPlayerHandPrefab, TransformUsageFlags.Dynamic),
                 SlimeBaseSpawnerBuildingPrefab =
                     GetEntity(authoring.SlimeBaseSpawnerBuildingPrefab, TransformUsageFlags.Dynamic),
                 MecaBaseSpawnerBuildingPrefab =
@@ -76,6 +82,8 @@ public struct SpawnManager : IComponentData
     public float BasicMecaUnitAttack;
     // BasicSlimeUnitLife, BasicMecaUnitLife ...
 
+    public Entity SlimePlayerHandPrefab;
+    public Entity MecaPlayerHandPrefab;
     public Entity SlimeBaseSpawnerBuildingPrefab;
     public Entity MecaBaseSpawnerBuildingPrefab;
     public Entity BasicSlimeUnitPrefab;

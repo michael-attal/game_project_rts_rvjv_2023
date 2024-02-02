@@ -17,9 +17,6 @@ public class BaseSpawnerBuildingAuthoring : MonoBehaviour
             {
                 species = authoring.species
             });
-            AddComponent<UnitSpawner>(entity);
-            AddComponent<Building>(entity);
-            AddComponent<Player>(entity);
         }
     }
 }

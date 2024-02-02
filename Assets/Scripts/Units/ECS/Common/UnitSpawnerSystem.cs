@@ -19,7 +19,6 @@ public partial struct UnitSpawnerSystem : ISystem
     {
         state.RequireForUpdate<SpawnManager>();
         state.RequireForUpdate<BaseSpawnerBuilding>();
-        state.RequireForUpdate<UnitSpawner>();
     }
 
     [BurstCompile]
