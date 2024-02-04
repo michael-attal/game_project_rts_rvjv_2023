@@ -118,3 +118,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d28e04bdea3db4ce49e2c5ba3ccf73fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PlayerNumber: 2
+  PlayerSpecies: 1
+  NbOfBaseSpawnerBuilding: 1
+  NbOfUnitPerBaseSpawnerBuilding: 1000
+  StartPosition:
+    x: 0
+    y: 0
+    z: 0
+  BaseSpawnerBuildingPrefab: {fileID: 6851779870681047773, guid: c11a9cb22bf814101a676687080166dd, type: 3}
+  BasicUnitPrefab: {fileID: 6087196481752196242, guid: 03ed2dbcd6a084717b4e1c2bde44dc88, type: 3}

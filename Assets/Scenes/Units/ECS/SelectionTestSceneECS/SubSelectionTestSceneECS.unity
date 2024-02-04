@@ -154,8 +154,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlayerOneSpecies: 0
   PlayerTwoSpecies: 1
-  NumberOfBaseSpawnerForPlayerOne: 1
-  NumberOfBaseSpawnerForPlayerTwo: 1
   StartPositionBaseSpawnerPlayerOne:
     x: 0
     y: 1
@@ -165,14 +163,16 @@ MonoBehaviour:
     y: 1
     z: -26
   SpawnUnitWhenPressEnter: 0
-  BasicSlimeUnitPerBaseSpawner: 1000
-  BasicMecaUnitPerBaseSpawner: 1000
+  NumberOfBaseSpawnerForPlayerOne: 1
+  NumberOfBaseSpawnerForPlayerTwo: 1
+  NumberOfSlimeUnitPerSlimeBaseSpawner: 1000
+  NumberOfMecaUnitPerMecaBaseSpawner: 1000
   SlimePlayerHandPrefab: {fileID: 6320164834673837995, guid: f571fa7df0f264f0a866e82fe099d7b5, type: 3}
-  MecaPlayerHandPrefab: {fileID: 1259044049793980661, guid: 2b27e280aca8e4416bf77212c6bd837d, type: 3}
   SlimeBaseSpawnerBuildingPrefab: {fileID: 2216618471874645061, guid: 888243f85db11483baf93363ac285d84, type: 3}
+  SlimeBasicUnitPrefab: {fileID: 5157904157934955495, guid: 0b855b23c046046b6bdf14d22c6838d9, type: 3}
+  MecaPlayerHandPrefab: {fileID: 1259044049793980661, guid: 2b27e280aca8e4416bf77212c6bd837d, type: 3}
   MecaBaseSpawnerBuildingPrefab: {fileID: 6851779870681047773, guid: c11a9cb22bf814101a676687080166dd, type: 3}
-  BasicSlimeUnitPrefab: {fileID: 5157904157934955495, guid: 0b855b23c046046b6bdf14d22c6838d9, type: 3}
-  BasicMecaUnitPrefab: {fileID: 6087196481752196242, guid: 03ed2dbcd6a084717b4e1c2bde44dc88, type: 3}
+  MecaBasicUnitPrefab: {fileID: 6087196481752196242, guid: 03ed2dbcd6a084717b4e1c2bde44dc88, type: 3}
 --- !u!4 &990228064
 Transform:
   m_ObjectHideFlags: 0
@@ -294,9 +294,55 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1711314537
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1711314538}
+  - component: {fileID: 1711314539}
+  m_Layer: 0
+  m_Name: ConfigECS
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1711314538
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1711314537}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1711314539
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1711314537}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 183a8500e7c3a43acafd3cccbdc7bcde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ActivateSwitchFocusCameraToPlayersOnSpacePress: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1190599449}
   - {fileID: 990228064}
+  - {fileID: 1711314538}

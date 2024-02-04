@@ -169,8 +169,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlayerOneSpecies: 0
   PlayerTwoSpecies: 1
-  NumberOfBaseSpawnerForPlayerOne: 1
-  NumberOfBaseSpawnerForPlayerTwo: 1
   StartPositionBaseSpawnerPlayerOne:
     x: 0
     y: 1
@@ -180,14 +178,16 @@ MonoBehaviour:
     y: 1
     z: -26
   SpawnUnitWhenPressEnter: 0
-  BasicSlimeUnitPerBaseSpawner: 1000
-  BasicMecaUnitPerBaseSpawner: 1000
+  NumberOfBaseSpawnerForPlayerOne: 1
+  NumberOfBaseSpawnerForPlayerTwo: 1
+  NumberOfSlimeUnitPerSlimeBaseSpawner: 1000
+  NumberOfMecaUnitPerMecaBaseSpawner: 1000
   SlimePlayerHandPrefab: {fileID: 6320164834673837995, guid: f571fa7df0f264f0a866e82fe099d7b5, type: 3}
-  MecaPlayerHandPrefab: {fileID: 1259044049793980661, guid: 2b27e280aca8e4416bf77212c6bd837d, type: 3}
   SlimeBaseSpawnerBuildingPrefab: {fileID: 2216618471874645061, guid: 888243f85db11483baf93363ac285d84, type: 3}
+  SlimeBasicUnitPrefab: {fileID: 5157904157934955495, guid: 0b855b23c046046b6bdf14d22c6838d9, type: 3}
+  MecaPlayerHandPrefab: {fileID: 1259044049793980661, guid: 2b27e280aca8e4416bf77212c6bd837d, type: 3}
   MecaBaseSpawnerBuildingPrefab: {fileID: 6851779870681047773, guid: c11a9cb22bf814101a676687080166dd, type: 3}
-  BasicSlimeUnitPrefab: {fileID: 5157904157934955495, guid: 0b855b23c046046b6bdf14d22c6838d9, type: 3}
-  BasicMecaUnitPrefab: {fileID: 6087196481752196242, guid: 03ed2dbcd6a084717b4e1c2bde44dc88, type: 3}
+  MecaBasicUnitPrefab: {fileID: 6087196481752196242, guid: 03ed2dbcd6a084717b4e1c2bde44dc88, type: 3}
 --- !u!1 &1463282772
 GameObject:
   m_ObjectHideFlags: 0

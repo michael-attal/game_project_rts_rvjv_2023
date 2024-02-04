@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class SpawnManagerWithoutECS : MonoBehaviour
 {
-    public Species PlayerOneSpecies;
-    public Species PlayerTwoSpecies;
+    public SpeciesType PlayerOneSpecies;
+    public SpeciesType PlayerTwoSpecies;
     public int NumberOfBaseSpawnerForPlayerOne;
     public int NumberOfBaseSpawnerForPlayerTwo;
     public Vector3 StartPositionBaseSpawnerPlayerOne;
@@ -16,8 +16,8 @@ public class SpawnManagerWithoutECS : MonoBehaviour
 
     public GameObject SlimeBaseSpawnerBuildingPrefab;
     public GameObject MecaBaseSpawnerBuildingPrefab;
-    public GameObject BasicSlimeUnitPrefab;
-    public GameObject BasicMecaUnitPrefab;
+    public GameObject SlimeBasicUnitPrefab;
+    public GameObject MecaBasicUnitPrefab;
 
     private void Start()
     {
@@ -25,7 +25,7 @@ public class SpawnManagerWithoutECS : MonoBehaviour
         {
             var currentSpecies = i < NumberOfBaseSpawnerForPlayerOne ? PlayerOneSpecies : PlayerTwoSpecies;
 
-            var positionBaseSpawner = currentSpecies == Species.Slime
+            var positionBaseSpawner = currentSpecies == SpeciesType.Slime
                 ? new Vector3(StartPositionBaseSpawnerPlayerOne.x + i % NumberOfBaseSpawnerForPlayerTwo,
                     StartPositionBaseSpawnerPlayerOne.y,
                     StartPositionBaseSpawnerPlayerOne.z + i % NumberOfBaseSpawnerForPlayerTwo)
@@ -34,16 +34,16 @@ public class SpawnManagerWithoutECS : MonoBehaviour
                     StartPositionBaseSpawnerPlayerTwo.z + i % NumberOfBaseSpawnerForPlayerOne);
 
             var BaseSpawner = Instantiate(
-                currentSpecies == Species.Slime ? SlimeBaseSpawnerBuildingPrefab : MecaBaseSpawnerBuildingPrefab,
+                currentSpecies == SpeciesType.Slime ? SlimeBaseSpawnerBuildingPrefab : MecaBaseSpawnerBuildingPrefab,
                 positionBaseSpawner,
                 Quaternion.identity);
 
             var buildingManager = BaseSpawner.AddComponent<BaseBuildingManagerWithoutECS>();
-            buildingManager.NumberOfUnitToSpawn = currentSpecies == Species.Slime
+            buildingManager.NumberOfUnitToSpawn = currentSpecies == SpeciesType.Slime
                 ? BasicSlimeUnitPerBaseSpawner
                 : BasicMecaUnitPerBaseSpawner;
             buildingManager.BasicUnitPrefab =
-                currentSpecies == Species.Slime ? BasicSlimeUnitPrefab : BasicMecaUnitPrefab;
+                currentSpecies == SpeciesType.Slime ? SlimeBasicUnitPrefab : MecaBasicUnitPrefab;
         }
     }
 
