@@ -19,7 +19,13 @@ public class UnitAuthoring : MonoBehaviour
                 SpeciesType = authoring.SpeciesType
             });
 
-            AddComponent<UnitSelectable>(entity);
+            AddComponent(entity, new UnitSelectable
+            {
+                IsSelected = false,
+                ShouldBeSelected = false,
+                OriginalUnitColor = authoring.UnitColorRGBA
+            });
+
             AddComponent<UnitMovement>(entity);
             AddComponent<UnitDamage>(entity);
             AddComponent<UnitAttack>(entity);
@@ -54,6 +60,7 @@ public struct UnitSelectable : IComponentData
 {
     public bool IsSelected;
     public bool ShouldBeSelected;
+    public float4 OriginalUnitColor;
 }
 
 public struct UnitMovement : IComponentData
