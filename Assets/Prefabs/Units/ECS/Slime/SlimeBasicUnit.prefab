@@ -124,5 +124,5 @@ MonoBehaviour:
   UnitColorRGBA:
     x: 0
     y: 0
-    z: 255
-    w: 255
+    z: 1
+    w: 1

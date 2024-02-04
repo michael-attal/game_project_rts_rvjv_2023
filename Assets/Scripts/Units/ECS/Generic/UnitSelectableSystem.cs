@@ -10,7 +10,6 @@ public partial struct UnitSelectableSystem : ISystem
 {
     private bool isClicked;
     private Vector3 initialClickPosition;
-    private Vector3 movement;
 
     [BurstCompile]
     public void OnCreate(ref SystemState state)
@@ -32,11 +31,6 @@ public partial struct UnitSelectableSystem : ISystem
             isClicked = true;
             initialClickPosition = Input.mousePosition;
             Debug.Log(initialClickPosition);
-        }
-
-        if (isClicked && Input.GetMouseButton(0))
-        {
-            // TODO: Create a green selection rectangle while moving mouse.
         }
 
         if (Input.GetMouseButtonUp(0))
@@ -61,7 +55,9 @@ public partial struct UnitSelectableSystem : ISystem
                          .WithEntityAccess())
             {
                 unitSelectableComponent.ValueRW.IsSelected = false;
-                unitSelectableColor.ValueRW.Value = new float4(0, 0, 255, 255); // TODO: Get back to the original color
+                unitSelectableColor.ValueRW.Value =
+                    unitSelectableComponent.ValueRO
+                        .OriginalUnitColor; // TODO: Get back to the original color with UnitSelectableMaterialChangerSystem later.
 
                 var unitRadius = unitSelectableTransform.ValueRO.Scale;
                 Vector3 transformPosition = unitSelectableTransform.ValueRO.Position;
@@ -77,7 +73,7 @@ public partial struct UnitSelectableSystem : ISystem
                 {
                     unitSelectableComponent.ValueRW.IsSelected = true;
                     // Edit color to green. TODO: Later, add a green highlight to the existing color.
-                    unitSelectableColor.ValueRW.Value = new float4(0, 255, 0, 255);
+                    unitSelectableColor.ValueRW.Value = new float4(0, 1, 0, 1);
                 }
             }
         }
