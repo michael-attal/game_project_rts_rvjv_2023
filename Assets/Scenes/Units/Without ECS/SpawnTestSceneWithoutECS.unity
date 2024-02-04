@@ -177,8 +177,8 @@ MonoBehaviour:
   BasicMecaUnitPerBaseSpawner: 1000
   SlimeBaseSpawnerBuildingPrefab: {fileID: 2216618471874645061, guid: 6d58af59aabf3464fb7b379d81d38dde, type: 3}
   MecaBaseSpawnerBuildingPrefab: {fileID: 6851779870681047773, guid: 25d1bec5325f64559827081cc0417e53, type: 3}
-  BasicSlimeUnitPrefab: {fileID: 5157904157934955495, guid: abad47f87610c455a91b4f0f199be00b, type: 3}
-  BasicMecaUnitPrefab: {fileID: 6087196481752196242, guid: afbe06673ec5b448cbde2a73ca1db79b, type: 3}
+  SlimeBasicUnitPrefab: {fileID: 5157904157934955495, guid: abad47f87610c455a91b4f0f199be00b, type: 3}
+  MecaBasicUnitPrefab: {fileID: 6087196481752196242, guid: afbe06673ec5b448cbde2a73ca1db79b, type: 3}
 --- !u!1 &1160458871
 GameObject:
   m_ObjectHideFlags: 0
