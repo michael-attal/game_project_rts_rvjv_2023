@@ -28,82 +28,108 @@ public partial struct SelectionRectResizeSystem : ISystem
             isClicked = true;
             initialClickPosition = Input.mousePosition;
             initialClickPosition.z = Camera.main.transform.position.z;
-
-            // TODO: Make it works.
-            // // Convert screen coordinates to world coordinates
-            // var worldPosition = Camera.main.ScreenToWorldPoint(initialClickPosition);
-            //
-            // foreach (var (selectionRectLocalToWorld, selectionRectEntity)
-            //          in
-            //          SystemAPI
-            //              .Query<RefRW<LocalToWorld>>()
-            //              .WithAll<SelectionRect>()
-            //              .WithEntityAccess())
-            // {
-            //     var ltw = state.EntityManager.GetComponentData<LocalToWorld>(selectionRectEntity);
-            //     // Set the initial position of the SelectionRect
-            //     state.EntityManager.SetComponentData(selectionRectEntity, new LocalToWorld
-            //     {
-            //         Value = float4x4.TRS(
-            //             new float3
-            //             {
-            //                 x = worldPosition.x,
-            //                 y = ltw.Position.y,
-            //                 z = worldPosition.z
-            //             },
-            //             ltw.Rotation,
-            //             new float3
-            //                 { x = 1.0f, y = 1.0f, z = 1.0f } // Set back to the original scale
-            //         )
-            //     });
-            // }
         }
 
         // Update the scale of the selection according to the mouse movement.
         if (isClicked && Input.GetMouseButton(0))
         {
-            var initialClickViewportPosition = Camera.main.ScreenToViewportPoint(initialClickPosition);
-            var movementViewportPosition = Camera.main.ScreenToViewportPoint(movement);
-            foreach (var (selectionRectLocalToWorld, selectionRectEntity)
+            movement = Input.mousePosition;
+            movement.z = Camera.main.transform.position.z;
+
+            var movementWorldPosition = Camera.main.ScreenToWorldPoint(movement);
+            var initialClickWorldPosition = Camera.main.ScreenToWorldPoint(initialClickPosition);
+
+            foreach (var selectionRectLTW
                      in
                      SystemAPI
                          .Query<RefRW<LocalToWorld>>()
-                         .WithAll<SelectionRect>()
-                         .WithEntityAccess())
+                         .WithAll<SelectionRect>())
             {
-                movement = Input.mousePosition;
-                movement.z = Camera.main.transform.position.z;
-                var ltw = state.EntityManager.GetComponentData<LocalToWorld>(selectionRectEntity);
+                // NOTE: It works with camera at 40 on the y-axis and angle set to 75 - Not tested with other camera config
+                // NOTE: The default size of the plane is 10 by 10 units. <- Please be cautious about updating it if the plane size changes. Alternatively, we can dynamically obtain the MeshRenderer.Bounds to adjust it, but this may impact performance.
+                var defaultPlaneBoundSizeX = 10f;
+                // We could use something like defaultPlaneBoundSizeXZ because the plane is a square.
+                var defaultPlaneBoundSizeZ = 10f;
+                var smallestUnitOfTheGameScaleXAdaptedToPlaneSize = 1f / defaultPlaneBoundSizeX;
+                var smallestUnitOfTheGameScaleYAdaptedToPlaneSize = 1f / defaultPlaneBoundSizeZ;
+                // TODO: I'm not sure why the mouse position is approximately three times smaller. I suppose it's because of the camera property. I need to inquire Sacha about the implementation of the camera.
+                var
+                    correctionMouse =
+                        3.12f; // TODO: Faire un tableau de proportionnalité entre la position Y de la caméra et mes tests de position de clic sur l'écran afin d'obtenir une correction précise. Par la suite, examiner l'origine de cette corrélation.
+                // Same for the correctionDeltaZ, I think the issue come from converting the mouse position from FPS view to RTS view.
+                var correctionDeltaZ = 8f;
 
                 // Calculate scale based on mouse movement
                 var scale = new float3
                 {
-                    x = Mathf.Abs(movementViewportPosition.x - initialClickViewportPosition.x) * 10,
+                    x = Mathf.Abs(initialClickWorldPosition.x - movementWorldPosition.x) * correctionMouse /
+                        defaultPlaneBoundSizeX, // Probablement ajouter smallestUnitOfTheGameScaleYAdaptedToPlaneSize par la suite.
                     y = 1,
-                    z = Mathf.Abs(movementViewportPosition.y - initialClickViewportPosition.y) * 10
+                    z = Mathf.Abs(initialClickWorldPosition.z - movementWorldPosition.z) * correctionMouse /
+                        defaultPlaneBoundSizeX
                 };
 
-                // // Convert viewport coordinates to world coordinates - NOT WORKING.
-                // var initialClickWorldPosition = Camera.main.ViewportToWorldPoint(initialClickViewportPosition);
-                // var movementWorldPosition = Camera.main.ViewportToWorldPoint(movementViewportPosition);
-                //
-                // // Calculate the new position based on mouse movement
-                // var position = new float3
-                // {
-                //     x = Mathf.Min(initialClickWorldPosition.x, movementWorldPosition.x) + scale.x / 2,
-                //     y = ltw.Position.y,
-                //     z = Mathf.Min(initialClickWorldPosition.z, movementWorldPosition.z) + scale.z / 2
-                // };
-                var position = ltw.Position;
+                var calcultatedBoundSizeXByScale = defaultPlaneBoundSizeX * scale.x;
+                var calcultatedBoundSizeZByScale = defaultPlaneBoundSizeZ * scale.z;
 
-                state.EntityManager.SetComponentData(selectionRectEntity, new LocalToWorld
+                // Calculate the new position based on mouse movement
+                var calculatedPositionX = 0f;
+
+                // Invert because local to world is xyx inverted
+                if (initialClickWorldPosition.x <= 0f)
                 {
-                    Value = float4x4.TRS(
-                        position,
-                        ltw.Rotation,
-                        scale
-                    )
-                });
+                    calculatedPositionX =
+                        -(movementWorldPosition.x * correctionMouse) - calcultatedBoundSizeXByScale / 2;
+                    if (initialClickWorldPosition.x < movementWorldPosition.x)
+                        calculatedPositionX =
+                            -(movementWorldPosition.x * correctionMouse) + calcultatedBoundSizeXByScale / 2;
+                }
+                else
+                {
+                    Debug.Log("ici");
+                    // TODO: Continuer ici
+                }
+
+                var calculatedPositionY = 0f;
+
+                if (initialClickWorldPosition.z + correctionDeltaZ <= 0f)
+                {
+                    // TODO: Faire les bons calculs ici
+                    calculatedPositionY =
+                        -movementWorldPosition.z - correctionDeltaZ - calcultatedBoundSizeZByScale / 2;
+                }
+                else
+                {
+                    Debug.Log("ici");
+                    Debug.Log("ici");
+                    // TODO: Continuer ici
+                }
+
+                var position = new float3
+                {
+                    // Invert x & y. Divide by 2 to get the middle
+                    x = calculatedPositionX,
+                    y = 10,
+                    z = calculatedPositionY
+                };
+
+                Debug.Log("========= scaleX : " + scale.x);
+                Debug.Log("========= scaleZ : " + scale.z);
+                Debug.Log("========= positionX : " + position.x);
+                Debug.Log("========= positionZ : " + position.z);
+                Debug.Log("========= movementWorldPosition.x : " + movementWorldPosition.x);
+                Debug.Log("========= movementWorldPosition.y : " + movementWorldPosition.y);
+                Debug.Log("========= movementWorldPosition.z : " + movementWorldPosition.z);
+                Debug.Log(
+                    "========= mon calcul : " +
+                    (calculatedPositionY =
+                        -movementWorldPosition.z - correctionDeltaZ - calcultatedBoundSizeZByScale / 2));
+
+                selectionRectLTW.ValueRW.Value = float4x4.TRS(
+                    position,
+                    selectionRectLTW.ValueRO.Rotation,
+                    scale
+                );
             }
         }
 
@@ -111,34 +137,17 @@ public partial struct SelectionRectResizeSystem : ISystem
         if (Input.GetMouseButtonUp(0))
         {
             isClicked = false;
-
-            // Put selection rect scale back to 0. TODO: Create a method to do it and avoid duplicated code
-            foreach (var (selectionRectLocalToWorld, selectionRectEntity)
+            // Hide the selection rect on click released.
+            foreach (var selectionRectLTW
                      in
                      SystemAPI
                          .Query<RefRW<LocalToWorld>>()
-                         .WithAll<SelectionRect>()
-                         .WithEntityAccess())
-            {
-                var ltw = state.EntityManager.GetComponentData<LocalToWorld>(selectionRectEntity);
-
-                // Calculate scale based on mouse movement
-                var newScale = new float3
-                {
-                    x = 0,
-                    y = 0,
-                    z = 0
-                };
-
-                state.EntityManager.SetComponentData(selectionRectEntity, new LocalToWorld
-                {
-                    Value = float4x4.TRS(
-                        ltw.Position,
-                        ltw.Rotation,
-                        newScale
-                    )
-                });
-            }
+                         .WithAll<SelectionRect>())
+                selectionRectLTW.ValueRW.Value = float4x4.TRS(
+                    selectionRectLTW.ValueRO.Position,
+                    selectionRectLTW.ValueRO.Rotation,
+                    new float3 { x = 0f, y = 0f, z = 0f }
+                );
         }
     }
 }
