@@ -45,7 +45,11 @@ public partial struct UnitSelectableSystem : ISystem
             var width = Mathf.Abs(initialClickPosition.x - finalClickPosition.x);
             var height = Mathf.Abs(initialClickPosition.y - finalClickPosition.y);
 
-            var selectionArea = new Rect(left, top, width, height);
+            // NOTE: Incorporate a slight radius to enable unit selection with a single click.
+            var minimumSelectionArea = 12f;
+            var minimumSelectionAreaCenter = minimumSelectionArea / 2f;
+            var selectionArea = new Rect(left - minimumSelectionAreaCenter, top - minimumSelectionAreaCenter,
+                width + minimumSelectionArea, height + minimumSelectionArea);
 
             foreach (var (unitSelectableTransform, unitSelectableColor, unitSelectableComponent, unitSelectableEntity)
                      in
