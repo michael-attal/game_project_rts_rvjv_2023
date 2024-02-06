@@ -6,21 +6,25 @@ public class SpawnManagerAuthoring : MonoBehaviour
 {
     // The SpawnManager component will be used as a singleton.
     // It stores a grab bag of game parameters plus the entity prefabs that we'll instantiate at runtime.
-    public Species PlayerOneSpecies;
-    public Species PlayerTwoSpecies;
-    public int NumberOfBaseSpawnerForPlayerOne;
-    public int NumberOfBaseSpawnerForPlayerTwo;
+    public SpeciesType PlayerOneSpecies;
+    public SpeciesType PlayerTwoSpecies;
     public float3 StartPositionBaseSpawnerPlayerOne;
     public float3 StartPositionBaseSpawnerPlayerTwo;
+
     public bool SpawnUnitWhenPressEnter;
 
-    public int BasicSlimeUnitPerBaseSpawner;
-    public int BasicMecaUnitPerBaseSpawner;
+    public uint NumberOfBaseSpawnerForPlayerOne;
+    public uint NumberOfBaseSpawnerForPlayerTwo;
+    public uint NumberOfSlimeUnitPerSlimeBaseSpawner;
+    public uint NumberOfMecaUnitPerMecaBaseSpawner;
 
+    public GameObject SlimePlayerHandPrefab;
     public GameObject SlimeBaseSpawnerBuildingPrefab;
+    public GameObject SlimeBasicUnitPrefab;
+
+    public GameObject MecaPlayerHandPrefab;
     public GameObject MecaBaseSpawnerBuildingPrefab;
-    public GameObject BasicSlimeUnitPrefab;
-    public GameObject BasicMecaUnitPrefab;
+    public GameObject MecaBasicUnitPrefab;
 
     private class Baker : Baker<SpawnManagerAuthoring>
     {
@@ -33,25 +37,33 @@ public class SpawnManagerAuthoring : MonoBehaviour
             {
                 PlayerOneSpecies = authoring.PlayerOneSpecies,
                 PlayerTwoSpecies = authoring.PlayerTwoSpecies,
-                NumberOfBaseSpawnerForPlayerOne = authoring.NumberOfBaseSpawnerForPlayerOne,
-                NumberOfBaseSpawnerForPlayerTwo = authoring.NumberOfBaseSpawnerForPlayerTwo,
                 StartPositionBaseSpawnerPlayerOne = authoring.StartPositionBaseSpawnerPlayerOne,
                 StartPositionBaseSpawnerPlayerTwo = authoring.StartPositionBaseSpawnerPlayerTwo,
+
                 SpawnUnitWhenPressEnter = authoring.SpawnUnitWhenPressEnter,
-                BasicSlimeUnitPerBaseSpawner = authoring.BasicSlimeUnitPerBaseSpawner,
-                BasicMecaUnitPerBaseSpawner = authoring.BasicMecaUnitPerBaseSpawner,
-                // BasicSlimeUnitSpeed = authoring.BasicSlimeUnitSpeed,
-                // BasicMecaUnitSpeed = authoring.BasicMecaUnitSpeed,
-                // BasicSlimeUnitAttack = authoring.BasicSlimeUnitAttack,
-                // BasicMecaUnitAttack = authoring.BasicMecaUnitAttack,
+
+                NumberOfBaseSpawnerForPlayerOne = authoring.NumberOfBaseSpawnerForPlayerOne,
+                NumberOfBaseSpawnerForPlayerTwo = authoring.NumberOfBaseSpawnerForPlayerTwo,
+                NumberOfSlimeUnitPerSlimeBaseSpawner = authoring.NumberOfSlimeUnitPerSlimeBaseSpawner,
+                NumberOfMecaUnitPerMecaBaseSpawner = authoring.NumberOfMecaUnitPerMecaBaseSpawner,
+
+                // SlimeBasicUnitSpeed = authoring.SlimeBasicUnitSpeed,
+                // SlimeBasicUnitAttack = authoring.SlimeBasicUnitAttack,
+                // MecaBasicUnitSpeed = authoring.MecaBasicUnitSpeed,
+                // MecaBasicUnitAttack = authoring.MecaBasicUnitAttack,
 
                 // GetEntity() bakes a GameObject prefab into its entity equivalent.
+                SlimePlayerHandPrefab =
+                    GetEntity(authoring.SlimePlayerHandPrefab, TransformUsageFlags.Dynamic),
+                SlimeBasicUnitPrefab = GetEntity(authoring.SlimeBasicUnitPrefab, TransformUsageFlags.Dynamic),
                 SlimeBaseSpawnerBuildingPrefab =
                     GetEntity(authoring.SlimeBaseSpawnerBuildingPrefab, TransformUsageFlags.Dynamic),
+
+                MecaPlayerHandPrefab =
+                    GetEntity(authoring.MecaPlayerHandPrefab, TransformUsageFlags.Dynamic),
                 MecaBaseSpawnerBuildingPrefab =
                     GetEntity(authoring.MecaBaseSpawnerBuildingPrefab, TransformUsageFlags.Dynamic),
-                BasicSlimeUnitPrefab = GetEntity(authoring.BasicSlimeUnitPrefab, TransformUsageFlags.Dynamic),
-                BasicMecaUnitPrefab = GetEntity(authoring.BasicMecaUnitPrefab, TransformUsageFlags.Dynamic)
+                MecaBasicUnitPrefab = GetEntity(authoring.MecaBasicUnitPrefab, TransformUsageFlags.Dynamic)
             });
         }
     }
@@ -59,25 +71,29 @@ public class SpawnManagerAuthoring : MonoBehaviour
 
 public struct SpawnManager : IComponentData
 {
-    public Species PlayerOneSpecies;
-    public Species PlayerTwoSpecies;
-    public int NumberOfBaseSpawnerForPlayerOne;
-    public int NumberOfBaseSpawnerForPlayerTwo;
+    public SpeciesType PlayerOneSpecies;
+    public SpeciesType PlayerTwoSpecies;
     public float3 StartPositionBaseSpawnerPlayerOne;
     public float3 StartPositionBaseSpawnerPlayerTwo;
+
     public bool SpawnUnitWhenPressEnter;
 
-    public int BasicSlimeUnitPerBaseSpawner;
-    public int BasicMecaUnitPerBaseSpawner;
+    public uint NumberOfBaseSpawnerForPlayerOne;
+    public uint NumberOfBaseSpawnerForPlayerTwo;
+    public uint NumberOfSlimeUnitPerSlimeBaseSpawner;
+    public uint NumberOfMecaUnitPerMecaBaseSpawner;
 
-    public float BasicSlimeUnitSpeed; // meters per second
-    public float BasicMecaUnitSpeed;
-    public float BasicSlimeUnitAttack; // Amount of damage dealt by the slime
-    public float BasicMecaUnitAttack;
-    // BasicSlimeUnitLife, BasicMecaUnitLife ...
+    public float SlimeBasicUnitSpeed; // meters per second
+    public float SlimeBasicUnitAttack; // Amount of damage dealt by the slime
+    public float MecaBasicUnitSpeed;
+    public float MecaBasicUnitAttack;
+    // SlimeBasicUnitLife, MecaBasicUnitLife ...
 
+    public Entity SlimePlayerHandPrefab;
     public Entity SlimeBaseSpawnerBuildingPrefab;
+    public Entity SlimeBasicUnitPrefab;
+
+    public Entity MecaPlayerHandPrefab;
     public Entity MecaBaseSpawnerBuildingPrefab;
-    public Entity BasicSlimeUnitPrefab;
-    public Entity BasicMecaUnitPrefab;
+    public Entity MecaBasicUnitPrefab;
 }
