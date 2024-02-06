@@ -13,7 +13,7 @@ public partial struct SelectionRectResizeSystem : ISystem
 
     private float defaultPlaneBoundSizeXZ;
 
-    // NOTE: We can adjust the y value to get the selection above (e.g 0) or below the unit.
+    // NOTE: We can adjust the y value to get the selection above or below (e.g 0) the unit.
     private float positionSelectionRectY;
 
     [BurstCompile]
