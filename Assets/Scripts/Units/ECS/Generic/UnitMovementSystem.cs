@@ -16,7 +16,6 @@ public partial struct UnitMovementSystem : ISystem
         state.RequireForUpdate<UnitMovement>();
     }
 
-    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         // Implement the shared movement system here.
@@ -25,7 +24,9 @@ public partial struct UnitMovementSystem : ISystem
         if (!Input.GetMouseButtonDown(1))
             return;
 
-        var mousePos = Input.mousePosition;
+        var clickPos = Input.mousePosition;
+        var mainCamera = Camera.main;
+        var clickWorldPosition = mainCamera.ScreenToWorldPoint(new Vector3(clickPos.x, clickPos.y, mainCamera.transform.position.y));
 
         foreach (var (unitMovementLTW, unitSelectable)
                  in
@@ -38,10 +39,10 @@ public partial struct UnitMovementSystem : ISystem
             {
                 var newPosition = new float3(
                     // mousePos.x,
-                    5,
+                    clickWorldPosition.x,
                     unitMovementLTW.ValueRW.Position.y,
                     // mousePos.z
-                    5
+                    clickWorldPosition.y
                 );
 
                 unitMovementLTW.ValueRW.Value =

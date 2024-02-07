@@ -35,10 +35,7 @@ public partial struct SelectionRectResizeSystem : ISystem
             var mainCamera = Camera.main;
             isClicked = true;
             initialClickPosition = Input.mousePosition;
-            initialWorldPosition =
-                mainCamera.ScreenToWorldPoint(new Vector3(initialClickPosition.x, initialClickPosition.y,
-                    mainCamera.transform.position
-                        .y)); // NOTE: Because we are in RTS view, we need to reverse the y and z axes.
+            initialWorldPosition = mainCamera.ScreenToWorldPoint(new Vector3(initialClickPosition.x, initialClickPosition.y, mainCamera.transform.position.y)); // NOTE: Because we are in RTS view, we need to reverse the y and z axes.
         }
 
         // Update the scale of the selection according to the mouse movement.
