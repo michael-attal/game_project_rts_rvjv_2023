@@ -16,6 +16,7 @@ public partial struct UnitSelectableSystem : ISystem
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<Config>();
         state.RequireForUpdate<UnitSelectable>();
     }
 
@@ -23,6 +24,14 @@ public partial struct UnitSelectableSystem : ISystem
     {
         // Implement the shared unit selectable system here.
         // If the selectable system differs significantly between units, we should implement a specialized system, such as MySlimeUnitSelectableSystem, in addition of a generic one like this one.
+
+        var configManager = SystemAPI.GetSingleton<Config>();
+
+        if (!configManager.ActivateUnitSelectableSystem)
+        {
+            state.Enabled = false;
+            return;
+        }
 
         // Check if the left mouse button is clicked down
         if (Input.GetMouseButtonDown(0) && !isClicked)
@@ -82,8 +91,7 @@ public partial struct UnitSelectionJob : IJobEntity
     public Rect SelectionArea;
 
     // Because we want the global position of a child entity, we read LocalToWorld instead of LocalTransform.
-    private void Execute(in LocalToWorld unitLT, RefRW<UnitSelectable> unitSelectable,
-        RefRW<URPMaterialPropertyBaseColor> unitColor)
+    private void Execute(in LocalToWorld unitLT, RefRW<UnitSelectable> unitSelectable, RefRW<URPMaterialPropertyBaseColor> unitColor)
     {
         unitSelectable.ValueRW.IsSelected = false;
         unitColor.ValueRW.Value = unitSelectable.ValueRO.OriginalUnitColor; // TODO: Get back to the original color with UnitSelectableMaterialChangerSystem later.

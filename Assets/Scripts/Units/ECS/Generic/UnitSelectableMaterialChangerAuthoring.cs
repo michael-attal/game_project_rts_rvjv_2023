@@ -73,6 +73,11 @@ public partial class UnitSelectableMaterialChangerSystem : SystemBase
 
     protected override void OnUpdate()
     {
+        var configManager = SystemAPI.GetSingleton<Config>();
+
+        if (!configManager.ActivateSelectableMaterialChangerSystem)
+            return;
+
         var entityManager = EntityManager;
 
         if (!Input.GetKeyDown(KeyCode.M)) // Change material by pressing M for the moment.

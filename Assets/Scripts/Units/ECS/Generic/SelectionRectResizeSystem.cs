@@ -19,6 +19,7 @@ public partial struct SelectionRectResizeSystem : ISystem
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<Config>();
         state.RequireForUpdate<SelectionRect>();
         state.RequireForUpdate<SelectionRectResize>();
         // NOTE: The default size of the plane is 10 by 10 units. <- Please be cautious about updating it if the plane size changes. Alternatively, we can dynamically obtain the MeshRenderer.Bounds to adjust it, but this may impact performance.
@@ -29,6 +30,14 @@ public partial struct SelectionRectResizeSystem : ISystem
     // TODO: In case there are additional selection rect entities (which seems unlikely), we should create a job that will adjust the position and size of the selection rect based on the mouse input received within this non-BurstCompile OnUpdate function to get additional performance.
     public void OnUpdate(ref SystemState state)
     {
+        var configManager = SystemAPI.GetSingleton<Config>();
+
+        if (!configManager.ActivateSelectionRectResizeSystem)
+        {
+            state.Enabled = false;
+            return;
+        }
+
         // Check if the left mouse button is clicked down
         if (Input.GetMouseButtonDown(0) && !isClicked)
         {
