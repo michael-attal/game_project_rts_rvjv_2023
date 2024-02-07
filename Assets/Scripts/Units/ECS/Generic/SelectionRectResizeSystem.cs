@@ -26,7 +26,7 @@ public partial struct SelectionRectResizeSystem : ISystem
         positionSelectionRectY = 1f; // Set a minimum y (height) position to 1.
     }
 
-    // [BurstCompile] // TODO: Get the camera in parameter with a job to enable burst compile
+    // TODO: In case there are additional selection rect entities (which seems unlikely), we should create a job that will adjust the position and size of the selection rect based on the mouse input received within this non-BurstCompile OnUpdate function to get additional performance.
     public void OnUpdate(ref SystemState state)
     {
         // Check if the left mouse button is clicked down
@@ -44,9 +44,7 @@ public partial struct SelectionRectResizeSystem : ISystem
             var mainCamera = Camera.main;
             var positionCamera = mainCamera.transform.position;
             var currentMousePosition = Input.mousePosition;
-            var currentWorldPosition =
-                mainCamera.ScreenToWorldPoint(new Vector3(currentMousePosition.x, currentMousePosition.y,
-                    positionCamera.y));
+            var currentWorldPosition = mainCamera.ScreenToWorldPoint(new Vector3(currentMousePosition.x, currentMousePosition.y, positionCamera.y));
 
             var scale = new float3
             {
