@@ -34,15 +34,16 @@ public partial struct UnitMovementSystem : ISystem
                      .Query<RefRW<LocalToWorld>, RefRO<UnitSelectable>>()
                      .WithAll<UnitMovement>())
         {
-            // TODO: Create a destination float3 data within the UnitMovement component, which will store the intended world position to travel to. Subsequently, assign a velocity to the selected units, and ultimately eliminate the velocity prior to arrival. Alternatively, we can simply update the position as an initial implementation.
+            // TODO: Create a destination float3 data within the UnitMovement component, which will store the intended world position to travel to. Subsequently, assign a velocity to the selected units, and ultimately eliminate the velocity prior to arrival. 
+            // TODO: Avoid clustering all units together by spacing them out at a fixed distance from each other.
             if (unitSelectable.ValueRO.IsSelected)
             {
                 var newPosition = new float3(
                     // mousePos.x,
                     clickWorldPosition.x,
-                    unitMovementLTW.ValueRW.Position.y,
+                    clickWorldPosition.y,
                     // mousePos.z
-                    clickWorldPosition.y
+                    clickWorldPosition.z
                 );
 
                 unitMovementLTW.ValueRW.Value =
