@@ -26,7 +26,11 @@ public class UnitAuthoring : MonoBehaviour
                 OriginalUnitColor = authoring.UnitColorRGBA
             });
 
-            AddComponent<UnitMovement>(entity);
+            AddComponent(entity, new UnitMovement
+            {
+                Velocity = 10f
+            });
+
             AddComponent<UnitDamage>(entity);
             AddComponent<UnitAttack>(entity);
             AddComponent<Velocity>(entity);
@@ -65,6 +69,8 @@ public struct UnitSelectable : IComponentData
 
 public struct UnitMovement : IComponentData
 {
+    public float3 Velocity;
+    public float3 Destination;
 }
 
 public struct UnitDamage : IComponentData
