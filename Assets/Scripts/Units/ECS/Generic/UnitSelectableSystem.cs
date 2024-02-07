@@ -85,7 +85,7 @@ public partial struct UnitSelectionJob : IJobEntity
     private void Execute(in LocalToWorld unitLT, RefRW<UnitSelectable> unitSelectable,
         RefRW<URPMaterialPropertyBaseColor> unitColor)
     {
-        unitSelectable.ValueRW.IsSelected = true;
+        unitSelectable.ValueRW.IsSelected = false;
         unitColor.ValueRW.Value = unitSelectable.ValueRO.OriginalUnitColor; // TODO: Get back to the original color with UnitSelectableMaterialChangerSystem later.
 
         var unitRadius = unitLT.Value.Scale().x;
