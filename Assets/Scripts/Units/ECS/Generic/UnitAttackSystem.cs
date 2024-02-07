@@ -8,7 +8,7 @@ public partial struct UnitAttackSystem : ISystem
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<Unit>();
+        state.RequireForUpdate<Config>();
         state.RequireForUpdate<UnitAttack>();
     }
 
@@ -17,5 +17,13 @@ public partial struct UnitAttackSystem : ISystem
     {
         // Implement the shared attack system here.
         // If the Attack system differs significantly between units, we should implement a specialized system, such as MySlimeUnitAttackSystem, in addition of a generic one like this one.
+
+        var configManager = SystemAPI.GetSingleton<Config>();
+
+        if (!configManager.ActivateUnitAttackSystem)
+        {
+            state.Enabled = false;
+            // return;
+        }
     }
 }

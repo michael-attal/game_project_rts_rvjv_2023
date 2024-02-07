@@ -7,6 +7,7 @@ public class UnitAuthoring : MonoBehaviour
 {
     public SpeciesType SpeciesType;
     public float4 UnitColorRGBA;
+    public float UnitSpeed;
 
     private class Baker : Baker<UnitAuthoring>
     {
@@ -28,7 +29,9 @@ public class UnitAuthoring : MonoBehaviour
 
             AddComponent(entity, new UnitMovement
             {
-                Velocity = 10f
+                Velocity = 10f,
+                IsMoving = false,
+                Speed = authoring.UnitSpeed
             });
 
             AddComponent<UnitDamage>(entity);
@@ -69,8 +72,14 @@ public struct UnitSelectable : IComponentData
 
 public struct UnitMovement : IComponentData
 {
+    public bool IsMoving;
+    public float Speed;
     public float3 Velocity;
     public float3 Destination;
+}
+
+public struct IsMovingTag : IComponentData
+{
 }
 
 public struct UnitDamage : IComponentData

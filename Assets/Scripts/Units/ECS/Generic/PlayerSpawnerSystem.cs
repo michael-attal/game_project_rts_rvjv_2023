@@ -10,12 +10,21 @@ public partial struct PlayerSpawnerSystem : ISystem
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<Config>();
         state.RequireForUpdate<SpawnManager>();
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
+        var configManager = SystemAPI.GetSingleton<Config>();
+
+        if (!configManager.ActivatePlayerSpawnerSystem)
+        {
+            state.Enabled = false;
+            return;
+        }
+
         // We only want to spawn players one time. Disabling the system stops subsequent updates.
         state.Enabled = false;
 

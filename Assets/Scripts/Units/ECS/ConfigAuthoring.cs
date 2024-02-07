@@ -5,7 +5,18 @@ using UnityEngine;
 
 public class ConfigAuthoring : MonoBehaviour
 {
+    public bool ActivatePlayerSpawnerSystem;
+    public bool ActivateBaseSpawnerBuildingSystem;
+    public bool ActivateUnitSpawnerSystem;
+    public bool ActivateUnitSelectableSystem;
+    public bool ActivateSelectionRectResizeSystem;
+    public bool ActivateUnitMovementSystem;
+    public bool ActivateSelectableMaterialChangerSystem;
+    public bool ActivateUnitAttackSystem;
+    public bool ActivateUnitDamageSystem;
+
     public bool ActivateSwitchFocusCameraToPlayersOnSpacePress;
+    public bool ActivateUnitFollowMousePosition;
 
     private class Baker : Baker<ConfigAuthoring>
     {
@@ -15,8 +26,19 @@ public class ConfigAuthoring : MonoBehaviour
 
             AddComponent(entity, new Config
             {
+                ActivatePlayerSpawnerSystem = authoring.ActivatePlayerSpawnerSystem,
+                ActivateBaseSpawnerBuildingSystem = authoring.ActivateBaseSpawnerBuildingSystem,
+                ActivateUnitSpawnerSystem = authoring.ActivateUnitSpawnerSystem,
+                ActivateUnitSelectableSystem = authoring.ActivateUnitSelectableSystem,
+                ActivateSelectionRectResizeSystem = authoring.ActivateSelectionRectResizeSystem,
+                ActivateUnitMovementSystem = authoring.ActivateUnitMovementSystem,
+                ActivateSelectableMaterialChangerSystem = authoring.ActivateSelectableMaterialChangerSystem,
+                ActivateUnitAttackSystem = authoring.ActivateUnitAttackSystem,
+                ActivateUnitDamageSystem = authoring.ActivateUnitDamageSystem,
+
                 ActivateSwitchFocusCameraToPlayersOnSpacePress =
-                    authoring.ActivateSwitchFocusCameraToPlayersOnSpacePress
+                    authoring.ActivateSwitchFocusCameraToPlayersOnSpacePress,
+                ActivateUnitFollowMousePosition = authoring.ActivateUnitFollowMousePosition
             });
 
             if (authoring.ActivateSwitchFocusCameraToPlayersOnSpacePress) AddComponent<ICCamera>(entity);
@@ -26,5 +48,16 @@ public class ConfigAuthoring : MonoBehaviour
 
 public struct Config : IComponentData
 {
+    public bool ActivatePlayerSpawnerSystem;
+    public bool ActivateBaseSpawnerBuildingSystem;
+    public bool ActivateUnitSpawnerSystem;
+    public bool ActivateUnitSelectableSystem;
+    public bool ActivateSelectionRectResizeSystem;
+    public bool ActivateUnitMovementSystem;
+    public bool ActivateSelectableMaterialChangerSystem;
+    public bool ActivateUnitAttackSystem;
+    public bool ActivateUnitDamageSystem;
+
     public bool ActivateSwitchFocusCameraToPlayersOnSpacePress;
+    public bool ActivateUnitFollowMousePosition;
 }

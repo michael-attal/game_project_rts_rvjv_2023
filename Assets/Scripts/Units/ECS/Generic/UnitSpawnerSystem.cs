@@ -13,6 +13,7 @@ public partial struct UnitSpawnerSystem : ISystem
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<Config>();
         state.RequireForUpdate<SpawnManager>();
         state.RequireForUpdate<BaseSpawnerBuilding>();
     }
@@ -20,6 +21,14 @@ public partial struct UnitSpawnerSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
+        var configManager = SystemAPI.GetSingleton<Config>();
+
+        if (!configManager.ActivateUnitSpawnerSystem)
+        {
+            state.Enabled = false;
+            return;
+        }
+
         var spawnManager = SystemAPI.GetSingleton<SpawnManager>();
 
         if (spawnManager.SpawnUnitWhenPressEnter)
@@ -33,7 +42,7 @@ public partial struct UnitSpawnerSystem : ISystem
             state.Enabled = false; // Let it spawn only one time if it does it automatically
         }
 
-        // TODO: Use IJobParallelFor to efficiently instantiate multiple units if necessary
+        // TODO: Create a job with IJobParallelFor to efficiently instantiate multiple units
         foreach (var (transform, baseSpawnerInfos) in
                  SystemAPI.Query<RefRO<LocalTransform>, RefRO<BaseSpawnerBuilding>>()
                      .WithAll<BaseSpawnerBuilding>())

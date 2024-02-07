@@ -384,7 +384,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 183a8500e7c3a43acafd3cccbdc7bcde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ActivatePlayerSpawnerSystem: 1
+  ActivateBaseSpawnerBuildingSystem: 1
+  ActivateUnitSpawnerSystem: 1
+  ActivateUnitSelectableSystem: 1
+  ActivateSelectionRectResizeSystem: 1
+  ActivateUnitMovementSystem: 1
+  ActivateSelectableMaterialChangerSystem: 1
+  ActivateUnitAttackSystem: 1
+  ActivateUnitDamageSystem: 1
   ActivateSwitchFocusCameraToPlayersOnSpacePress: 1
+  ActivateUnitFollowMousePosition: 0
 --- !u!4 &889198423
 Transform:
   m_ObjectHideFlags: 0
