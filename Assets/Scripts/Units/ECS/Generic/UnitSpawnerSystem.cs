@@ -26,13 +26,14 @@ public partial struct UnitSpawnerSystem : ISystem
         {
             if (!Input.GetKeyDown(KeyCode.Return))
                 return;
-            Debug.Log("Enter detected! Spawning unit now!"); // TODO: Change the spawning position on Enter
+            Debug.Log("Enter detected! Spawning unit now!");
         }
         else
         {
             state.Enabled = false; // Let it spawn only one time if it does it automatically
         }
 
+        // TODO: Use IJobParallelFor to efficiently instantiate multiple units if necessary
         foreach (var (transform, baseSpawnerInfos) in
                  SystemAPI.Query<RefRO<LocalTransform>, RefRO<BaseSpawnerBuilding>>()
                      .WithAll<BaseSpawnerBuilding>())
