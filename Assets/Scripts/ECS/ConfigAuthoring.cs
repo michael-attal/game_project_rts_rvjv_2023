@@ -16,7 +16,6 @@ public class ConfigAuthoring : MonoBehaviour
     public bool ActivateUnitDamageSystem;
 
     public bool ActivateSwitchFocusCameraToPlayersOnSpacePress;
-    public bool ActivateUnitFollowMousePosition;
 
     private class Baker : Baker<ConfigAuthoring>
     {
@@ -37,8 +36,7 @@ public class ConfigAuthoring : MonoBehaviour
                 ActivateUnitDamageSystem = authoring.ActivateUnitDamageSystem,
 
                 ActivateSwitchFocusCameraToPlayersOnSpacePress =
-                    authoring.ActivateSwitchFocusCameraToPlayersOnSpacePress,
-                ActivateUnitFollowMousePosition = authoring.ActivateUnitFollowMousePosition
+                    authoring.ActivateSwitchFocusCameraToPlayersOnSpacePress
             });
 
             if (authoring.ActivateSwitchFocusCameraToPlayersOnSpacePress) AddComponent<ICCamera>(entity);
@@ -59,5 +57,4 @@ public struct Config : IComponentData
     public bool ActivateUnitDamageSystem;
 
     public bool ActivateSwitchFocusCameraToPlayersOnSpacePress;
-    public bool ActivateUnitFollowMousePosition;
 }

@@ -28,6 +28,7 @@ public partial struct SelectionRectResizeSystem : ISystem
     }
 
     // TODO: In case there are additional selection rect entities (which seems unlikely), we should create a job that will adjust the position and size of the selection rect based on the mouse input received within this non-BurstCompile OnUpdate function to get additional performance.
+    // TODO: Refactor with MouseManager singleton (see UnitMovementSystem).
     public void OnUpdate(ref SystemState state)
     {
         var configManager = SystemAPI.GetSingleton<Config>();
