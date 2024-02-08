@@ -20,6 +20,7 @@ public partial struct UnitSelectableSystem : ISystem
         state.RequireForUpdate<UnitSelectable>();
     }
 
+    // TODO: Refactor with MouseManager singleton (see UnitMovementSystem).
     public void OnUpdate(ref SystemState state)
     {
         // Implement the shared unit selectable system here.

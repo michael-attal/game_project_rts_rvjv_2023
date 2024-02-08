@@ -2,33 +2,36 @@ using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine;
 
 [UpdateBefore(typeof(TransformSystemGroup))]
-// [UpdateAfter(typeof(UnitSelectableSystem))] // NOTE: We need to update after the to not lose the unit selection on the right click
+[UpdateAfter(typeof(MouseSystemGroup))] // We need to know if a mouse event occurred before updating this system
 public partial struct UnitMovementSystem : ISystem
 {
     private bool isClicked;
     private float3 worldClickPosition;
     private EntityQuery isMovingTagQuery;
+    private int lastClickID;
 
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<Config>();
+        state.RequireForUpdate<MouseManager>();
+        state.RequireForUpdate<MouseRightClickEvent>();
         state.RequireForUpdate<UnitSelectable>();
         state.RequireForUpdate<UnitMovement>();
 
         isMovingTagQuery = state.GetEntityQuery(ComponentType.ReadOnly<IsMovingTag>());
+        lastClickID = -1;
     }
 
     public void OnUpdate(ref SystemState state)
     {
         // Implement the shared movement system here.
         // If the movement system differs significantly between units, we should implement a specialized system, such as MySlimeUnitMovementSystem, in addition of a generic one like this one.
-
         var configManager = SystemAPI.GetSingleton<Config>();
+        var mouseManagerEntity = SystemAPI.GetSingletonEntity<MouseManager>();
 
         if (!configManager.ActivateUnitMovementSystem)
         {
@@ -36,48 +39,42 @@ public partial struct UnitMovementSystem : ISystem
             return;
         }
 
-        // NOTE: If you want some fun, you can make active unit follow the mouse on the ConfigManager :D
-        if (configManager.ActivateUnitFollowMousePosition)
-        {
-            isClicked = true;
-            var clickPos = Input.mousePosition;
-            var mainCamera = Camera.main;
-            if (mainCamera != null) worldClickPosition = mainCamera.ScreenToWorldPoint(new Vector3(clickPos.x, clickPos.y, mainCamera.transform.position.y));
-        }
-        else
-        {
-            // Check if there's a left click
-            if (Input.GetMouseButtonDown(1))
-            {
-                isClicked = true;
-                var clickPos = Input.mousePosition;
-                var mainCamera = Camera.main;
-                if (mainCamera != null) worldClickPosition = mainCamera.ScreenToWorldPoint(new Vector3(clickPos.x, clickPos.y, mainCamera.transform.position.y));
-            }
-        }
-
         // Check if any unit is moving
-        var isUnitsMoving = isMovingTagQuery.IsEmptyIgnoreFilter;
+        var isUnitsMoving = !isMovingTagQuery.IsEmptyIgnoreFilter;
+        var isNewClickEventDetected = true;
 
-        // If no units are moving and there's no left click, don't do anything in this frame
-        if (isUnitsMoving == false && isClicked == false)
+        // Get the mouse click event
+        var mouseRightClickEventData = state.EntityManager.GetComponentData<MouseRightClickEvent>(mouseManagerEntity);
+
+        if (lastClickID == mouseRightClickEventData.RightClickID)
+        {
+            isNewClickEventDetected = false;
+        }
+
+        // if (Math.Abs(mouseRightClickEventData.LastPosition.x - mouseRightClickEventData.Position.x) < 0.01f &&
+        //     Math.Abs(mouseRightClickEventData.LastPosition.y - mouseRightClickEventData.Position.y) < 0.01f &&
+        //     Math.Abs(mouseRightClickEventData.LastPosition.z - mouseRightClickEventData.Position.z) < 0.01f)
+        // {
+        //     // Do something ?
+        // }
+
+        // If no units are moving and there's no right click event, don't do anything in this frame
+        if (isUnitsMoving == false && isNewClickEventDetected == false)
         {
             return;
         }
 
+        lastClickID = mouseRightClickEventData.RightClickID;
         var ecbSystem = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
-        // TODO: S'assurer que la position n'est envoyée qu'une seule fois et qu'elle ne change pas pour les unités qui ne sont plus sélectionnées mais qui sont en mouvement. 
-        // TODO: Donner la destination après avoir sélectionné des unités et effectué un clic droit et empecher de reprendre la précédente destination.
+
         var unitMovementJob = new UnitMovementJob
         {
             ECB = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter(),
             DeltaTime = SystemAPI.Time.DeltaTime,
-            Destination = new float3 { x = worldClickPosition.x, y = worldClickPosition.y, z = worldClickPosition.z }
+            Destination = mouseRightClickEventData.Position
         };
 
         unitMovementJob.ScheduleParallel();
-
-        Debug.Log("Unit selected moved!");
     }
 }
 
@@ -91,7 +88,8 @@ public partial struct UnitMovementJob : IJobEntity
 
     private void Execute(Entity entity, RefRO<UnitSelectable> unitSelectable, RefRW<UnitMovement> unitMovement, RefRW<LocalTransform> transform, [ChunkIndexInQuery] int chunkIndex)
     {
-        if (unitSelectable.ValueRO.IsSelected == false)
+        // TODO: Ajouter le click id en tant que paramètre. Si un nouveau clic est effectué avec les mêmes unités sélectionnées, la destination est remplacée. Sinon, elle reste inchangée.
+        if (unitSelectable.ValueRO.IsSelected == false && unitMovement.ValueRO.IsMoving == false)
             return;
 
         var direction = math.normalize(Destination - transform.ValueRO.Position);
@@ -99,7 +97,7 @@ public partial struct UnitMovementJob : IJobEntity
         var gravity = new float3(0.0f, -9.82f, 0.0f);
 
         // Only update the destination if the unit is not already moving
-        if (!unitMovement.ValueRW.IsMoving)
+        if (!unitMovement.ValueRO.IsMoving)
         {
             unitMovement.ValueRW.Destination = Destination;
         }
