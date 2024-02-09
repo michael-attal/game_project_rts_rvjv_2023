@@ -12,6 +12,7 @@ public class SpawnManagerAuthoring : MonoBehaviour
     public float3 StartPositionBaseSpawnerPlayerTwo;
 
     public bool SpawnUnitWhenPressEnter;
+    public GroupUnitShape GroupUnitsBy;
 
     public uint NumberOfBaseSpawnerForPlayerOne;
     public uint NumberOfBaseSpawnerForPlayerTwo;
@@ -41,6 +42,7 @@ public class SpawnManagerAuthoring : MonoBehaviour
                 StartPositionBaseSpawnerPlayerTwo = authoring.StartPositionBaseSpawnerPlayerTwo,
 
                 SpawnUnitWhenPressEnter = authoring.SpawnUnitWhenPressEnter,
+                GroupUnitsBy = authoring.GroupUnitsBy,
 
                 NumberOfBaseSpawnerForPlayerOne = authoring.NumberOfBaseSpawnerForPlayerOne,
                 NumberOfBaseSpawnerForPlayerTwo = authoring.NumberOfBaseSpawnerForPlayerTwo,
@@ -77,6 +79,7 @@ public struct SpawnManager : IComponentData
     public float3 StartPositionBaseSpawnerPlayerTwo;
 
     public bool SpawnUnitWhenPressEnter;
+    public GroupUnitShape GroupUnitsBy;
 
     public uint NumberOfBaseSpawnerForPlayerOne;
     public uint NumberOfBaseSpawnerForPlayerTwo;

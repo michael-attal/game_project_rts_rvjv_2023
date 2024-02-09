@@ -157,12 +157,13 @@ MonoBehaviour:
   StartPositionBaseSpawnerPlayerOne:
     x: 0
     y: 1
-    z: 1
+    z: 14
   StartPositionBaseSpawnerPlayerTwo:
     x: 0
     y: 1
-    z: -26
+    z: -22
   SpawnUnitWhenPressEnter: 0
+  GroupUnitsBy: 2
   NumberOfBaseSpawnerForPlayerOne: 1
   NumberOfBaseSpawnerForPlayerTwo: 1
   NumberOfSlimeUnitPerSlimeBaseSpawner: 1000
@@ -435,7 +436,7 @@ MonoBehaviour:
   ActivateUnitSelectableSystem: 1
   ActivateSelectionRectResizeSystem: 1
   ActivateUnitMovementSystem: 1
-  ActivateSelectableMaterialChangerSystem: 1
+  ActivateSelectableMaterialChangerSystem: 0
   ActivateUnitAttackSystem: 1
   ActivateUnitDamageSystem: 1
   ActivateSwitchFocusCameraToPlayersOnSpacePress: 1
