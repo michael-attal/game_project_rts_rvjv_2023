@@ -49,7 +49,8 @@ public class UnitAuthoring : MonoBehaviour
             {
                 Strength = authoring.UnitAttack,
                 Range = authoring.UnitRange,
-                RateOfFire = authoring.UnitRateOfFire
+                RateOfFire = authoring.UnitRateOfFire,
+                CurrentReloadTime = 0f
             });
             
             AddComponent<Velocity>(entity);
@@ -108,4 +109,5 @@ public struct UnitAttack : IComponentData
     public float Strength;
     public float Range;
     public float RateOfFire;
+    public float CurrentReloadTime;
 }
