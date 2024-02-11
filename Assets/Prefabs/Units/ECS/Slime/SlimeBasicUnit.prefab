@@ -126,4 +126,8 @@ MonoBehaviour:
     y: 0
     z: 1
     w: 1
-  UnitSpeed: 10
+  UnitSpeed: 100
+  UnitStandardHealth: 100
+  UnitAttack: 10
+  UnitRange: 1
+  UnitRateOfFire: 1
