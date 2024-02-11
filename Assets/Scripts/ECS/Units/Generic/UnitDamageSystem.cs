@@ -23,7 +23,25 @@ public partial struct UnitDamageSystem : ISystem
         if (!configManager.ActivateUnitDamageSystem)
         {
             state.Enabled = false;
-            // return;
+            return;
         }
+
+        var job = new UnitDamageJob()
+        {
+            ECB = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>()
+                .CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter()
+        };
+        job.ScheduleParallel();
+    }
+}
+
+public partial struct UnitDamageJob : IJobEntity
+{
+    public EntityCommandBuffer.ParallelWriter ECB;
+
+    private void Execute(Entity entity, RefRO<UnitDamage> unitDamage, [ChunkIndexInQuery] int chunkIndex)
+    {
+        if (unitDamage.ValueRO.Health <= 0)
+            ECB.DestroyEntity(chunkIndex, entity);
     }
 }
