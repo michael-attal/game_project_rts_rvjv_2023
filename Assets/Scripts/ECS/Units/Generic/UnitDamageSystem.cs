@@ -8,6 +8,7 @@ public partial struct UnitDamageSystem : ISystem
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<Config>();
         state.RequireForUpdate<UnitDamage>();
     }
@@ -26,7 +27,7 @@ public partial struct UnitDamageSystem : ISystem
             return;
         }
 
-        var job = new UnitDamageJob()
+        var job = new UnitDamageJob
         {
             ECB = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>()
                 .CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter()

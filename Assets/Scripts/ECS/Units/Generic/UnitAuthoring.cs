@@ -6,11 +6,12 @@ using UnityEngine;
 public class UnitAuthoring : MonoBehaviour
 {
     public SpeciesType SpeciesType;
+    public UnitType UnitType;
     public float4 UnitColorRGBA;
     public float UnitSpeed;
 
-    [Header("Combat")]
-    public float UnitStandardHealth;
+    [Header("Combat")] public float UnitStandardHealth;
+
     public float UnitAttack;
     public float UnitRange;
     public float UnitRateOfFire;
@@ -23,7 +24,8 @@ public class UnitAuthoring : MonoBehaviour
 
             AddComponent(entity, new Unit
             {
-                SpeciesType = authoring.SpeciesType
+                SpeciesType = authoring.SpeciesType,
+                UnitType = authoring.UnitType
             });
 
             AddComponent(entity, new UnitSelectable
@@ -40,19 +42,19 @@ public class UnitAuthoring : MonoBehaviour
                 Speed = authoring.UnitSpeed
             });
 
-            AddComponent(entity, new UnitDamage()
+            AddComponent(entity, new UnitDamage
             {
                 Health = authoring.UnitStandardHealth
             });
-            
-            AddComponent(entity, new UnitAttack()
+
+            AddComponent(entity, new UnitAttack
             {
                 Strength = authoring.UnitAttack,
                 Range = authoring.UnitRange,
                 RateOfFire = authoring.UnitRateOfFire,
                 CurrentReloadTime = 0f
             });
-            
+
             AddComponent<Velocity>(entity);
 
             AddComponent(entity, new URPMaterialPropertyBaseColor
@@ -69,9 +71,22 @@ public enum SpeciesType
     Meca
 }
 
+public enum UnitType
+{
+    SlimeBasic,
+    MecaBasic,
+    SlimeStronger,
+    MecaStronger
+
+    // SlimeFire,
+    // SlimeWater,
+    // ...
+}
+
 public struct Unit : IComponentData
 {
     public SpeciesType SpeciesType;
+    public UnitType UnitType;
 }
 
 // A 2d velocity vector for the unit entities.
