@@ -16,6 +16,7 @@ public partial struct UnitSpawnerSystem : ISystem
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<Game>();
         state.RequireForUpdate<Config>();
         state.RequireForUpdate<SpawnManager>();
         state.RequireForUpdate<BaseSpawnerBuilding>();
@@ -102,6 +103,14 @@ public partial struct UnitSpawnerSystem : ISystem
 
         ecbJob.Playback(state.EntityManager);
         ecbJob.Dispose();
+
+        // If this was the initial spawn wave, start the game
+        var singleton = SystemAPI.GetSingleton<Game>();
+        if (singleton.State == GameState.Starting)
+        {
+            singleton.State = GameState.Running;
+            SystemAPI.SetSingleton(singleton);
+        }
     }
 }
 
