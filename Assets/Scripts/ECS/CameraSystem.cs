@@ -18,7 +18,7 @@ public partial struct CameraSystem : ISystem
         state.RequireForUpdate<ICCamera>();
         state.RequireForUpdate<Config>();
         state.RequireForUpdate<Player>();
-        numberOfPlayers = 2;
+        numberOfPlayers = 2; // TODO: If we allow more than 2 players, create spawnManager.NumberOfPlayer and update this code
         playerNumberFocused = 1;
     }
 
@@ -33,8 +33,7 @@ public partial struct CameraSystem : ISystem
             return;
 
         if (playerNumberFocused == numberOfPlayers + 1)
-            playerNumberFocused =
-                1; // TODO: If we allow more than 2 players, create spawnManager.NumberOfPlayer and refactor this
+            playerNumberFocused = 1;
 
 
         var playerQuery = SystemAPI.QueryBuilder().WithAll<Player>().Build();

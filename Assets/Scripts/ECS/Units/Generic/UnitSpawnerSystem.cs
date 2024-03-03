@@ -47,7 +47,7 @@ public partial struct UnitSpawnerSystem : ISystem
 
         var ecbJob = new EntityCommandBuffer(Allocator.TempJob);
 
-        // TODO: In the future, when we're developing buildings that spawn units upon click or according to our chosen criteria, we'll need to revise the code below.
+        // TODO: In the future, when we're developing buildings that spawn units upon click or according to our chosen criteria, we'll need to refactor the code below.
         // TODO: See if we use a System base instead of the current implementation, with something like:
         // Entities
         // .WithDeferredPlaybackSystem<EndSimulationEntityCommandBufferSystem>()
@@ -67,6 +67,10 @@ public partial struct UnitSpawnerSystem : ISystem
                 ? spawnManager.SlimeBasicUnitPrefab
                 : spawnManager.MecaBasicUnitPrefab;
 
+            var typeOfUnit = spawnedUnitPrefab == spawnManager.SlimeBasicUnitPrefab
+                ? UnitType.SlimeBasic
+                : UnitType.MecaBasic;
+
             var nbOfUnitPerBase = playerSpecies == SpeciesType.Slime
                 ? spawnManager.NumberOfSlimeUnitPerSlimeBaseSpawner
                 : spawnManager.NumberOfMecaUnitPerMecaBaseSpawner;
@@ -81,6 +85,8 @@ public partial struct UnitSpawnerSystem : ISystem
             var unitSpawnerJob = new UnitSpawnerJob
             {
                 CommandBuffer = ecbJob.AsParallelWriter(),
+                Species = playerSpecies,
+                TypeOfUnit = typeOfUnit,
                 Prefab = spawnedUnitPrefab,
                 BasePosition = startPosition, // Spawn a unit, position it at near the base spawner player's location
                 TotalUnits = nbOfUnitPerBase,
@@ -110,6 +116,8 @@ public enum GroupUnitShape
 public struct UnitSpawnerJob : IJobParallelFor
 {
     public EntityCommandBuffer.ParallelWriter CommandBuffer;
+    public SpeciesType Species;
+    public UnitType TypeOfUnit;
     public Entity Prefab;
     public float3 BasePosition;
     public uint TotalUnits;
@@ -189,5 +197,14 @@ public struct UnitSpawnerJob : IJobParallelFor
             Rotation = quaternion.identity,
             Scale = 1
         });
+
+        if (Species == SpeciesType.Slime && TypeOfUnit == UnitType.SlimeBasic)
+        {
+            CommandBuffer.AddComponent(index, instance, new SlimeBasicUnitMerge
+            {
+                NbUnitsToMerge = 10,
+                MergedUnitType = UnitType.SlimeStronger
+            });
+        }
     }
 }

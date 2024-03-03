@@ -22,6 +22,7 @@ public class SpawnManagerAuthoring : MonoBehaviour
     public GameObject SlimePlayerHandPrefab;
     public GameObject SlimeBaseSpawnerBuildingPrefab;
     public GameObject SlimeBasicUnitPrefab;
+    public GameObject SlimeStrongerUnitPrefab;
 
     public GameObject MecaPlayerHandPrefab;
     public GameObject MecaBaseSpawnerBuildingPrefab;
@@ -55,16 +56,13 @@ public class SpawnManagerAuthoring : MonoBehaviour
                 // MecaBasicUnitAttack = authoring.MecaBasicUnitAttack,
 
                 // GetEntity() bakes a GameObject prefab into its entity equivalent.
-                SlimePlayerHandPrefab =
-                    GetEntity(authoring.SlimePlayerHandPrefab, TransformUsageFlags.Dynamic),
+                SlimePlayerHandPrefab = GetEntity(authoring.SlimePlayerHandPrefab, TransformUsageFlags.Dynamic),
+                SlimeBaseSpawnerBuildingPrefab = GetEntity(authoring.SlimeBaseSpawnerBuildingPrefab, TransformUsageFlags.Dynamic),
                 SlimeBasicUnitPrefab = GetEntity(authoring.SlimeBasicUnitPrefab, TransformUsageFlags.Dynamic),
-                SlimeBaseSpawnerBuildingPrefab =
-                    GetEntity(authoring.SlimeBaseSpawnerBuildingPrefab, TransformUsageFlags.Dynamic),
+                SlimeStrongerUnitPrefab = GetEntity(authoring.SlimeStrongerUnitPrefab, TransformUsageFlags.Dynamic),
 
-                MecaPlayerHandPrefab =
-                    GetEntity(authoring.MecaPlayerHandPrefab, TransformUsageFlags.Dynamic),
-                MecaBaseSpawnerBuildingPrefab =
-                    GetEntity(authoring.MecaBaseSpawnerBuildingPrefab, TransformUsageFlags.Dynamic),
+                MecaPlayerHandPrefab = GetEntity(authoring.MecaPlayerHandPrefab, TransformUsageFlags.Dynamic),
+                MecaBaseSpawnerBuildingPrefab = GetEntity(authoring.MecaBaseSpawnerBuildingPrefab, TransformUsageFlags.Dynamic),
                 MecaBasicUnitPrefab = GetEntity(authoring.MecaBasicUnitPrefab, TransformUsageFlags.Dynamic)
             });
         }
@@ -95,6 +93,7 @@ public struct SpawnManager : IComponentData
     public Entity SlimePlayerHandPrefab;
     public Entity SlimeBaseSpawnerBuildingPrefab;
     public Entity SlimeBasicUnitPrefab;
+    public Entity SlimeStrongerUnitPrefab;
 
     public Entity MecaPlayerHandPrefab;
     public Entity MecaBaseSpawnerBuildingPrefab;
