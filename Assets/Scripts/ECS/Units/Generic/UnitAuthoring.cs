@@ -9,6 +9,12 @@ public class UnitAuthoring : MonoBehaviour
     public float4 UnitColorRGBA;
     public float UnitSpeed;
 
+    [Header("Combat")]
+    public float UnitStandardHealth;
+    public float UnitAttack;
+    public float UnitRange;
+    public float UnitRateOfFire;
+
     private class Baker : Baker<UnitAuthoring>
     {
         public override void Bake(UnitAuthoring authoring)
@@ -34,8 +40,19 @@ public class UnitAuthoring : MonoBehaviour
                 Speed = authoring.UnitSpeed
             });
 
-            AddComponent<UnitDamage>(entity);
-            AddComponent<UnitAttack>(entity);
+            AddComponent(entity, new UnitDamage()
+            {
+                Health = authoring.UnitStandardHealth
+            });
+            
+            AddComponent(entity, new UnitAttack()
+            {
+                Strength = authoring.UnitAttack,
+                Range = authoring.UnitRange,
+                RateOfFire = authoring.UnitRateOfFire,
+                CurrentReloadTime = 0f
+            });
+            
             AddComponent<Velocity>(entity);
 
             AddComponent(entity, new URPMaterialPropertyBaseColor
@@ -84,8 +101,13 @@ public struct IsMovingTag : IComponentData
 
 public struct UnitDamage : IComponentData
 {
+    public float Health;
 }
 
 public struct UnitAttack : IComponentData
 {
+    public float Strength;
+    public float Range;
+    public float RateOfFire;
+    public float CurrentReloadTime;
 }
