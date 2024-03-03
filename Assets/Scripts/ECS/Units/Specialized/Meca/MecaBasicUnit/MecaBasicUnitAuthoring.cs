@@ -29,3 +29,7 @@ public class MecaBasicUnitAuthoring : MonoBehaviour
 public struct MecaBasicUnit : IComponentData
 {
 }
+
+public struct MecaBasicUnitUpgrade : IComponentData
+{
+}

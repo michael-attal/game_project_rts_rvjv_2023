@@ -14,6 +14,8 @@ public class ConfigAuthoring : MonoBehaviour
     public bool ActivateSelectableMaterialChangerSystem;
     public bool ActivateUnitAttackSystem;
     public bool ActivateUnitDamageSystem;
+    public bool ActivateSlimeBasicUnitMergeSystem;
+    public bool ActivateMecaBasicUnitUpgradeSystem;
 
     public bool ActivateSwitchFocusCameraToPlayersOnSpacePress;
 
@@ -34,6 +36,8 @@ public class ConfigAuthoring : MonoBehaviour
                 ActivateSelectableMaterialChangerSystem = authoring.ActivateSelectableMaterialChangerSystem,
                 ActivateUnitAttackSystem = authoring.ActivateUnitAttackSystem,
                 ActivateUnitDamageSystem = authoring.ActivateUnitDamageSystem,
+                ActivateSlimeBasicUnitMergeSystem = authoring.ActivateSlimeBasicUnitMergeSystem,
+                ActivateMecaBasicUnitUpgradeSystem = authoring.ActivateMecaBasicUnitUpgradeSystem,
 
                 ActivateSwitchFocusCameraToPlayersOnSpacePress =
                     authoring.ActivateSwitchFocusCameraToPlayersOnSpacePress
@@ -55,6 +59,8 @@ public struct Config : IComponentData
     public bool ActivateSelectableMaterialChangerSystem;
     public bool ActivateUnitAttackSystem;
     public bool ActivateUnitDamageSystem;
+    public bool ActivateSlimeBasicUnitMergeSystem;
+    public bool ActivateMecaBasicUnitUpgradeSystem;
 
     public bool ActivateSwitchFocusCameraToPlayersOnSpacePress;
 }

@@ -34,4 +34,6 @@ public struct SlimeBasicUnit : IComponentData
 
 public struct SlimeBasicUnitMerge : IComponentData
 {
+    public uint NbUnitsToMerge;
+    public UnitType MergedUnitType;
 }
