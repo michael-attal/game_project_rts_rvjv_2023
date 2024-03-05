@@ -14,6 +14,7 @@ public class ConfigAuthoring : MonoBehaviour
     public bool ActivateSelectableMaterialChangerSystem;
     public bool ActivateUnitAttackSystem;
     public bool ActivateUnitDamageSystem;
+    public bool ActivateWinConditions;
     public bool ActivateSlimeBasicUnitMergeSystem;
     public bool ActivateMecaBasicUnitUpgradeSystem;
 
@@ -36,6 +37,7 @@ public class ConfigAuthoring : MonoBehaviour
                 ActivateSelectableMaterialChangerSystem = authoring.ActivateSelectableMaterialChangerSystem,
                 ActivateUnitAttackSystem = authoring.ActivateUnitAttackSystem,
                 ActivateUnitDamageSystem = authoring.ActivateUnitDamageSystem,
+                ActivateWinConditions = authoring.ActivateWinConditions,
                 ActivateSlimeBasicUnitMergeSystem = authoring.ActivateSlimeBasicUnitMergeSystem,
                 ActivateMecaBasicUnitUpgradeSystem = authoring.ActivateMecaBasicUnitUpgradeSystem,
 
@@ -59,6 +61,7 @@ public struct Config : IComponentData
     public bool ActivateSelectableMaterialChangerSystem;
     public bool ActivateUnitAttackSystem;
     public bool ActivateUnitDamageSystem;
+    public bool ActivateWinConditions;
     public bool ActivateSlimeBasicUnitMergeSystem;
     public bool ActivateMecaBasicUnitUpgradeSystem;
 
