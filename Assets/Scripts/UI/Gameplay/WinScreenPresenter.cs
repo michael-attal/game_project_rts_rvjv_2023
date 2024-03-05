@@ -15,7 +15,7 @@ public class WinScreenPresenter : MonoBehaviour
 
     private void Start()
     {
-        retryButton.onClick.AddListener(Retry);
+        retryButton.onClick.AddListener(BackToMenu);
         quitButton.onClick.AddListener(Quit);
 
         // Ensure WinScreen isn't shown at first
@@ -30,9 +30,9 @@ public class WinScreenPresenter : MonoBehaviour
         gameObject.SetActive(true);
     }
 
-    private void Retry()
+    private void BackToMenu()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        SceneManager.LoadScene("MenuScene");
     }
 
     private void Quit()

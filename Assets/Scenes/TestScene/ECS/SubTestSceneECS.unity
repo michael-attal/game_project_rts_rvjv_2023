@@ -167,7 +167,7 @@ MonoBehaviour:
   NumberOfBaseSpawnerForPlayerOne: 1
   NumberOfBaseSpawnerForPlayerTwo: 1
   NumberOfSlimeUnitPerSlimeBaseSpawner: 1000
-  NumberOfMecaUnitPerMecaBaseSpawner: 5
+  NumberOfMecaUnitPerMecaBaseSpawner: 1000
   SlimePlayerHandPrefab: {fileID: 6320164834673837995, guid: f571fa7df0f264f0a866e82fe099d7b5, type: 3}
   SlimeBaseSpawnerBuildingPrefab: {fileID: 2216618471874645061, guid: 888243f85db11483baf93363ac285d84, type: 3}
   SlimeBasicUnitPrefab: {fileID: 5157904157934955495, guid: 0b855b23c046046b6bdf14d22c6838d9, type: 3}
