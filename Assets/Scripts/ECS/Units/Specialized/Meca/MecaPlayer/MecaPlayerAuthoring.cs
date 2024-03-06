@@ -1,0 +1,37 @@
+using Unity.Entities;
+using Unity.Mathematics;
+using UnityEngine;
+
+public class MecaPlayerAuthoring : MonoBehaviour
+{
+    public uint PlayerNumber;
+    public uint NbOfBaseSpawnerBuilding = 1;
+    public uint NbOfUnitPerBaseSpawnerBuilding = 1000;
+    public float3 StartPosition;
+
+    private class Baker : Baker<MecaPlayerAuthoring>
+    {
+        public override void Bake(MecaPlayerAuthoring authoring)
+        {
+            var entity = GetEntity(TransformUsageFlags.Dynamic);
+
+            AddComponent(entity, new MecaPlayer
+            {
+                PlayerNumber = authoring.PlayerNumber,
+                NbOfBaseSpawnerBuilding = authoring.NbOfBaseSpawnerBuilding,
+                NbOfUnitPerBaseSpawnerBuilding = authoring.NbOfUnitPerBaseSpawnerBuilding,
+                StartPosition = authoring.StartPosition,
+                Winner = false
+            });
+        }
+    }
+}
+
+public struct MecaPlayer : IComponentData
+{
+    public uint PlayerNumber;
+    public uint NbOfBaseSpawnerBuilding;
+    public uint NbOfUnitPerBaseSpawnerBuilding;
+    public float3 StartPosition;
+    public bool Winner; // NOTE: Create a component or use a data ?
+}

@@ -1,0 +1,1 @@
+This folder contains only scripts that are not managed according to the Unity ECS pattern. Its purpose is to demonstrate to the teacher the contrast in performance between the ECS and non-ECS scripts.
