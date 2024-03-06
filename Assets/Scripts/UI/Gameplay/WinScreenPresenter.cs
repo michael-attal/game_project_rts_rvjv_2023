@@ -1,6 +1,5 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class WinScreenPresenter : MonoBehaviour
@@ -26,13 +25,16 @@ public class WinScreenPresenter : MonoBehaviour
     {
         winText.text = $"The {winner.ToString()}s have won!";
         background.color = winner == SpeciesType.Slime ? slimeColor : mecaColor;
-        
+
         gameObject.SetActive(true);
     }
 
     private void BackToMenu()
     {
-        SceneManager.LoadScene("MenuScene");
+        var gameManager = GameObject.Find("GameManager");
+        var sceneLoader = gameManager.GetComponent<SceneLoader>();
+        sceneLoader.sceneToLoad = Scenes.MenuScene;
+        StartCoroutine(sceneLoader.LoadSceneAsync());
     }
 
     private void Quit()
