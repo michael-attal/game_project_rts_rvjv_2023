@@ -241,7 +241,7 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
---- !u!1 &712872264
+--- !u!1 &1098183274
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -249,43 +249,43 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 712872266}
-  - component: {fileID: 712872265}
+  - component: {fileID: 1098183276}
+  - component: {fileID: 1098183275}
   m_Layer: 0
-  m_Name: SubTestSceneECS
+  m_Name: SubBattlefieldScene
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &712872265
+--- !u!114 &1098183275
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 712872264}
+  m_GameObject: {fileID: 1098183274}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 45a335734b1572644a6a5d09d87adc65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _SceneAsset: {fileID: 102900000, guid: 082a44091f3ff49a6aeebe6bf7cd8339, type: 3}
+  _SceneAsset: {fileID: 102900000, guid: 6ac1248c576f848a6b3e13373b67f757, type: 3}
   _HierarchyColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   AutoLoadScene: 1
   _SceneGUID:
     Value:
-      x: 2420417152
-      y: 2840589297
-      z: 3068915366
-      w: 2469977215
---- !u!4 &712872266
+      x: 3359775910
+      y: 2823353973
+      z: 1932649398
+      w: 1971287731
+--- !u!4 &1098183276
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 712872264}
+  m_GameObject: {fileID: 1098183274}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -679,6 +679,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BackToMenuButton
       objectReference: {fileID: 0}
+    - target: {fileID: 3527482039740635823, guid: efd497e075cb4314cac4a7cef54d597d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3858029427008752090, guid: efd497e075cb4314cac4a7cef54d597d, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -764,4 +768,4 @@ SceneRoots:
   - {fileID: 109892896}
   - {fileID: 1786692379}
   - {fileID: 1766734521}
-  - {fileID: 712872266}
+  - {fileID: 1098183276}

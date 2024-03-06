@@ -10,19 +10,22 @@ public class MainMenuPresenter : MonoBehaviour
     {
         startButton.onClick
             .AddListener(StartGame);
-        
+
         quitButton.onClick
             .AddListener(QuitGame);
     }
 
     private void StartGame()
     {
-        Debug.Log("Change scene here!");
+        Debug.Log("Loading battlefield scene...");
+        var gameManager = GameObject.Find("GameManager");
+        var sceneLoader = gameManager.GetComponent<SceneLoader>();
+        sceneLoader.sceneToLoad = Scenes.BattlefieldScene;
+        StartCoroutine(sceneLoader.LoadSceneAsync());
     }
 
     private void QuitGame()
     {
-        
         Application.Quit();
     }
 }
