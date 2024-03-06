@@ -91,7 +91,7 @@ public partial struct UnitSpawnerSystem : ISystem
                 Prefab = spawnedUnitPrefab,
                 BasePosition = startPosition, // Spawn a unit, position it at near the base spawner player's location
                 TotalUnits = nbOfUnitPerBase,
-                UnitSpace = 2f, // NOTE: Default space to 1f for x and y axis
+                UnitSpace = 2f, // NOTE: Default space to 2f for x and y axis
                 GroupUnitsBy = spawnManager.GroupUnitsBy
             };
 
