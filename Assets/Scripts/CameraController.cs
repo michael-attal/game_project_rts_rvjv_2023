@@ -46,7 +46,12 @@ public class CameraController : MonoBehaviour
         Transform thisTransform = transform;
 
         Vector3 up = transform.worldToLocalMatrix.MultiplyVector(Vector3.up);
-        Vector3 movement = Vector3.ProjectOnPlane(movementInput, up).normalized * speed;
+
+        // If not done separately, there will be unbalance beetween the two movements.
+        Vector3 xMovement = Vector3.ProjectOnPlane(new Vector3() { x = movementInput.x }, up).normalized;
+        Vector3 zMovement = Vector3.ProjectOnPlane(new Vector3() { z = movementInput.z }, up).normalized;
+
+        Vector3 movement = (xMovement + zMovement).normalized * speed;
 
         thisTransform.Translate(movement * Time.fixedDeltaTime);
     }
