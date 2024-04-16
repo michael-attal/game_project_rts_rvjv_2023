@@ -478,6 +478,7 @@ MonoBehaviour:
   instantiatableEntities:
   - entityID: ECS_SLIME_BASE_SPAWNER
     entity: {fileID: 2216618471874645061, guid: 888243f85db11483baf93363ac285d84, type: 3}
+  mergeGraph: {fileID: 11400000, guid: aad126b3c80ae9a488b2428a00ff8c0a, type: 2}
 --- !u!1 &1101015496
 GameObject:
   m_ObjectHideFlags: 0

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311924, g: 0.38073963, b: 0.3587269, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -435,6 +435,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7c65d1ab237c434caa3e40a77bbf8eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mergeGraph: {fileID: 11400000, guid: aad126b3c80ae9a488b2428a00ff8c0a, type: 2}
   instantiatableEntities:
   - entityID: ECS_SLIME_BASE_SPAWNER
     entity: {fileID: 2216618471874645061, guid: 888243f85db11483baf93363ac285d84, type: 3}
