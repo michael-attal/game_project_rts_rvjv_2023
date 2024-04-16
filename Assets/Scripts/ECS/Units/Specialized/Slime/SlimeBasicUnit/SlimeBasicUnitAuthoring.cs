@@ -3,8 +3,7 @@ using UnityEngine;
 
 public class SlimeBasicUnitAuthoring : MonoBehaviour
 {
-    [SerializeField] private uint NbUnitsToMerge;
-    [SerializeField] private UnitType MergedUnitType;
+    [SerializeField] private FusionInfo FusionInfo;
     
     private class Baker : Baker<SlimeBasicUnitAuthoring>
     {
@@ -16,8 +15,7 @@ public class SlimeBasicUnitAuthoring : MonoBehaviour
             AddComponent<SlimeBasicUnit>(entity);
             AddComponent(entity, new SlimeBasicUnitMerge()
             {
-                NbUnitsToMerge = authoring.NbUnitsToMerge,
-                MergedUnitType = authoring.MergedUnitType
+                FusionInfo = authoring.FusionInfo
             });
         }
     }
@@ -31,6 +29,5 @@ public struct SlimeBasicUnit : IComponentData
 
 public struct SlimeBasicUnitMerge : IComponentData
 {
-    public uint NbUnitsToMerge;
-    public UnitType MergedUnitType;
+    public FusionInfo FusionInfo;
 }
