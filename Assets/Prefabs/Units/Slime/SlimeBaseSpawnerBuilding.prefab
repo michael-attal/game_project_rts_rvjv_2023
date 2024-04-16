@@ -120,6 +120,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f69dab9b5ba6a4bbca470c930b2319a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SpeciesType: 0
-  NbOfUnitPerBase: 50
-  SpawnedUnitPrefab: {fileID: 5157904157934955495, guid: 0b855b23c046046b6bdf14d22c6838d9, type: 3}
+  NbOfUnitPerBase: 1
+  GenerationInterval: 2
+  SpawnedUnitPrefab: {fileID: 7369921848103496935, guid: 8b5e0f8d6a54c4fd7add410a44958b2b, type: 3}
