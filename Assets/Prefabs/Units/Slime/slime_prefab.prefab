@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2688333842852962168}
   - component: {fileID: 3089216964947194309}
   - component: {fileID: 530879326086402787}
+  - component: {fileID: 4947647432525000421}
   m_Layer: 0
   m_Name: slime_prefab
   m_TagString: Untagged
@@ -118,3 +119,17 @@ MonoBehaviour:
   UnitAttack: 10
   UnitRange: 2
   UnitRateOfFire: 1
+--- !u!114 &4947647432525000421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7369921848103496935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4eefe39c8dfa04620aad151d93a87c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NbUnitsToMerge: 10
+  MergedUnitType: 0

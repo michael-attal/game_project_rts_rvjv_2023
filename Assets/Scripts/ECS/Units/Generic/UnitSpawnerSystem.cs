@@ -41,64 +41,32 @@ public partial struct UnitSpawnerSystem : ISystem
                 return;
             Debug.Log("Enter detected! Spawning unit now!");
         }
-        else
-        {
-            state.Enabled = false; // Let it spawn only one time if it does it automatically
-        }
 
         var ecbJob = new EntityCommandBuffer(Allocator.TempJob);
 
-        // TODO: In the future, when we're developing buildings that spawn units upon click or according to our chosen criteria, we'll need to refactor the code below.
-        // TODO: See if we use a System base instead of the current implementation, with something like:
-        // Entities
-        // .WithDeferredPlaybackSystem<EndSimulationEntityCommandBufferSystem>()
-        // .ForEach(
-        //     (Entity entity, EntityCommandBuffer ecb, in BaseSpawnerBuilding baseSpawner) =>
-        //     {
-        //         // Spawn unit here with EntityCommandBuffer
-        //     }
-        // ).ScheduleParallel();
-        for (uint i = 0; i < 2; i++)
+        foreach (var (transform, spawner) in SystemAPI.Query<RefRO<LocalTransform>, RefRW<BaseSpawnerBuilding>>())
         {
-            var playerSpecies = i == 0
-                ? spawnManager.PlayerOneSpecies
-                : spawnManager.PlayerTwoSpecies;
-
-            var spawnedUnitPrefab = playerSpecies == SpeciesType.Slime
-                ? spawnManager.SlimeBasicUnitPrefab
-                : spawnManager.MecaBasicUnitPrefab;
-
-            var typeOfUnit = spawnedUnitPrefab == spawnManager.SlimeBasicUnitPrefab
-                ? UnitType.SlimeBasic
-                : UnitType.MecaBasic;
-
-            var nbOfUnitPerBase = playerSpecies == SpeciesType.Slime
-                ? spawnManager.NumberOfSlimeUnitPerSlimeBaseSpawner
-                : spawnManager.NumberOfMecaUnitPerMecaBaseSpawner;
-
-            var startPosition = i == 0
-                ? spawnManager.StartPositionBaseSpawnerPlayerOne
-                : spawnManager.StartPositionBaseSpawnerPlayerTwo;
-
-            // Spawn most of the entities in a Burst job by cloning a pre-created prototype entity,
-            // which can be either an entity created at run time or a Prefab like here.
-            // This is the fastest and most efficient way to create entities at run time.
-            var unitSpawnerJob = new UnitSpawnerJob
+            if (spawner.ValueRO.TimeToNextGeneration > 0f)
+            {
+                spawner.ValueRW.TimeToNextGeneration -= SystemAPI.Time.DeltaTime;
+                continue;
+            }
+            
+            spawner.ValueRW.TimeToNextGeneration = spawner.ValueRO.GenerationInterval;
+            
+            var unitSpawnJob = new UnitSpawnJob
             {
                 CommandBuffer = ecbJob.AsParallelWriter(),
-                Species = playerSpecies,
-                TypeOfUnit = typeOfUnit,
-                Prefab = spawnedUnitPrefab,
-                BasePosition = startPosition, // Spawn a unit, position it at near the base spawner player's location
-                TotalUnits = nbOfUnitPerBase,
+                Prefab = spawner.ValueRO.SpawnedUnitPrefab,
+                BasePosition = transform.ValueRO.Position, // Spawn a unit, position it at near the base spawner player's location
+                TotalUnits = spawner.ValueRO.NbOfUnitPerBase,
                 UnitSpace = 2f, // NOTE: Default space to 2f for x and y axis
-                GroupUnitsBy = spawnManager.GroupUnitsBy
+                GroupUnitsBy = GroupUnitShape.Line
             };
-
-            var unitSpawnerJobHandle = unitSpawnerJob.Schedule((int)nbOfUnitPerBase, 64, state.Dependency);
-            state.Dependency = unitSpawnerJobHandle;
-
-            unitSpawnerJobHandle.Complete();
+            var unitSpawnJobHandler = unitSpawnJob.Schedule((int)spawner.ValueRO.NbOfUnitPerBase, 64, state.Dependency);
+            state.Dependency = unitSpawnJobHandler;
+            
+            unitSpawnJobHandler.Complete();
         }
 
         ecbJob.Playback(state.EntityManager);
@@ -122,11 +90,9 @@ public enum GroupUnitShape
 }
 
 [BurstCompile]
-public struct UnitSpawnerJob : IJobParallelFor
+public struct UnitSpawnJob : IJobParallelFor
 {
     public EntityCommandBuffer.ParallelWriter CommandBuffer;
-    public SpeciesType Species;
-    public UnitType TypeOfUnit;
     public Entity Prefab;
     public float3 BasePosition;
     public uint TotalUnits;
@@ -206,14 +172,5 @@ public struct UnitSpawnerJob : IJobParallelFor
             Rotation = quaternion.identity,
             Scale = 1
         });
-
-        if (Species == SpeciesType.Slime && TypeOfUnit == UnitType.SlimeBasic)
-        {
-            CommandBuffer.AddComponent(index, instance, new SlimeBasicUnitMerge
-            {
-                NbUnitsToMerge = 10,
-                MergedUnitType = UnitType.SlimeStronger
-            });
-        }
     }
 }

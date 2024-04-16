@@ -54,13 +54,6 @@ public partial struct BaseSpawnerBuildingSystem : ISystem
                 Scale = 1,
                 Rotation = quaternion.identity
             });
-
-            state.EntityManager.SetComponentData(baseSpawnerPlayer, new BaseSpawnerBuilding
-            {
-                SpeciesType = playerInfos.ValueRO.PlayerSpecies,
-                NbOfUnitPerBase = playerInfos.ValueRO.NbOfUnitPerBaseSpawnerBuilding,
-                SpawnedUnitPrefab = playerInfos.ValueRO.BasicUnitPrefab
-            });
         }
 
         Debug.Log("Players base unit spawners building successfully created!");
