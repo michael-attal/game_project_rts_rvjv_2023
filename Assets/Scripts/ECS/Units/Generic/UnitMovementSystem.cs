@@ -3,6 +3,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 
+// TODO: Use Position Motor from Unity Physics instead
 [BurstCompile]
 [UpdateBefore(typeof(TransformSystemGroup))]
 [UpdateAfter(typeof(MouseSystemGroup))] // We need to know if a mouse event occurred before updating this system
@@ -83,12 +84,13 @@ public partial struct UnitMovementJob : IJobEntity
 
     private void Execute(Entity entity, RefRO<UnitSelectable> unitSelectable, RefRW<UnitMovement> unitMovement, RefRW<LocalTransform> transform, [ChunkIndexInQuery] int chunkIndex)
     {
-        Destination = new float3(Destination.x, transform.ValueRO.Position.y, Destination.z); // Due to the camera coordinate issue with the y axis, we use the default y value for the specific type of unit being used (such as flying or underground units) for the moment.
         if ((unitSelectable.ValueRO.IsSelected && IsNewDestination) || unitMovement.ValueRO.IsMoving)
         {
             // Update the destination only when a new destination is set while the unit is selected
             if (unitSelectable.ValueRO.IsSelected && IsNewDestination)
             {
+                Destination = new float3(Destination.x, transform.ValueRO.Position.y, Destination.z); // Due to the camera coordinate issue with the y axis, we use the default y value for the specific type of unit being used (such as flying or underground units) for the moment.
+                // NOTE: We should add [EntityIndexInQuery] int entityInQueryIndex in the Execute argument, and use it to create formationOffset. However, it seems that the entityInQueryIndex is not consistent, so I stopped here.
                 unitMovement.ValueRW.Destination = Destination;
             }
 
