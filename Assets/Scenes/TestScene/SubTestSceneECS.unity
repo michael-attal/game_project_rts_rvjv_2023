@@ -281,6 +281,7 @@ MonoBehaviour:
   MecaPlayerHandPrefab: {fileID: 1259044049793980661, guid: 2b27e280aca8e4416bf77212c6bd837d, type: 3}
   MecaBaseSpawnerBuildingPrefab: {fileID: 6851779870681047773, guid: c11a9cb22bf814101a676687080166dd, type: 3}
   MecaBasicUnitPrefab: {fileID: 6087196481752196242, guid: 03ed2dbcd6a084717b4e1c2bde44dc88, type: 3}
+  UnitSelectedCircleMaterial: {fileID: 2100000, guid: 9df2609dea1a94a7ea5bfdfe2da45399, type: 2}
 --- !u!4 &105172278
 Transform:
   m_ObjectHideFlags: 0
@@ -439,6 +440,7 @@ MonoBehaviour:
   ActivateSelectionRectResizeSystem: 1
   ActivateUnitMovementSystem: 1
   ActivateSelectableMaterialChangerSystem: 0
+  ActivateUnitSelectedRendererSystem: 1
   ActivateUnitAttackSystem: 1
   ActivateUnitDamageSystem: 1
   ActivateWinConditions: 1
