@@ -1,13 +1,11 @@
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Rendering;
 using UnityEngine;
 
 public class UnitAuthoring : MonoBehaviour
 {
     public SpeciesType SpeciesType;
     public UnitType UnitType;
-    public float4 UnitColorRGBA;
     public float UnitSpeed;
 
     [Header("Combat")] public float UnitStandardHealth;
@@ -31,8 +29,7 @@ public class UnitAuthoring : MonoBehaviour
             AddComponent(entity, new UnitSelectable
             {
                 IsSelected = false,
-                ShouldBeSelected = false,
-                OriginalUnitColor = authoring.UnitColorRGBA
+                ShouldBeSelected = false
             });
 
             AddComponent(entity, new UnitMovement
@@ -56,11 +53,6 @@ public class UnitAuthoring : MonoBehaviour
             });
 
             AddComponent<Velocity>(entity);
-
-            AddComponent(entity, new URPMaterialPropertyBaseColor
-            {
-                Value = authoring.UnitColorRGBA
-            });
         }
     }
 }
@@ -99,7 +91,6 @@ public struct UnitSelectable : IComponentData
 {
     public bool IsSelected;
     public bool ShouldBeSelected;
-    public float4 OriginalUnitColor;
 }
 
 public struct UnitMovement : IComponentData
