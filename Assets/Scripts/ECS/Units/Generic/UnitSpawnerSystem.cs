@@ -22,7 +22,7 @@ public partial struct UnitSpawnerSystem : ISystem
         state.RequireForUpdate<BaseSpawnerBuilding>();
     }
 
-    [BurstCompile]
+    // [BurstCompile] can't burst compile, spawnManager is a ref now
     public void OnUpdate(ref SystemState state)
     {
         var configManager = SystemAPI.GetSingleton<Config>();
@@ -33,7 +33,8 @@ public partial struct UnitSpawnerSystem : ISystem
             return;
         }
 
-        var spawnManager = SystemAPI.GetSingleton<SpawnManager>();
+        var spawnManagerQuery = SystemAPI.QueryBuilder().WithAll<SpawnManager>().Build();
+        var spawnManager = spawnManagerQuery.GetSingleton<SpawnManager>();
 
         if (spawnManager.SpawnUnitWhenPressEnter)
         {
@@ -51,9 +52,9 @@ public partial struct UnitSpawnerSystem : ISystem
                 spawner.ValueRW.TimeToNextGeneration -= SystemAPI.Time.DeltaTime;
                 continue;
             }
-            
+
             spawner.ValueRW.TimeToNextGeneration = spawner.ValueRO.GenerationInterval;
-            
+
             var unitSpawnJob = new UnitSpawnJob
             {
                 CommandBuffer = ecbJob.AsParallelWriter(),
@@ -65,7 +66,7 @@ public partial struct UnitSpawnerSystem : ISystem
             };
             var unitSpawnJobHandler = unitSpawnJob.Schedule((int)spawner.ValueRO.NbOfUnitPerBase, 64, state.Dependency);
             state.Dependency = unitSpawnJobHandler;
-            
+
             unitSpawnJobHandler.Complete();
         }
 

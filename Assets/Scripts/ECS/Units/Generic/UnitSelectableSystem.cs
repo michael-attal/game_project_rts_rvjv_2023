@@ -1,7 +1,6 @@
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine;
 
@@ -92,10 +91,9 @@ public partial struct UnitSelectionJob : IJobEntity
     public Rect SelectionArea;
 
     // Because we want the global position of a child entity, we read LocalToWorld instead of LocalTransform.
-    private void Execute(in LocalToWorld unitLT, RefRW<UnitSelectable> unitSelectable, RefRW<URPMaterialPropertyBaseColor> unitColor)
+    private void Execute(in LocalToWorld unitLT, RefRW<UnitSelectable> unitSelectable)
     {
         unitSelectable.ValueRW.IsSelected = false;
-        unitColor.ValueRW.Value = unitSelectable.ValueRO.OriginalUnitColor; // TODO: Get back to the original color with UnitSelectableMaterialChangerSystem later.
 
         var unitRadius = unitLT.Value.Scale().x;
 
@@ -119,8 +117,6 @@ public partial struct UnitSelectionJob : IJobEntity
         if (unitRect.Overlaps(SelectionArea, true))
         {
             unitSelectable.ValueRW.IsSelected = true;
-            // Edit color to green. TODO: Later, add a green highlight to the existing color.
-            unitColor.ValueRW.Value = new float4(0, 1, 0, 1);
         }
     }
 }

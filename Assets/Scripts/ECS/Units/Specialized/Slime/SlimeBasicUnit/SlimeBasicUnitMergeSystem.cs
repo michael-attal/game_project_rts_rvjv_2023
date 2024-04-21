@@ -20,7 +20,7 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
         state.RequireForUpdate<SlimeBasicUnitMerge>();
     }
 
-    [BurstCompile]
+    //[BurstCompile] can't burst compile, spawnManager is a ref now
     public void OnUpdate(ref SystemState state)
     {
         var configManager = SystemAPI.GetSingleton<Config>();
@@ -35,7 +35,8 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
         if (!Input.GetKeyDown(KeyCode.F))
             return;
 
-        var spawnManager = SystemAPI.GetSingleton<SpawnManager>();
+        var spawnManagerQuery = SystemAPI.QueryBuilder().WithAll<SpawnManager>().Build();
+        var spawnManager = spawnManagerQuery.GetSingleton<SpawnManager>();
 
         // TODO: Implement a component, IsSelected, which is dynamically added or removed when a unit is selected (similar to the IsMovingTag component). This will eliminate the need for a nested loop to determine the number of selected entities, as the where option cannot be used in a Unity ECS query.
 
@@ -66,6 +67,7 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
 
         if (nbOfBasicSlimeUnitToMergeSelected > nbOfUnitToAllowMerge)
         {
+            // TODO: Create a job to enable burst compile for this action
             foreach (var entity in query.ToEntityArray(Allocator.Temp))
             {
                 var unitSelectable = state.EntityManager.GetComponentData<UnitSelectable>(entity);
