@@ -1,7 +1,9 @@
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Physics;
 using Unity.Transforms;
+using UnityEngine;
 
 // TODO: Use Position Motor from Unity Physics instead
 [BurstCompile]
@@ -82,7 +84,7 @@ public partial struct UnitMovementJob : IJobEntity
     public float3 Destination;
     public bool IsNewDestination;
 
-    private void Execute(Entity entity, RefRO<UnitSelectable> unitSelectable, RefRW<UnitMovement> unitMovement, RefRW<LocalTransform> transform, [ChunkIndexInQuery] int chunkIndex)
+    private void Execute(Entity entity, RefRO<UnitSelectable> unitSelectable, RefRW<UnitMovement> unitMovement, RefRW<LocalTransform> transform, RefRW<PhysicsVelocity> velocity, [ChunkIndexInQuery] int chunkIndex)
     {
         if ((unitSelectable.ValueRO.IsSelected && IsNewDestination) || unitMovement.ValueRO.IsMoving)
         {
@@ -93,24 +95,27 @@ public partial struct UnitMovementJob : IJobEntity
                 // NOTE: We should add [EntityIndexInQuery] int entityInQueryIndex in the Execute argument, and use it to create formationOffset. However, it seems that the entityInQueryIndex is not consistent, so I stopped here.
                 unitMovement.ValueRW.Destination = Destination;
             }
-
+            
             var direction = math.normalize(unitMovement.ValueRO.Destination - transform.ValueRO.Position);
 
-            // Right now, I'm not using velocity and gravity, just UnitMovement speed, so I've commented them out.
-            // var gravity = new float3(0.0f, -9.82f, 0.0f);
-
             var distanceToDestination = math.distance(transform.ValueRO.Position, unitMovement.ValueRO.Destination);
-            if (distanceToDestination < 0.1f)
+            if (distanceToDestination < math.length(velocity.ValueRO.Linear))
             {
-                // unitMovement.ValueRW.Velocity = 0;
                 unitMovement.ValueRW.IsMoving = false;
                 ECB.RemoveComponent<IsMovingTag>(chunkIndex, entity);
             }
             else
             {
-                // unitMovement.ValueRW.Velocity += gravity * DeltaTime;
                 unitMovement.ValueRW.IsMoving = true;
-                transform.ValueRW.Position += direction * unitMovement.ValueRO.Speed * DeltaTime;
+
+                var currentVelocity2D = velocity.ValueRO.Linear;
+                currentVelocity2D.y = 0;
+                var direction2D = math.normalize(new float3(direction.x, 0, direction.z));
+                
+                var wantedVelocity = direction2D * unitMovement.ValueRO.Speed;
+                var remainingVelocity = wantedVelocity - currentVelocity2D;
+                velocity.ValueRW.Linear += remainingVelocity;
+                
                 ECB.AddComponent<IsMovingTag>(chunkIndex, entity);
             }
         }
