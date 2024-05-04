@@ -1,26 +1,27 @@
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-// NOTE: Consider implementing a generic merging system that utilizes a MergeUnit component to specify the unit to be instantiated and the number of units to be merged, in order to create a merged unit.
 [BurstCompile]
-[UpdateBefore(typeof(TransformSystemGroup))]
-public partial struct SlimeBasicUnitMergeSystem : ISystem
+public partial struct SlimeMergeSystem : ISystem
 {
-    [BurstCompile]
+    private EntityQuery query;
+
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<Config>();
         state.RequireForUpdate<SpawnManager>();
-        state.RequireForUpdate<UnitSelectable>();
+        state.RequireForUpdate<UnitSelected>();
         state.RequireForUpdate<SlimeBasicUnitMerge>();
+        query = state.GetEntityQuery(typeof(SlimeBasicUnitMerge), typeof(UnitSelected), typeof(LocalToWorld));
     }
 
-    //[BurstCompile] can't burst compile, spawnManager is a ref now
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         var configManager = SystemAPI.GetSingleton<Config>();
@@ -31,76 +32,76 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
             return;
         }
 
-        // NOTE: We have to press multiple time F to merge unit if we have like 50 unit selected.
-        if (!Input.GetKeyDown(KeyCode.F))
-            return;
+        if (!Input.GetKeyDown(KeyCode.F)) return;
 
-        var spawnManagerQuery = SystemAPI.QueryBuilder().WithAll<SpawnManager>().Build();
-        var spawnManager = spawnManagerQuery.GetSingleton<SpawnManager>();
+        var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
 
-        // TODO: Implement a component, IsSelected, which is dynamically added or removed when a unit is selected (similar to the IsMovingTag component). This will eliminate the need for a nested loop to determine the number of selected entities, as the where option cannot be used in a Unity ECS query.
+        var spawnManager = SystemAPI.GetSingleton<SpawnManager>();
+        var slimeStrongerUnitPrefab = spawnManager.SlimeStrongerUnitPrefab;
 
-        var query = SystemAPI.QueryBuilder()
-            .WithAll<SlimeBasicUnitMerge>()
-            .WithAll<UnitSelected>()
-            .Build();
+        var entities = query.ToEntityArray(Allocator.TempJob);
+        var positions = query.ToComponentDataArray<LocalToWorld>(Allocator.TempJob);
 
-        var nbOfBasicSlimeUnitToMergeSelected = 0;
-        uint nbOfUnitToAllowMerge = 10;
-        var sumPositions = float3.zero;
-
-        foreach (var entity in query.ToEntityArray(Allocator.Temp))
+        // TODO: Get the minimum number of unit to be able to merge from spawn manager
+        if (entities.Length < 10)
         {
-            var unitSelectable = state.EntityManager.GetComponentData<UnitSelectable>(entity);
-            var slimeBasicUnitMerge = state.EntityManager.GetComponentData<SlimeBasicUnitMerge>(entity);
-
-            nbOfUnitToAllowMerge = slimeBasicUnitMerge.NbUnitsToMerge;
-
-            if (unitSelectable.IsSelected)
-            {
-                nbOfBasicSlimeUnitToMergeSelected++;
-            }
+            entities.Dispose();
+            positions.Dispose();
+            return;
         }
 
-        var unitMerged = 0;
-        var stopMergeAt = nbOfBasicSlimeUnitToMergeSelected - nbOfBasicSlimeUnitToMergeSelected % 10;
+        var groupCount = entities.Length / 10;
+        var defaultScale = state.EntityManager.GetComponentData<LocalTransform>(slimeStrongerUnitPrefab).Scale;
 
-        if (nbOfBasicSlimeUnitToMergeSelected > nbOfUnitToAllowMerge)
+        var mergeUnitsJob = new MergeUnitsJob
         {
-            // TODO: Create a job to enable burst compile for this action
-            foreach (var entity in query.ToEntityArray(Allocator.Temp))
+            ECB = ecb,
+            MergedUnitPrefab = slimeStrongerUnitPrefab,
+            DefaultScale = defaultScale,
+            Entities = entities,
+            Positions = positions,
+            GroupCount = groupCount
+        }.Schedule(groupCount, 1, state.Dependency);
+
+        state.Dependency = mergeUnitsJob;
+    }
+}
+
+[BurstCompile]
+public struct MergeUnitsJob : IJobParallelFor
+{
+    public EntityCommandBuffer.ParallelWriter ECB;
+    public Entity MergedUnitPrefab;
+    public float DefaultScale;
+    [DeallocateOnJobCompletion] [ReadOnly] public NativeArray<Entity> Entities;
+    [DeallocateOnJobCompletion] [ReadOnly] public NativeArray<LocalToWorld> Positions;
+    public int GroupCount;
+
+    public void Execute(int index)
+    {
+        var averagePosition = float3.zero;
+        for (var i = 0; i < 10; i++)
+        {
+            averagePosition += Positions[index * 10 + i].Position;
+        }
+
+        averagePosition /= 10;
+
+        var newEntity = ECB.Instantiate(index, MergedUnitPrefab);
+
+        ECB.SetComponent(index, newEntity, new LocalTransform
             {
-                var unitSelectable = state.EntityManager.GetComponentData<UnitSelectable>(entity);
-                if (unitSelectable.IsSelected && unitMerged < stopMergeAt)
-                {
-                    var ltw = state.EntityManager.GetComponentData<LocalToWorld>(entity);
-                    sumPositions += ltw.Position;
-
-                    state.EntityManager.DestroyEntity(entity);
-
-                    if ((unitMerged + 1) % nbOfUnitToAllowMerge == 0)
-                    {
-                        var slimeStrongerUnit = state.EntityManager.Instantiate(spawnManager.SlimeStrongerUnitPrefab);
-                        var slimeStrongerUnitScale = state.EntityManager.GetComponentData<LocalTransform>(slimeStrongerUnit).Scale;
-
-                        var averagePosition = sumPositions / nbOfUnitToAllowMerge;
-
-                        state.EntityManager.SetComponentData(slimeStrongerUnit, new LocalTransform
-                            {
-                                Position = averagePosition,
-                                Rotation = quaternion.identity,
-                                Scale = slimeStrongerUnitScale
-                            }
-                        );
-
-                        sumPositions = float3.zero; // Put back to zero for the next merging
-                    }
-
-                    unitMerged++;
-                }
+                Position = averagePosition,
+                Rotation = quaternion.identity,
+                Scale = DefaultScale
             }
+        );
+        ECB.SetComponentEnabled<UnitSelected>(GroupCount, newEntity, true); // NOTE: Automatically select the new unit. I'm not sure if we should actually do that for the gameplay.
 
-            Debug.Log("Merging selected basic slime unit now!");
+        for (var i = 0; i < 10; i++)
+        {
+            ECB.DestroyEntity(index, Entities[index * 10 + i]);
         }
     }
 }
