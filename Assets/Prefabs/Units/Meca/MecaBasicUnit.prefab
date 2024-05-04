@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 7328586235460180490}
   - component: {fileID: 5299393840060707209}
   - component: {fileID: 5926453099639304242}
-  - component: {fileID: -93540063280617835}
-  - component: {fileID: -3512113469855385472}
+  - component: {fileID: -6162579239124162240}
+  - component: {fileID: -3724412383456412117}
   m_Layer: 0
   m_Name: MecaBasicUnit
   m_TagString: Untagged
@@ -100,17 +100,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SpeciesType: 1
   UnitType: 1
-  UnitColorRGBA:
-    x: 0
-    y: 0
-    z: 0
-    w: 1
   UnitSpeed: 3
   UnitStandardHealth: 200
   UnitAttack: 20
   UnitRange: 4
   UnitRateOfFire: 2
---- !u!114 &-93540063280617835
+--- !u!114 &-6162579239124162240
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -253,7 +248,7 @@ MonoBehaviour:
         Tag07: 0
     m_SerializedVersion: 1
   m_SerializedVersion: 1
---- !u!114 &-3512113469855385472
+--- !u!114 &-3724412383456412117
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
