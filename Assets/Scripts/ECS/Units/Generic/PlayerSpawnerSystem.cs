@@ -14,7 +14,7 @@ public partial struct PlayerSpawnerSystem : ISystem
         state.RequireForUpdate<SpawnManager>();
     }
 
-    // [BurstCompile] can't burst compile, spawnManager is a ref now
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         var configManager = SystemAPI.GetSingleton<Config>();
@@ -28,8 +28,7 @@ public partial struct PlayerSpawnerSystem : ISystem
         // We only want to spawn players one time. Disabling the system stops subsequent updates.
         state.Enabled = false;
 
-        var spawnManagerQuery = SystemAPI.QueryBuilder().WithAll<SpawnManager>().Build();
-        var spawnManager = spawnManagerQuery.GetSingleton<SpawnManager>();
+        var spawnManager = SystemAPI.GetSingleton<SpawnManager>();
 
         // NOTE: If we allow more than 2 players, adjust the loop here
         // TODO: Use a job and settings from main menu to load players
