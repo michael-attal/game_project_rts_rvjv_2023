@@ -29,16 +29,13 @@ public partial struct UnitSelectedRendererSystem : ISystem
         var spawnManagerQuery = SystemAPI.QueryBuilder().WithAll<SpawnManager>().Build();
         var spawnManager = spawnManagerQuery.GetSingleton<SpawnManager>();
 
-        foreach (var (unitSelectedTransform, unitSelectable) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<UnitSelectable>>().WithAll<UnitSelectable>())
+        foreach (var (unitSelectedTransform, unitSelectable) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<UnitSelectable>>().WithAll<UnitSelected>())
         {
-            if (unitSelectable.ValueRO.IsSelected)
-            {
                 Graphics.DrawMesh(
                     spawnManager.UnitSelectedCircleMesh,
                     unitSelectedTransform.ValueRO.Position + new float3(0f, -unitSelectedTransform.ValueRO.Position.y + 0.1f, 0f),
                     Quaternion.Euler(90, 0, 0),
                     spawnManager.UnitSelectedCircleMaterial, 0);
-            }
         }
     }
 }

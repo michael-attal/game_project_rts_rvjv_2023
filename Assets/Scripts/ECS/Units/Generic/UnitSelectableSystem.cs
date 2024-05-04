@@ -15,6 +15,7 @@ public partial struct UnitSelectableSystem : ISystem
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<Config>();
         state.RequireForUpdate<UnitSelectable>();
     }
@@ -61,6 +62,7 @@ public partial struct UnitSelectableSystem : ISystem
             var transformCamera = mainCamera.transform;
             var unitSelectionJob = new UnitSelectionJob
             {
+                ECB = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter(),
                 CameraPos = transformCamera.position,
                 CamForward = transformCamera.forward,
                 CamProjMatrix = mainCamera.projectionMatrix,
@@ -80,6 +82,7 @@ public partial struct UnitSelectableSystem : ISystem
 [BurstCompile]
 public partial struct UnitSelectionJob : IJobEntity
 {
+    public EntityCommandBuffer.ParallelWriter ECB;
     public float3 CameraPos;
     public float4x4 CamProjMatrix;
     public float3 CamUp;
@@ -91,7 +94,7 @@ public partial struct UnitSelectionJob : IJobEntity
     public Rect SelectionArea;
 
     // Because we want the global position of a child entity, we read LocalToWorld instead of LocalTransform.
-    private void Execute(in LocalToWorld unitLT, RefRW<UnitSelectable> unitSelectable)
+    private void Execute(Entity entity, LocalToWorld unitLT, RefRW<UnitSelectable> unitSelectable)
     {
         unitSelectable.ValueRW.IsSelected = false;
 
@@ -117,6 +120,7 @@ public partial struct UnitSelectionJob : IJobEntity
         if (unitRect.Overlaps(SelectionArea, true))
         {
             unitSelectable.ValueRW.IsSelected = true;
+            ECB.SetComponentEnabled<UnitSelected>(0, entity, true);
         }
     }
 }

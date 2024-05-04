@@ -41,8 +41,8 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
         // TODO: Implement a component, IsSelected, which is dynamically added or removed when a unit is selected (similar to the IsMovingTag component). This will eliminate the need for a nested loop to determine the number of selected entities, as the where option cannot be used in a Unity ECS query.
 
         var query = SystemAPI.QueryBuilder()
-            .WithAll<UnitSelectable>()
             .WithAll<SlimeBasicUnitMerge>()
+            .WithAll<UnitSelected>()
             .Build();
 
         var nbOfBasicSlimeUnitToMergeSelected = 0;
