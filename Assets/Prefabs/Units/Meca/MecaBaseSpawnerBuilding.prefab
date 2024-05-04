@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 3893234960178793414}
   - component: {fileID: 5635385585678130235}
   - component: {fileID: 3282739715981832155}
-  - component: {fileID: -9105731822842499279}
-  - component: {fileID: -4192484594551560350}
+  - component: {fileID: 1042464652648747331}
+  - component: {fileID: -2420270271641880809}
   m_Layer: 0
   m_Name: MecaBaseSpawnerBuilding
   m_TagString: Untagged
@@ -101,7 +101,7 @@ MonoBehaviour:
   NbOfUnitPerBase: 1
   GenerationInterval: 5
   SpawnedUnitPrefab: {fileID: 6087196481752196242, guid: 03ed2dbcd6a084717b4e1c2bde44dc88, type: 3}
---- !u!114 &-9105731822842499279
+--- !u!114 &1042464652648747331
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -244,7 +244,7 @@ MonoBehaviour:
         Tag07: 0
     m_SerializedVersion: 1
   m_SerializedVersion: 1
---- !u!114 &-4192484594551560350
+--- !u!114 &-2420270271641880809
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
