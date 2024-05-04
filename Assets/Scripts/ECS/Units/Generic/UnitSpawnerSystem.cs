@@ -22,7 +22,7 @@ public partial struct UnitSpawnerSystem : ISystem
         state.RequireForUpdate<BaseSpawnerBuilding>();
     }
 
-    // [BurstCompile] can't burst compile, spawnManager is a ref now
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         var configManager = SystemAPI.GetSingleton<Config>();
@@ -33,8 +33,7 @@ public partial struct UnitSpawnerSystem : ISystem
             return;
         }
 
-        var spawnManagerQuery = SystemAPI.QueryBuilder().WithAll<SpawnManager>().Build();
-        var spawnManager = spawnManagerQuery.GetSingleton<SpawnManager>();
+        var spawnManager = SystemAPI.GetSingleton<SpawnManager>();
 
         if (spawnManager.SpawnUnitWhenPressEnter)
         {

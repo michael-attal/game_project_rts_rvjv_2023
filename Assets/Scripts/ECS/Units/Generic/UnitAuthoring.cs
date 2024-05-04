@@ -28,10 +28,9 @@ public class UnitAuthoring : MonoBehaviour
 
             AddComponent(entity, new UnitSelectable
             {
-                IsSelected = false,
                 ShouldBeSelected = false
             });
-            
+
             AddComponent<UnitSelected>(entity);
             SetComponentEnabled<UnitSelected>(entity, false);
 
@@ -39,7 +38,7 @@ public class UnitAuthoring : MonoBehaviour
             {
                 Speed = authoring.UnitSpeed
             });
-            
+
             AddComponent<WantsToMove>(entity);
             SetComponentEnabled<WantsToMove>(entity, false);
 
@@ -93,8 +92,7 @@ public struct Velocity : IComponentData
 
 public struct UnitSelectable : IComponentData
 {
-    public bool IsSelected;
-    public bool ShouldBeSelected;
+    public bool ShouldBeSelected; // If later we want to show an indicator on mouse hover unit
 }
 
 public struct UnitSelected : IComponentData, IEnableableComponent

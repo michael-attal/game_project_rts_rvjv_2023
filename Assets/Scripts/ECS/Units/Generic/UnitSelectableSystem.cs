@@ -94,10 +94,8 @@ public partial struct UnitSelectionJob : IJobEntity
     public Rect SelectionArea;
 
     // Because we want the global position of a child entity, we read LocalToWorld instead of LocalTransform.
-    private void Execute(Entity entity, LocalToWorld unitLT, RefRW<UnitSelectable> unitSelectable)
+    private void Execute(Entity entity, LocalToWorld unitLT, [ChunkIndexInQuery] int chunkIndex)
     {
-        unitSelectable.ValueRW.IsSelected = false;
-
         var unitRadius = unitLT.Value.Scale().x;
 
         var transformScreenPosition = CameraSingleton.ConvertWorldToScreenCoordinates(
@@ -119,8 +117,11 @@ public partial struct UnitSelectionJob : IJobEntity
         // Check if selection intersect with unit
         if (unitRect.Overlaps(SelectionArea, true))
         {
-            unitSelectable.ValueRW.IsSelected = true;
-            ECB.SetComponentEnabled<UnitSelected>(0, entity, true);
+            ECB.SetComponentEnabled<UnitSelected>(chunkIndex, entity, true);
+        }
+        else
+        {
+            ECB.SetComponentEnabled<UnitSelected>(chunkIndex, entity, false);
         }
     }
 }
