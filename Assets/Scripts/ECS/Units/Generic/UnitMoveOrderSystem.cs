@@ -10,6 +10,7 @@ partial struct UnitMoveOrderSystem : ISystem
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<Config>();
         state.RequireForUpdate<MouseManager>();
         state.RequireForUpdate<UnitSelectable>();
         state.RequireForUpdate<MouseRightClickEvent>();

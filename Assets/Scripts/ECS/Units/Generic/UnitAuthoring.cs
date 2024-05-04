@@ -31,6 +31,9 @@ public class UnitAuthoring : MonoBehaviour
                 IsSelected = false,
                 ShouldBeSelected = false
             });
+            
+            AddComponent<UnitSelected>(entity);
+            SetComponentEnabled<UnitSelected>(entity, false);
 
             AddComponent(entity, new UnitMovement
             {
@@ -92,6 +95,10 @@ public struct UnitSelectable : IComponentData
 {
     public bool IsSelected;
     public bool ShouldBeSelected;
+}
+
+public struct UnitSelected : IComponentData, IEnableableComponent
+{
 }
 
 public struct UnitMovement : IComponentData
