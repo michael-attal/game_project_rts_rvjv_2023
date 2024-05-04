@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 4522464390893762379}
   - component: {fileID: 4108615469993039113}
   - component: {fileID: -1774706210202700395}
-  - component: {fileID: -4212127173463364905}
-  - component: {fileID: -551931540351482720}
+  - component: {fileID: 8370839598158632589}
+  - component: {fileID: 4004015935249602165}
   m_Layer: 0
   m_Name: SlimeStrongerUnit
   m_TagString: Untagged
@@ -100,17 +100,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SpeciesType: 0
   UnitType: 2
-  UnitColorRGBA:
-    x: 0
-    y: 0
-    z: 1
-    w: 1
   UnitSpeed: 5
   UnitStandardHealth: 1000
   UnitAttack: 50
   UnitRange: 4
   UnitRateOfFire: 2
---- !u!114 &-4212127173463364905
+--- !u!114 &8370839598158632589
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -253,7 +248,7 @@ MonoBehaviour:
         Tag07: 0
     m_SerializedVersion: 1
   m_SerializedVersion: 1
---- !u!114 &-551931540351482720
+--- !u!114 &4004015935249602165
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

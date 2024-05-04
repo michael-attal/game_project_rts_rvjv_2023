@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 1211608845467698152}
   - component: {fileID: 675144223036567193}
   - component: {fileID: 6278993026369946659}
-  - component: {fileID: -2520784455597133701}
-  - component: {fileID: 6361350752940823414}
+  - component: {fileID: 1104375481110696576}
+  - component: {fileID: 9144102082182574487}
   m_Layer: 0
   m_Name: SlimeBaseSpawnerBuilding
   m_TagString: Untagged
@@ -101,7 +101,7 @@ MonoBehaviour:
   NbOfUnitPerBase: 1
   GenerationInterval: 2
   SpawnedUnitPrefab: {fileID: 7369921848103496935, guid: 8b5e0f8d6a54c4fd7add410a44958b2b, type: 3}
---- !u!114 &-2520784455597133701
+--- !u!114 &1104375481110696576
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -244,7 +244,7 @@ MonoBehaviour:
         Tag07: 0
     m_SerializedVersion: 1
   m_SerializedVersion: 1
---- !u!114 &6361350752940823414
+--- !u!114 &9144102082182574487
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
