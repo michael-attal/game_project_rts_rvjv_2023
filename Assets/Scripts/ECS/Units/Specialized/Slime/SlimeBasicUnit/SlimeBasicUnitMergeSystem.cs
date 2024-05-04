@@ -43,15 +43,15 @@ public partial struct SlimeMergeSystem : ISystem
         var entities = query.ToEntityArray(Allocator.TempJob);
         var positions = query.ToComponentDataArray<LocalToWorld>(Allocator.TempJob);
 
-        // TODO: Get the minimum number of unit to be able to merge from spawn manager
-        if (entities.Length < 10)
+        var nbOfUnitsToMerge = 10; // TODO: Get the minimum number of unit to be able to merge from spawn manager
+        if (entities.Length < nbOfUnitsToMerge)
         {
             entities.Dispose();
             positions.Dispose();
             return;
         }
 
-        var groupCount = entities.Length / 10;
+        var groupCount = entities.Length / nbOfUnitsToMerge;
         var defaultScale = state.EntityManager.GetComponentData<LocalTransform>(slimeStrongerUnitPrefab).Scale;
 
         var mergeUnitsJob = new MergeUnitsJob
@@ -59,6 +59,7 @@ public partial struct SlimeMergeSystem : ISystem
             ECB = ecb,
             MergedUnitPrefab = slimeStrongerUnitPrefab,
             DefaultScale = defaultScale,
+            NbOfUnitsToMerge = nbOfUnitsToMerge,
             Entities = entities,
             Positions = positions,
             GroupCount = groupCount
@@ -74,6 +75,7 @@ public struct MergeUnitsJob : IJobParallelFor
     public EntityCommandBuffer.ParallelWriter ECB;
     public Entity MergedUnitPrefab;
     public float DefaultScale;
+    public int NbOfUnitsToMerge;
     [DeallocateOnJobCompletion] [ReadOnly] public NativeArray<Entity> Entities;
     [DeallocateOnJobCompletion] [ReadOnly] public NativeArray<LocalToWorld> Positions;
     public int GroupCount;
@@ -81,12 +83,12 @@ public struct MergeUnitsJob : IJobParallelFor
     public void Execute(int index)
     {
         var averagePosition = float3.zero;
-        for (var i = 0; i < 10; i++)
+        for (var i = 0; i < NbOfUnitsToMerge; i++)
         {
-            averagePosition += Positions[index * 10 + i].Position;
+            averagePosition += Positions[index * NbOfUnitsToMerge + i].Position;
         }
 
-        averagePosition /= 10;
+        averagePosition /= NbOfUnitsToMerge;
 
         var newEntity = ECB.Instantiate(index, MergedUnitPrefab);
 
@@ -99,9 +101,9 @@ public struct MergeUnitsJob : IJobParallelFor
         );
         ECB.SetComponentEnabled<UnitSelected>(GroupCount, newEntity, true); // NOTE: Automatically select the new unit. I'm not sure if we should actually do that for the gameplay.
 
-        for (var i = 0; i < 10; i++)
+        for (var i = 0; i < NbOfUnitsToMerge; i++)
         {
-            ECB.DestroyEntity(index, Entities[index * 10 + i]);
+            ECB.DestroyEntity(index, Entities[index * NbOfUnitsToMerge + i]);
         }
     }
 }
