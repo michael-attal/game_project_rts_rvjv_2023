@@ -1,17 +1,16 @@
-using Unity.Serialization;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class BuildingScreenPresenter : MonoBehaviour
 {
-    public int SelectedPrefabID => selectedPrefab.GetHashCode();
+    public int SelectedPrefabID => selectedPrefab == "" ? 0 : selectedPrefab.GetHashCode();
     
     [SerializeField] private Camera renderCamera;
     [SerializeField] private BuildingOptionsDescriptor buildings;
     [SerializeField] private RectTransform layout;
     [SerializeField] private BuildingItemPresenter buildingItem;
 
-    private string selectedPrefab = "";
+    private string selectedPrefab;
 
     // Start is called before the first frame update
     void Start()
@@ -24,7 +23,7 @@ public class BuildingScreenPresenter : MonoBehaviour
 
     private void Initialize(BuildingOptionsDescriptor buildings)
     {
-        selectedPrefab = null;
+        selectedPrefab = "";
         
         // Clear all items
         while (layout.childCount > 0)

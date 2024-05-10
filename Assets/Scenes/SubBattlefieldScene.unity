@@ -456,7 +456,7 @@ MonoBehaviour:
   ActivateUnitSelectableSystem: 1
   ActivateSelectionRectResizeSystem: 1
   ActivateUnitMovementSystem: 1
-  ActivateUnitSelectedRendererSystem: 0
+  ActivateUnitSelectedRendererSystem: 1
   ActivateUnitAttackSystem: 1
   ActivateUnitDamageSystem: 1
   ActivateWinConditions: 1
