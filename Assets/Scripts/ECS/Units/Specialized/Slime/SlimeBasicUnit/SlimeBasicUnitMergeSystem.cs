@@ -44,20 +44,17 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
         int totalEntities = 0;
         
         var fusionInfo = new FusionInfo();
-        foreach (var (transform, merge, selectable, entity) 
-                 in SystemAPI.Query<RefRO<LocalToWorld>, RefRO<SlimeBasicUnitMerge>, RefRO<UnitSelectable>>()
+        foreach (var (transform, merge, entity) 
+                 in SystemAPI.Query<RefRO<LocalToWorld>, RefRO<SlimeBasicUnitMerge>>()
+                     .WithAll<UnitSelected>()
                      .WithEntityAccess())
         {
-            if (!selectable.ValueRO.IsSelected)
-                continue;
-            
             ecb.DestroyEntity(entity);
-
+            
             fusionInfo += merge.ValueRO.FusionInfo;
             sumPositions += transform.ValueRO.Position;
             ++totalEntities;
         }
-
 
         var gameInfo = SystemAPI.GetSingleton<Game>();
         for (int i = 0; i < gameInfo.SlimeRecipes.Value.Data.Length; ++i)
@@ -65,19 +62,30 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
             while (gameInfo.SlimeRecipes.Value.Data[i].Cost <= fusionInfo)
             {
                 fusionInfo -= gameInfo.SlimeRecipes.Value.Data[i].Cost;
-                Debug.Log(gameInfo.SlimeRecipes.Value.Data[i].EntityPrefab);
-
-                var newEntity = ecb.Instantiate(gameInfo.SlimeRecipes.Value.Data[i].EntityPrefab);
+                
+                var newEntity = InstantiateEntity(ref state, ecb, gameInfo.SlimeRecipes.Value.Data[i].PrefabId);
                 ecb.SetComponent(newEntity, new LocalTransform()
                 {
-                    Position = float3.zero,
+                    Position = sumPositions / totalEntities,
                     Rotation = quaternion.identity,
-                    Scale = 10000
+                    Scale = 1f
                 });
             }
         }
         
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
+    }
+
+    private Entity InstantiateEntity(ref SystemState state, EntityCommandBuffer ecb, int id)
+    {
+        var buffer = SystemAPI.GetBuffer<InstantiatableEntityData>(SystemAPI.GetSingletonEntity<Game>());
+        for (int i = 0; i < buffer.Length; ++i)
+        {
+            if (buffer[i].EntityID == id)
+                return ecb.Instantiate(buffer[i].Entity);
+        }
+        
+        return Entity.Null;
     }
 }

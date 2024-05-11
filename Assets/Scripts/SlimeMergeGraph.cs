@@ -57,13 +57,13 @@ public struct FusionInfo : IComparable<FusionInfo>
 [Serializable]
 public struct FusionRecipe
 {
-    public GameObject entityPrefab;
+    public string entityPrefab;
     public FusionInfo cost;
 }
 
 public struct FusionRecipeData
 {
-    public Entity EntityPrefab;
+    public int PrefabId;
     public FusionInfo Cost;
 }
 
