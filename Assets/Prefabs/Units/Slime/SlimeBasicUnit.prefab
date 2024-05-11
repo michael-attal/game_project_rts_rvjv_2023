@@ -128,8 +128,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4eefe39c8dfa04620aad151d93a87c66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NbUnitsToMerge: 10
-  MergedUnitType: 0
+  FusionInfo:
+    EarthAmount: 0
+    FireAmount: 0
+    WaterAmount: 1
+    AirAmount: 0
 --- !u!114 &6761616426691886913
 MonoBehaviour:
   m_ObjectHideFlags: 0

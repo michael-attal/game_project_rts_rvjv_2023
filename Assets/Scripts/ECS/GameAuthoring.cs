@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
@@ -13,18 +14,15 @@ public class GameAuthoring : MonoBehaviour
     {
         public override void Bake(GameAuthoring authoring)
         {
-            Debug.Log("Test?");
             var entity = GetEntity(TransformUsageFlags.None);
 
             var slimeRecipes = authoring.mergeGraph.GetRecipes();
             var slimeRecipesData = slimeRecipes
                 .Select(recipe =>
                 {
-                    var entity = GetEntity(recipe.entityPrefab, TransformUsageFlags.Dynamic);
-                    Debug.Log(entity);
                     return new FusionRecipeData()
                     {
-                        EntityPrefab = entity,
+                        PrefabId = recipe.entityPrefab.GetHashCode(),
                         Cost = recipe.cost
                     };
                 })
@@ -33,6 +31,7 @@ public class GameAuthoring : MonoBehaviour
             AddComponent(entity, new Game()
             {
                 State = GameState.Starting,
+                SlimeRecipes = GetRecipeDataBlob(slimeRecipesData)
             });
 
             DynamicBuffer<InstantiatableEntityData> buffer = AddBuffer<InstantiatableEntityData>(entity);
@@ -51,14 +50,14 @@ public class GameAuthoring : MonoBehaviour
         private BlobAssetReference<FusionRecipeDataPool> GetRecipeDataBlob(IEnumerable<FusionRecipeData> recipeDatas)
         {
             var builder = new BlobBuilder(Allocator.Temp);
-            ref FusionRecipeDataPool recipePool = ref builder.ConstructRoot<FusionRecipeDataPool>();
+            ref FusionRecipeDataPool recipeDataPool = ref builder.ConstructRoot<FusionRecipeDataPool>();
 
             var recipeDataArray = recipeDatas
                 .OrderByDescending(recipeData => recipeData.Cost)
                 .ToArray();
             
             var arrayBuilder = builder.Allocate(
-                ref recipePool.Data,
+                ref recipeDataPool.Data,
                 recipeDataArray.Length
             );
 

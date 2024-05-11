@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: SlimeMergeGraph
   m_EditorClassIdentifier: 
   recipes:
-  - entityPrefab: {fileID: 5157904157934955495, guid: cfda79e3306d245b79491da6f3cebca4, type: 3}
+  - entityPrefab: ECS_SUPER_SLIME_UNIT
     cost:
       EarthAmount: 0
       FireAmount: 0
       WaterAmount: 10
       AirAmount: 0
-  - entityPrefab: {fileID: 7369921848103496935, guid: 8b5e0f8d6a54c4fd7add410a44958b2b, type: 3}
+  - entityPrefab: ECS_SLIME_UNIT
     cost:
       EarthAmount: 0
       FireAmount: 0
