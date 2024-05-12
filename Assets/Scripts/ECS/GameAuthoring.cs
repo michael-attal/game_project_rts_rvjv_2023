@@ -31,7 +31,8 @@ public class GameAuthoring : MonoBehaviour
             AddComponent(entity, new Game()
             {
                 State = GameState.Starting,
-                SlimeRecipes = GetRecipeDataBlob(slimeRecipesData)
+                SlimeRecipes = GetRecipeDataBlob(slimeRecipesData),
+                RessourceCount = 10
             });
 
             DynamicBuffer<InstantiatableEntityData> buffer = AddBuffer<InstantiatableEntityData>(entity);
@@ -82,6 +83,7 @@ public struct Game : IComponentData
 {
     public BlobAssetReference<FusionRecipeDataPool> SlimeRecipes;
     public GameState State;
+    public int RessourceCount;
 }
 
 [Serializable]
