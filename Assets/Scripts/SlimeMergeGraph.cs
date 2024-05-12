@@ -67,7 +67,7 @@ public struct FusionRecipeData
     public FusionInfo Cost;
 }
 
-[CreateAssetMenu(menuName = "RustVsGoo/Slimes/SlimeMergeGraph", fileName = "SlimeMergeGraph")]
+[CreateAssetMenu(menuName = "Rust Vs Goo/Slimes/SlimeMergeGraph", fileName = "SlimeMergeGraph")]
 public class SlimeMergeGraph : ScriptableObject
 {
     [SerializeField] private List<FusionRecipe> recipes;
