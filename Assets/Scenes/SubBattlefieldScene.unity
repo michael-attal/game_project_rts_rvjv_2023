@@ -435,6 +435,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7c65d1ab237c434caa3e40a77bbf8eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  instantiatableEntities:
+  - entityID: ECS_SLIME_BASE_SPAWNER
+    entity: {fileID: 2216618471874645061, guid: 888243f85db11483baf93363ac285d84, type: 3}
 --- !u!114 &1732016747
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -453,7 +456,7 @@ MonoBehaviour:
   ActivateUnitSelectableSystem: 1
   ActivateSelectionRectResizeSystem: 1
   ActivateUnitMovementSystem: 1
-  ActivateUnitSelectedRendererSystem: 0
+  ActivateUnitSelectedRendererSystem: 1
   ActivateUnitAttackSystem: 1
   ActivateUnitDamageSystem: 1
   ActivateWinConditions: 1
