@@ -1,3 +1,4 @@
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -6,6 +7,7 @@ public class UnitAuthoring : MonoBehaviour
 {
     public SpeciesType SpeciesType;
     public UnitType UnitType;
+    public string BakedPrefabName;
     public float UnitSpeed;
 
     [Header("Combat")] public float UnitStandardHealth;
@@ -23,7 +25,8 @@ public class UnitAuthoring : MonoBehaviour
             AddComponent(entity, new Unit
             {
                 SpeciesType = authoring.SpeciesType,
-                UnitType = authoring.UnitType
+                UnitType = authoring.UnitType,
+                BakedPrefabName = new FixedString32Bytes(authoring.BakedPrefabName)
             });
 
             AddComponent(entity, new UnitSelectable
@@ -66,6 +69,14 @@ public enum SpeciesType
     Meca
 }
 
+// NOTE: It's important that each prefab has the same order for the animations
+// TODO: Refactoring to make it more open and easy to modify
+public enum AnimationsType
+{
+    Idle,
+    Attack
+}
+
 public enum UnitType
 {
     SlimeBasic,
@@ -82,6 +93,7 @@ public struct Unit : IComponentData
 {
     public SpeciesType SpeciesType;
     public UnitType UnitType;
+    public FixedString32Bytes BakedPrefabName;
 }
 
 // A 2d velocity vector for the unit entities.

@@ -1,0 +1,25 @@
+
+Model: SlimeBasicUnitPrefab
+Skin: 0, Root Bone: Base
+  1fps, 256x256, 1048KB
+Skin: 1, Root Bone: Base
+  1fps, 256x128, 524KB
+Skin: 2, Root Bone: Base
+  1fps, 256x128, 524KB
+Play Shader: AnimationCooker/VtxAnimSimpleLit
+
+Enum Declaration: enabled
+Reset Rotation Before Bake: disabled
+Reset Position Before Bake: disabled
+Reset Scale Before Bake: disabled
+Ignore Bone Meshes: disabled
+Bone Adjust: disabled
+
+Post Domain Reload: enabled
+R10G11B11: enabled
+
+
+Started: 5/13/2024 3:49:40 PM
+Output files were saved to: Assets/ExampleScene/Baked/SlimeBasicUnitPrefab
+Animation enums saved to: Assets/ExampleScene/Scripts/Generated/AnimEnums.cs
+Completed in 7.0344 seconds.

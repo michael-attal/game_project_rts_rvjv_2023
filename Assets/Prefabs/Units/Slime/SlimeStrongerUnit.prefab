@@ -50,11 +50,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SpeciesType: 0
   UnitType: 2
+  BakedPrefabName: SlimeStrongerUnitPrefab
   UnitSpeed: 5
   UnitStandardHealth: 1000
   UnitAttack: 50
   UnitRange: 4
-  UnitRateOfFire: 2
+  UnitRateOfFire: 4
 --- !u!114 &3085192064226709902
 MonoBehaviour:
   m_ObjectHideFlags: 0
