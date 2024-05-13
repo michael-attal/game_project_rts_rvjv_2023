@@ -166,7 +166,7 @@ MonoBehaviour:
   UnitSpeed: 5
   UnitStandardHealth: 100
   UnitAttack: 10
-  UnitRange: 2
+  UnitRange: 4
   UnitRateOfFire: 3
 --- !u!114 &6900664370609139119
 MonoBehaviour:
