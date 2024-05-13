@@ -266,11 +266,11 @@ MonoBehaviour:
   StartPositionBaseSpawnerPlayerOne:
     x: 0
     y: 0
-    z: 14
+    z: -14
   StartPositionBaseSpawnerPlayerTwo:
     x: 0
-    y: 0.5
-    z: -22
+    y: 0
+    z: 14
   SpawnUnitWhenPressEnter: 0
   GroupUnitsBy: 2
   NumberOfBaseSpawnerForPlayerOne: 1
@@ -279,7 +279,7 @@ MonoBehaviour:
   NumberOfMecaUnitPerMecaBaseSpawner: 500
   SlimePlayerHandPrefab: {fileID: 6320164834673837995, guid: f571fa7df0f264f0a866e82fe099d7b5, type: 3}
   SlimeBaseSpawnerBuildingPrefab: {fileID: 2216618471874645061, guid: 888243f85db11483baf93363ac285d84, type: 3}
-  SlimeBasicUnitPrefab: {fileID: 7369921848103496935, guid: 8b5e0f8d6a54c4fd7add410a44958b2b, type: 3}
+  SlimeBasicUnitPrefab: {fileID: 306399793582707361, guid: fce1ec0bc862144ba9b48c79a2f70711, type: 3}
   SlimeStrongerUnitPrefab: {fileID: 5157904157934955495, guid: cfda79e3306d245b79491da6f3cebca4, type: 3}
   MecaPlayerHandPrefab: {fileID: 1259044049793980661, guid: 2b27e280aca8e4416bf77212c6bd837d, type: 3}
   MecaBaseSpawnerBuildingPrefab: {fileID: 6851779870681047773, guid: c11a9cb22bf814101a676687080166dd, type: 3}
@@ -758,6 +758,65 @@ MonoBehaviour:
         Tag07: 0
     m_SerializedVersion: 1
   m_SerializedVersion: 1
+--- !u!1 &1304955235
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1304955236}
+  - component: {fileID: 1304955238}
+  - component: {fileID: 1304955237}
+  m_Layer: 0
+  m_Name: AnimSingleton
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1304955236
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1304955235}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1304955237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1304955235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f54730f7cf9a523458b153909d29226c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TimerInterval: 0.25
+--- !u!114 &1304955238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1304955235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35b557eb2198ddd40b463256bfddbb4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AnimDbScriptable: {fileID: 11400000, guid: c15441211b5274e4385d9e92a3482b8d, type: 2}
 --- !u!1 &1850114947
 GameObject:
   m_ObjectHideFlags: 0
@@ -807,6 +866,7 @@ MonoBehaviour:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 1304955236}
   - {fileID: 1850114948}
   - {fileID: 14296342}
   - {fileID: 31481635}

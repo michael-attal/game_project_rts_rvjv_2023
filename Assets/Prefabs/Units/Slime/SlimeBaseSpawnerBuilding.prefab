@@ -100,7 +100,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   NbOfUnitPerBase: 1
   GenerationInterval: 2
-  SpawnedUnitPrefab: {fileID: 7369921848103496935, guid: 8b5e0f8d6a54c4fd7add410a44958b2b, type: 3}
+  SpawnedUnitPrefab: {fileID: 306399793582707361, guid: fce1ec0bc862144ba9b48c79a2f70711, type: 3}
 --- !u!114 &1104375481110696576
 MonoBehaviour:
   m_ObjectHideFlags: 0

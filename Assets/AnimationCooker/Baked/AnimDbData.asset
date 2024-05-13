@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5db671430d248e499a2437884636ff0, type: 3}
+  m_Name: AnimDbData
+  m_EditorClassIdentifier: 
+  Models:
+  - ModelName: SlimeBasicUnitPrefab
+    Skins:
+    - SkinClips:
+      - BeginFrame: 0
+        EndFrame: 2
+      - BeginFrame: 3
+        EndFrame: 5
+      Width: 256
+      Height: 256
+      Interval: 1
+      Pow2: 8
+      FrameRate: 1
+      VertCount: 5423
+    - SkinClips:
+      - BeginFrame: 0
+        EndFrame: 2
+      - BeginFrame: 3
+        EndFrame: 5
+      Width: 256
+      Height: 128
+      Interval: 1
+      Pow2: 8
+      FrameRate: 1
+      VertCount: 3913
+    - SkinClips:
+      - BeginFrame: 0
+        EndFrame: 2
+      - BeginFrame: 3
+        EndFrame: 5
+      Width: 256
+      Height: 128
+      Interval: 1
+      Pow2: 8
+      FrameRate: 1
+      VertCount: 2853
+    Clips:
+    - ClipName: Idle
+      Length: 3.9583335
+    - ClipName: Attack
+      Length: 3.9583335

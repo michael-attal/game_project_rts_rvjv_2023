@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &7369921848103496935
+--- !u!1 &306399793582707361
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,50 +8,45 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6445198803855261487}
-  - component: {fileID: 2688333842852962168}
-  - component: {fileID: 3089216964947194309}
-  - component: {fileID: 530879326086402787}
-  - component: {fileID: 4947647432525000421}
-  - component: {fileID: 6761616426691886913}
-  - component: {fileID: 6952022923446306389}
+  - component: {fileID: 2895004747253410646}
+  - component: {fileID: 3439832212228208480}
+  - component: {fileID: 5213180229080186058}
+  - component: {fileID: 8283935242742198271}
+  - component: {fileID: 168136233467081775}
+  - component: {fileID: 3784103885735085079}
+  - component: {fileID: 6760733296612509033}
+  - component: {fileID: 6900664370609139119}
+  - component: {fileID: -7073370883853168669}
+  - component: {fileID: -4797642203998968029}
   m_Layer: 0
-  m_Name: SlimeBasicUnit
+  m_Name: SlimeBasicUnitPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &6445198803855261487
+--- !u!4 &2895004747253410646
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7369921848103496935}
+  m_GameObject: {fileID: 306399793582707361}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &2688333842852962168
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7369921848103496935}
-  m_Mesh: {fileID: -2432090755550338912, guid: 7f732daea0e09421ea8bc4ebf07a8520, type: 3}
---- !u!23 &3089216964947194309
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!23 &3439832212228208480
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7369921848103496935}
+  m_GameObject: {fileID: 306399793582707361}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -65,17 +60,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 8028682152784843991, guid: 7f732daea0e09421ea8bc4ebf07a8520, type: 3}
-  - {fileID: -6504079184308014200, guid: 7f732daea0e09421ea8bc4ebf07a8520, type: 3}
-  - {fileID: 6691196908682704563, guid: 7f732daea0e09421ea8bc4ebf07a8520, type: 3}
-  - {fileID: 2558076406209371264, guid: 7f732daea0e09421ea8bc4ebf07a8520, type: 3}
-  - {fileID: 4040554876336755812, guid: 7f732daea0e09421ea8bc4ebf07a8520, type: 3}
-  - {fileID: -1643094494257375873, guid: 7f732daea0e09421ea8bc4ebf07a8520, type: 3}
-  - {fileID: 1160951552467389112, guid: 7f732daea0e09421ea8bc4ebf07a8520, type: 3}
-  - {fileID: -6028708626872827828, guid: 7f732daea0e09421ea8bc4ebf07a8520, type: 3}
-  - {fileID: 1245138875358327837, guid: 7f732daea0e09421ea8bc4ebf07a8520, type: 3}
-  - {fileID: 7386004588206420572, guid: 7f732daea0e09421ea8bc4ebf07a8520, type: 3}
-  - {fileID: -7145200164374433194, guid: 7f732daea0e09421ea8bc4ebf07a8520, type: 3}
+  - {fileID: 2100000, guid: 2f8edbf15160f4d69a17b1debd53c1fc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -97,13 +82,79 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &530879326086402787
+--- !u!33 &5213180229080186058
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 306399793582707361}
+  m_Mesh: {fileID: 4300000, guid: 676e5d0d3c1154d028f3ba1f162f5c5b, type: 2}
+--- !u!114 &8283935242742198271
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7369921848103496935}
+  m_GameObject: {fileID: 306399793582707361}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31ad6fab447edd745985a8123b81e8cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AnimationModelName: SlimeBasicUnitPrefab
+  DefaultClipName: Idle
+  DefaultPlaySpeed: 1
+  AnimationDb: {fileID: 11400000, guid: c15441211b5274e4385d9e92a3482b8d, type: 2}
+--- !u!205 &168136233467081775
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 306399793582707361}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: 0, y: 0, z: 0}
+  m_Size: 2.0818734
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.04
+    fadeTransitionWidth: 0
+    renderers: []
+  - screenRelativeHeight: 0.02
+    fadeTransitionWidth: 0
+    renderers: []
+  - screenRelativeHeight: 0.004
+    fadeTransitionWidth: 0
+    renderers: []
+  m_Enabled: 0
+--- !u!114 &3784103885735085079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 306399793582707361}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 833cf88681f228d48afd6620e0b9f6c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Mesh0: {fileID: 4300000, guid: 676e5d0d3c1154d028f3ba1f162f5c5b, type: 2}
+  Mesh1: {fileID: 4300000, guid: 6ca6a9b053baa410ba367d3a26a70681, type: 2}
+  Mesh2: {fileID: 4300000, guid: 9ddda372449724559b84e35b542987f7, type: 2}
+  Mat0: {fileID: 2100000, guid: 2f8edbf15160f4d69a17b1debd53c1fc, type: 2}
+  Mat1: {fileID: 2100000, guid: 6bb5034f42cd7450ca6d2369c31701f9, type: 2}
+  Mat2: {fileID: 2100000, guid: a102507f43f9c403eadedcbd8961f1b3, type: 2}
+--- !u!114 &6760733296612509033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 306399793582707361}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9e78a1caba6414ba19e94e33beb5ecef, type: 3}
@@ -111,18 +162,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SpeciesType: 0
   UnitType: 0
+  BakedPrefabName: SlimeBasicUnitPrefab
   UnitSpeed: 5
   UnitStandardHealth: 100
   UnitAttack: 10
   UnitRange: 2
-  UnitRateOfFire: 1
---- !u!114 &4947647432525000421
+  UnitRateOfFire: 3
+--- !u!114 &6900664370609139119
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7369921848103496935}
+  m_GameObject: {fileID: 306399793582707361}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4eefe39c8dfa04620aad151d93a87c66, type: 3}
@@ -133,13 +185,13 @@ MonoBehaviour:
     FireAmount: 0
     WaterAmount: 1
     AirAmount: 0
---- !u!114 &6761616426691886913
+--- !u!114 &-7073370883853168669
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7369921848103496935}
+  m_GameObject: {fileID: 306399793582707361}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b275e5f92732148048d7b77e264ac30e, type: 3}
@@ -147,13 +199,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ShapeType: 0
   m_PrimitiveCenter:
-    x: 0
-    y: 0.619903
-    z: 0.00000047683716
+    x: -0.00000035762787
+    y: 0.6199029
+    z: -0.00000035762787
   m_PrimitiveSize:
     x: 2.081872
-    y: 1.281802
-    z: 2.081873
+    y: 1.2818019
+    z: 2.0818727
   m_PrimitiveOrientation:
     Value:
       x: -0
@@ -161,18 +213,18 @@ MonoBehaviour:
       z: 0
     RotationOrder: 4
   m_Capsule:
-    Height: 2.081873
+    Height: 2.0818727
     Radius: 1.040936
     Axis: 2
   m_Cylinder:
-    Height: 1.281802
-    Radius: 1.0409365
+    Height: 1.2818019
+    Radius: 1.0409364
     Axis: 1
   m_CylinderSideCount: 20
-  m_SphereRadius: 1.0409365
+  m_SphereRadius: 1.0409364
   m_MinimumSkinnedVertexWeight: 0.1
   m_ConvexHullGenerationParameters:
-    m_SimplificationTolerance: 0.031228093
+    m_SimplificationTolerance: 0.03122809
     m_BevelRadius: 0.05
     m_MinimumAngle: 2.5000002
   m_CustomMesh: {fileID: 0}
@@ -276,13 +328,13 @@ MonoBehaviour:
         Tag07: 0
     m_SerializedVersion: 1
   m_SerializedVersion: 1
---- !u!114 &6952022923446306389
+--- !u!114 &-4797642203998968029
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7369921848103496935}
+  m_GameObject: {fileID: 306399793582707361}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ccea9ea98e38942e0b0938c27ed1903e, type: 3}
