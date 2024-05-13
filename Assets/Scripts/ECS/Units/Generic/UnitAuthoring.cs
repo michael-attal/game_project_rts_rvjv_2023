@@ -1,13 +1,13 @@
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Rendering;
 using UnityEngine;
 
 public class UnitAuthoring : MonoBehaviour
 {
     public SpeciesType SpeciesType;
     public UnitType UnitType;
-    public float4 UnitColorRGBA;
+    public string BakedPrefabName;
     public float UnitSpeed;
 
     [Header("Combat")] public float UnitStandardHealth;
@@ -25,22 +25,25 @@ public class UnitAuthoring : MonoBehaviour
             AddComponent(entity, new Unit
             {
                 SpeciesType = authoring.SpeciesType,
-                UnitType = authoring.UnitType
+                UnitType = authoring.UnitType,
+                BakedPrefabName = new FixedString32Bytes(authoring.BakedPrefabName)
             });
 
             AddComponent(entity, new UnitSelectable
             {
-                IsSelected = false,
-                ShouldBeSelected = false,
-                OriginalUnitColor = authoring.UnitColorRGBA
+                ShouldBeSelected = false
             });
+
+            AddComponent<UnitSelected>(entity);
+            SetComponentEnabled<UnitSelected>(entity, false);
 
             AddComponent(entity, new UnitMovement
             {
-                Velocity = 10f,
-                IsMoving = false,
                 Speed = authoring.UnitSpeed
             });
+
+            AddComponent<WantsToMove>(entity);
+            SetComponentEnabled<WantsToMove>(entity, false);
 
             AddComponent(entity, new UnitDamage
             {
@@ -56,11 +59,6 @@ public class UnitAuthoring : MonoBehaviour
             });
 
             AddComponent<Velocity>(entity);
-
-            AddComponent(entity, new URPMaterialPropertyBaseColor
-            {
-                Value = authoring.UnitColorRGBA
-            });
         }
     }
 }
@@ -69,6 +67,14 @@ public enum SpeciesType
 {
     Slime,
     Meca
+}
+
+// NOTE: It's important that each prefab has the same order for the animations
+// TODO: Refactoring to make it more open and easy to modify
+public enum AnimationsType
+{
+    Idle,
+    Attack
 }
 
 public enum UnitType
@@ -87,6 +93,7 @@ public struct Unit : IComponentData
 {
     public SpeciesType SpeciesType;
     public UnitType UnitType;
+    public FixedString32Bytes BakedPrefabName;
 }
 
 // A 2d velocity vector for the unit entities.
@@ -97,22 +104,24 @@ public struct Velocity : IComponentData
 
 public struct UnitSelectable : IComponentData
 {
-    public bool IsSelected;
-    public bool ShouldBeSelected;
-    public float4 OriginalUnitColor;
+    public bool ShouldBeSelected; // If later we want to show an indicator on mouse hover unit
+}
+
+public struct UnitSelected : IComponentData, IEnableableComponent
+{
 }
 
 public struct UnitMovement : IComponentData
 {
-    public bool IsMoving;
     public float Speed;
-    public float3 Velocity;
+}
+
+public struct WantsToMove : IComponentData, IEnableableComponent
+{
     public float3 Destination;
 }
 
-public struct IsMovingTag : IComponentData
-{
-}
+public struct DestinationReached : IComponentData {}
 
 public struct UnitDamage : IComponentData
 {

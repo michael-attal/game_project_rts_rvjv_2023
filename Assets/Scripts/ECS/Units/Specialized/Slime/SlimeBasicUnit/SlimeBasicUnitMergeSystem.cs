@@ -15,6 +15,7 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
     {
         state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<Config>();
+        state.RequireForUpdate<Game>();
         state.RequireForUpdate<SpawnManager>();
         state.RequireForUpdate<UnitSelectable>();
         state.RequireForUpdate<SlimeBasicUnitMerge>();
@@ -34,71 +35,57 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
         // NOTE: We have to press multiple time F to merge unit if we have like 50 unit selected.
         if (!Input.GetKeyDown(KeyCode.F))
             return;
-
-        var spawnManager = SystemAPI.GetSingleton<SpawnManager>();
-
+        
         // TODO: Implement a component, IsSelected, which is dynamically added or removed when a unit is selected (similar to the IsMovingTag component). This will eliminate the need for a nested loop to determine the number of selected entities, as the where option cannot be used in a Unity ECS query.
 
-        var query = SystemAPI.QueryBuilder()
-            .WithAll<UnitSelectable>()
-            .WithAll<SlimeBasicUnitMerge>()
-            .Build();
-
-        var nbOfBasicSlimeUnitToMergeSelected = 0;
-        uint nbOfUnitToAllowMerge = 10;
+        var ecb = new EntityCommandBuffer(Allocator.Temp);
+        
         var sumPositions = float3.zero;
-
-        foreach (var entity in query.ToEntityArray(Allocator.Temp))
+        int totalEntities = 0;
+        
+        var fusionInfo = new FusionInfo();
+        foreach (var (transform, merge, entity) 
+                 in SystemAPI.Query<RefRO<LocalToWorld>, RefRO<SlimeBasicUnitMerge>>()
+                     .WithAll<UnitSelected>()
+                     .WithEntityAccess())
         {
-            var unitSelectable = state.EntityManager.GetComponentData<UnitSelectable>(entity);
-            var slimeBasicUnitMerge = state.EntityManager.GetComponentData<SlimeBasicUnitMerge>(entity);
-
-            nbOfUnitToAllowMerge = slimeBasicUnitMerge.NbUnitsToMerge;
-
-            if (unitSelectable.IsSelected)
-            {
-                nbOfBasicSlimeUnitToMergeSelected++;
-            }
+            ecb.DestroyEntity(entity);
+            
+            fusionInfo += merge.ValueRO.FusionInfo;
+            sumPositions += transform.ValueRO.Position;
+            ++totalEntities;
         }
 
-        var unitMerged = 0;
-        var stopMergeAt = nbOfBasicSlimeUnitToMergeSelected - nbOfBasicSlimeUnitToMergeSelected % 10;
-
-        if (nbOfBasicSlimeUnitToMergeSelected > nbOfUnitToAllowMerge)
+        var gameInfo = SystemAPI.GetSingleton<Game>();
+        for (int i = 0; i < gameInfo.SlimeRecipes.Value.Data.Length; ++i)
         {
-            foreach (var entity in query.ToEntityArray(Allocator.Temp))
+            while (gameInfo.SlimeRecipes.Value.Data[i].Cost <= fusionInfo)
             {
-                var unitSelectable = state.EntityManager.GetComponentData<UnitSelectable>(entity);
-                if (unitSelectable.IsSelected && unitMerged < stopMergeAt)
+                fusionInfo -= gameInfo.SlimeRecipes.Value.Data[i].Cost;
+                
+                var newEntity = InstantiateEntity(ref state, ecb, gameInfo.SlimeRecipes.Value.Data[i].PrefabId);
+                ecb.SetComponent(newEntity, new LocalTransform()
                 {
-                    var ltw = state.EntityManager.GetComponentData<LocalToWorld>(entity);
-                    sumPositions += ltw.Position;
-
-                    state.EntityManager.DestroyEntity(entity);
-
-                    if ((unitMerged + 1) % nbOfUnitToAllowMerge == 0)
-                    {
-                        var slimeStrongerUnit = state.EntityManager.Instantiate(spawnManager.SlimeStrongerUnitPrefab);
-                        var slimeStrongerUnitScale = state.EntityManager.GetComponentData<LocalTransform>(slimeStrongerUnit).Scale;
-
-                        var averagePosition = sumPositions / nbOfUnitToAllowMerge;
-
-                        state.EntityManager.SetComponentData(slimeStrongerUnit, new LocalTransform
-                            {
-                                Position = averagePosition,
-                                Rotation = quaternion.identity,
-                                Scale = slimeStrongerUnitScale
-                            }
-                        );
-
-                        sumPositions = float3.zero; // Put back to zero for the next merging
-                    }
-
-                    unitMerged++;
-                }
+                    Position = sumPositions / totalEntities,
+                    Rotation = quaternion.identity,
+                    Scale = 1f
+                });
             }
-
-            Debug.Log("Merging selected basic slime unit now!");
         }
+        
+        ecb.Playback(state.EntityManager);
+        ecb.Dispose();
+    }
+
+    private Entity InstantiateEntity(ref SystemState state, EntityCommandBuffer ecb, int id)
+    {
+        var buffer = SystemAPI.GetBuffer<InstantiatableEntityData>(SystemAPI.GetSingletonEntity<Game>());
+        for (int i = 0; i < buffer.Length; ++i)
+        {
+            if (buffer[i].EntityID == id)
+                return ecb.Instantiate(buffer[i].Entity);
+        }
+        
+        return Entity.Null;
     }
 }

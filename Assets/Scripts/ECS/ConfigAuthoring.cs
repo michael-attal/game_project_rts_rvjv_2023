@@ -11,7 +11,7 @@ public class ConfigAuthoring : MonoBehaviour
     public bool ActivateUnitSelectableSystem;
     public bool ActivateSelectionRectResizeSystem;
     public bool ActivateUnitMovementSystem;
-    public bool ActivateSelectableMaterialChangerSystem;
+    public bool ActivateUnitSelectedRendererSystem;
     public bool ActivateUnitAttackSystem;
     public bool ActivateUnitDamageSystem;
     public bool ActivateWinConditions;
@@ -34,7 +34,7 @@ public class ConfigAuthoring : MonoBehaviour
                 ActivateUnitSelectableSystem = authoring.ActivateUnitSelectableSystem,
                 ActivateSelectionRectResizeSystem = authoring.ActivateSelectionRectResizeSystem,
                 ActivateUnitMovementSystem = authoring.ActivateUnitMovementSystem,
-                ActivateSelectableMaterialChangerSystem = authoring.ActivateSelectableMaterialChangerSystem,
+                ActivateUnitSelectedRendererSystem = authoring.ActivateUnitSelectedRendererSystem,
                 ActivateUnitAttackSystem = authoring.ActivateUnitAttackSystem,
                 ActivateUnitDamageSystem = authoring.ActivateUnitDamageSystem,
                 ActivateWinConditions = authoring.ActivateWinConditions,
@@ -58,7 +58,7 @@ public struct Config : IComponentData
     public bool ActivateUnitSelectableSystem;
     public bool ActivateSelectionRectResizeSystem;
     public bool ActivateUnitMovementSystem;
-    public bool ActivateSelectableMaterialChangerSystem;
+    public bool ActivateUnitSelectedRendererSystem;
     public bool ActivateUnitAttackSystem;
     public bool ActivateUnitDamageSystem;
     public bool ActivateWinConditions;

@@ -5,8 +5,8 @@ using UnityEngine;
 // we must create a BaseSlimeSpawnerAuthoring & BaseSlimeSpawnerSystem, for instance, to ensure distinct behaviors for each species.
 public class BaseSpawnerBuildingAuthoring : MonoBehaviour
 {
-    public SpeciesType SpeciesType;
     public uint NbOfUnitPerBase = 50; // NOTE: Put 50 by default for the moment
+    public float GenerationInterval;
     public GameObject SpawnedUnitPrefab;
 
     private class Baker : Baker<BaseSpawnerBuildingAuthoring>
@@ -17,8 +17,9 @@ public class BaseSpawnerBuildingAuthoring : MonoBehaviour
 
             AddComponent(entity, new BaseSpawnerBuilding
             {
-                SpeciesType = authoring.SpeciesType,
                 NbOfUnitPerBase = authoring.NbOfUnitPerBase,
+                GenerationInterval = authoring.GenerationInterval,
+                TimeToNextGeneration = 0f,
                 SpawnedUnitPrefab =
                     GetEntity(authoring.SpawnedUnitPrefab, TransformUsageFlags.Dynamic)
             });
@@ -28,7 +29,8 @@ public class BaseSpawnerBuildingAuthoring : MonoBehaviour
 
 public struct BaseSpawnerBuilding : IComponentData
 {
-    public SpeciesType SpeciesType;
     public uint NbOfUnitPerBase;
+    public float GenerationInterval;
+    public float TimeToNextGeneration;
     public Entity SpawnedUnitPrefab;
 }

@@ -1,7 +1,6 @@
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine;
 
@@ -16,6 +15,7 @@ public partial struct UnitSelectableSystem : ISystem
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<Config>();
         state.RequireForUpdate<UnitSelectable>();
     }
@@ -62,6 +62,7 @@ public partial struct UnitSelectableSystem : ISystem
             var transformCamera = mainCamera.transform;
             var unitSelectionJob = new UnitSelectionJob
             {
+                ECB = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter(),
                 CameraPos = transformCamera.position,
                 CamForward = transformCamera.forward,
                 CamProjMatrix = mainCamera.projectionMatrix,
@@ -81,6 +82,7 @@ public partial struct UnitSelectableSystem : ISystem
 [BurstCompile]
 public partial struct UnitSelectionJob : IJobEntity
 {
+    public EntityCommandBuffer.ParallelWriter ECB;
     public float3 CameraPos;
     public float4x4 CamProjMatrix;
     public float3 CamUp;
@@ -92,11 +94,8 @@ public partial struct UnitSelectionJob : IJobEntity
     public Rect SelectionArea;
 
     // Because we want the global position of a child entity, we read LocalToWorld instead of LocalTransform.
-    private void Execute(in LocalToWorld unitLT, RefRW<UnitSelectable> unitSelectable, RefRW<URPMaterialPropertyBaseColor> unitColor)
+    private void Execute(Entity entity, LocalToWorld unitLT, [ChunkIndexInQuery] int chunkIndex)
     {
-        unitSelectable.ValueRW.IsSelected = false;
-        unitColor.ValueRW.Value = unitSelectable.ValueRO.OriginalUnitColor; // TODO: Get back to the original color with UnitSelectableMaterialChangerSystem later.
-
         var unitRadius = unitLT.Value.Scale().x;
 
         var transformScreenPosition = CameraSingleton.ConvertWorldToScreenCoordinates(
@@ -118,9 +117,11 @@ public partial struct UnitSelectionJob : IJobEntity
         // Check if selection intersect with unit
         if (unitRect.Overlaps(SelectionArea, true))
         {
-            unitSelectable.ValueRW.IsSelected = true;
-            // Edit color to green. TODO: Later, add a green highlight to the existing color.
-            unitColor.ValueRW.Value = new float4(0, 1, 0, 1);
+            ECB.SetComponentEnabled<UnitSelected>(chunkIndex, entity, true);
+        }
+        else
+        {
+            ECB.SetComponentEnabled<UnitSelected>(chunkIndex, entity, false);
         }
     }
 }
