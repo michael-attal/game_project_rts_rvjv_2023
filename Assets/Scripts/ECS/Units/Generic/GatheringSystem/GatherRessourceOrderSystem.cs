@@ -29,7 +29,34 @@ partial struct GatherRessourceOrderSystem : ISystem
             if (SystemAPI.HasComponent<GatheringIntent>(entity))
                 ecb.RemoveComponent<GatheringIntent>(entity);
             else
-                ecb.AddComponent<GatheringIntent>(entity);
+            {
+                float minDistance = float.MaxValue;
+                Entity? minLocation = null;
+                foreach (var (gatherableTransform, gatherableEntity) in 
+                         SystemAPI.Query<RefRO<LocalTransform>>()
+                             .WithAll<GatherableSpot>()
+                             .WithEntityAccess())
+                {
+                    var gatherablePosition = gatherableTransform.ValueRO.Position;
+                    var distance = gatherablePosition.DistanceTo(transform.ValueRO.Position);
+                    if (distance < minDistance)
+                    {
+                        minDistance = distance;
+                        minLocation = gatherableEntity;
+                    }
+                }
+
+                if (minLocation.HasValue)
+                {
+                    ecb.AddComponent(entity, new GatheringIntent()
+                    {
+                        AssignedSpot = minLocation.Value
+                    });
+                    
+                    if (SystemAPI.IsComponentEnabled<WantsToMove>(entity))
+                        ecb.SetComponentEnabled<WantsToMove>(entity, false);
+                }
+            }
         }
         
         ecb.Playback(state.EntityManager);
@@ -37,4 +64,12 @@ partial struct GatherRessourceOrderSystem : ISystem
     }
 }
 
-public struct GatheringIntent : IComponentData {}
+public struct GatheringIntent : IComponentData
+{
+    public Entity AssignedSpot;
+}
+
+public struct HasRessource : IComponentData
+{
+    public int CarriedRessources;
+}

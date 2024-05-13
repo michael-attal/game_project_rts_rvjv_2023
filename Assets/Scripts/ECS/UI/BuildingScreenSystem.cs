@@ -20,6 +20,14 @@ partial struct BuildingScreenSystem : ISystem
         if (!Input.GetMouseButtonDown(0))
             return;
         
+        // Hard-coded cost because I'm tired
+        var game = SystemAPI.GetSingleton<Game>();
+        if (game.RessourceCount < 50)
+            return;
+        
+        game.RessourceCount -= 50;
+        SystemAPI.SetSingleton(game);
+        
         var clickPos = Input.mousePosition;
         var mainCamera = Camera.main;
         if (mainCamera == null)
