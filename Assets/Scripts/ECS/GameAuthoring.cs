@@ -31,8 +31,7 @@ public class GameAuthoring : MonoBehaviour
             AddComponent(entity, new Game()
             {
                 State = GameState.Starting,
-                SlimeRecipes = GetRecipeDataBlob(slimeRecipesData),
-                RessourceCount = 10
+                SlimeRecipes = GetRecipeDataBlob(slimeRecipesData)
             });
 
             DynamicBuffer<InstantiatableEntityData> buffer = AddBuffer<InstantiatableEntityData>(entity);

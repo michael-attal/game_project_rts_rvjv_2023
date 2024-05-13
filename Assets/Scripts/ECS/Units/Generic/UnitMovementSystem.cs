@@ -54,6 +54,7 @@ public partial struct UnitMovementJob : IJobEntity
         if (distanceToDestination < math.length(velocity.ValueRO.Linear))
         {
             ECB.SetComponentEnabled<WantsToMove>(chunkIndex, entity, false);
+            ECB.AddComponent<DestinationReached>(chunkIndex, entity);
         }
         else
         {

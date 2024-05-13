@@ -49,6 +49,9 @@ internal partial struct UnitMoveOrderSystem : ISystem
             {
                 Destination = mouseRightClickEventData.Position
             });
+            
+            if (SystemAPI.HasComponent<DestinationReached>(entity))
+                ecb.RemoveComponent<DestinationReached>(entity);
         }
 
         lastClickID = mouseRightClickEventData.RightClickID;
