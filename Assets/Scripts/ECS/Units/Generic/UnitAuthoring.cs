@@ -121,6 +121,8 @@ public struct WantsToMove : IComponentData, IEnableableComponent
     public float3 Destination;
 }
 
+public struct DestinationReached : IComponentData {}
+
 public struct UnitDamage : IComponentData
 {
     public float Health;
