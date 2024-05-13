@@ -3,7 +3,6 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
-using UnityEngine;
 
 [UpdateBefore(typeof(TransformSystemGroup))]
 public partial struct UnitAttackSystem : ISystem
@@ -67,31 +66,24 @@ public partial struct UnitAttackSystem : ISystem
 
             if (target.HasValue)
             {
-                if (modelIndex >= 0)
+                if (isAttackAnimationPlayed == false && modelIndex >= 0)
                 {
-                    var idleClipIndex = animDb.GetModel(modelIndex).FindClipThatContains(GetAnimationNameFromAnimationsType(AnimationsType.Attack));
-                    if (idleClipIndex < 0)
+                    var attackClipIndex = animDb.GetModel(modelIndex).FindClipThatContains(GetAnimationNameFromAnimationsType(AnimationsType.Attack));
+                    if (attackClipIndex < 0)
                     {
-                        idleClipIndex = 0; // default to first clip if an idle one wasn't found
+                        attackClipIndex = 0; // default to first clip if an attack one wasn't found
                     }
 
-                    if (isAttackAnimationPlayed == false)
+                    ecb.SetComponent(entity, new AnimationCmdData
                     {
-                        ecb.SetComponent(entity, new AnimationCmdData
-                        {
-                            Cmd = AnimationCmd.PlayOnce, ClipIndex = idleClipIndex
-                        });
-                        ecb.SetComponent(entity, new AnimationSpeedData
-                        {
-                            PlaySpeed = attackerAttack.ValueRO.RateOfFire
-                        });
-                        isAttackAnimationPlayed = true;
-                        isIdleAnimationPlayed = false;
-                    }
-                }
-                else
-                {
-                    Debug.LogWarning($"Attack system error: Could not find model {attackerInfo.ValueRO.BakedPrefabName} in the database.");
+                        Cmd = AnimationCmd.PlayOnce, ClipIndex = attackClipIndex
+                    });
+                    ecb.SetComponent(entity, new AnimationSpeedData
+                    {
+                        PlaySpeed = attackerAttack.ValueRO.RateOfFire
+                    });
+                    isAttackAnimationPlayed = true;
+                    isIdleAnimationPlayed = false;
                 }
 
                 target.Value.ValueRW.Health -= attackerAttack.ValueRO.Strength;
