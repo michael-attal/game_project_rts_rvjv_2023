@@ -82,6 +82,7 @@ public struct Game : IComponentData
 {
     public BlobAssetReference<FusionRecipeDataPool> SlimeRecipes;
     public GameState State;
+    public int RessourceCount;
 }
 
 [Serializable]
