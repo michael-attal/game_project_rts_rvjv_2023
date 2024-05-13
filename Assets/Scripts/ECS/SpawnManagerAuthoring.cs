@@ -71,31 +71,31 @@ public class SpawnManagerAuthoring : MonoBehaviour
 
 public struct SpawnManager : IComponentData
 {
-    public SpeciesType PlayerOneSpecies;
-    public SpeciesType PlayerTwoSpecies;
-    public float3 StartPositionBaseSpawnerPlayerOne;
-    public float3 StartPositionBaseSpawnerPlayerTwo;
-
-    public bool SpawnUnitWhenPressEnter;
     public GroupUnitShape GroupUnitsBy;
+    public Entity MecaBaseSpawnerBuildingPrefab;
+    public float MecaBasicUnitAttack;
+    public Entity MecaBasicUnitPrefab;
+    public float MecaBasicUnitSpeed;
+
+    public Entity MecaPlayerHandPrefab;
 
     public uint NumberOfBaseSpawnerForPlayerOne;
     public uint NumberOfBaseSpawnerForPlayerTwo;
-    public uint NumberOfSlimeUnitPerSlimeBaseSpawner;
     public uint NumberOfMecaUnitPerMecaBaseSpawner;
+    public uint NumberOfSlimeUnitPerSlimeBaseSpawner;
+    public SpeciesType PlayerOneSpecies;
+    public SpeciesType PlayerTwoSpecies;
+    public Entity SlimeBaseSpawnerBuildingPrefab;
+    public float SlimeBasicUnitAttack; // Amount of damage dealt by the slime
+    public Entity SlimeBasicUnitPrefab;
 
     public float SlimeBasicUnitSpeed; // meters per second
-    public float SlimeBasicUnitAttack; // Amount of damage dealt by the slime
-    public float MecaBasicUnitSpeed;
-    public float MecaBasicUnitAttack;
     // SlimeBasicUnitLife, MecaBasicUnitLife ...
 
     public Entity SlimePlayerHandPrefab;
-    public Entity SlimeBaseSpawnerBuildingPrefab;
-    public Entity SlimeBasicUnitPrefab;
     public Entity SlimeStrongerUnitPrefab;
 
-    public Entity MecaPlayerHandPrefab;
-    public Entity MecaBaseSpawnerBuildingPrefab;
-    public Entity MecaBasicUnitPrefab;
+    public bool SpawnUnitWhenPressEnter;
+    public float3 StartPositionBaseSpawnerPlayerOne;
+    public float3 StartPositionBaseSpawnerPlayerTwo;
 }

@@ -31,6 +31,7 @@ public partial struct PlayerSpawnerSystem : ISystem
         var spawnManager = SystemAPI.GetSingleton<SpawnManager>();
 
         // NOTE: If we allow more than 2 players, adjust the loop here
+        // TODO: Use a job and settings from main menu to load players
         for (uint i = 1; i <= 2; i++)
         {
             // Instantiate the hand entity for each player (the hand will replace the cursor of the mouse for more immersion).
