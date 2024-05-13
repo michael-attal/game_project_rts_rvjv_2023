@@ -100,6 +100,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SpeciesType: 1
   UnitType: 1
+  BakedPrefabName: MecaBasicUnitPrefab
   UnitSpeed: 3
   UnitStandardHealth: 200
   UnitAttack: 20
