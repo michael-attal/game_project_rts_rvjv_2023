@@ -6,28 +6,20 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-partial struct BuildingScreenSystem : ISystem
+internal partial struct BuildingScreenSystem : ISystem
 {
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<Game>();
     }
-    
+
     // Accessing BuildingScreen, can't use BurstCompile
     public void OnUpdate(ref SystemState state)
-    {   
+    {
         if (!Input.GetMouseButtonDown(0))
             return;
-        
-        // Hard-coded cost because I'm tired
-        var game = SystemAPI.GetSingleton<Game>();
-        if (game.RessourceCount < 50)
-            return;
-        
-        game.RessourceCount -= 50;
-        SystemAPI.SetSingleton(game);
-        
+
         var clickPos = Input.mousePosition;
         var mainCamera = Camera.main;
         if (mainCamera == null)
@@ -38,12 +30,20 @@ partial struct BuildingScreenSystem : ISystem
 
         var selectedID = BuildingScreenSingleton.Instance.SelectedPrefabID;
         var buffer = SystemAPI.GetBuffer<InstantiatableEntityData>(SystemAPI.GetSingletonEntity<Game>());
-        for (int i = 0; i < buffer.Length; ++i)
+        for (var i = 0; i < buffer.Length; ++i)
         {
             if (buffer[i].EntityID == selectedID)
             {
+                // Hard-coded cost because I'm tired
+                var game = SystemAPI.GetSingleton<Game>();
+                if (game.RessourceCount < 50)
+                    return;
+
+                game.RessourceCount -= 50;
+                SystemAPI.SetSingleton(game);
+
                 var newEntity = ecb.Instantiate(buffer[i].Entity);
-                ecb.SetComponent(newEntity, new LocalTransform()
+                ecb.SetComponent(newEntity, new LocalTransform
                 {
                     Position = clickWorldPosition,
                     Rotation = quaternion.identity,
@@ -51,7 +51,7 @@ partial struct BuildingScreenSystem : ISystem
                 });
             }
         }
-        
+
         BuildingScreenSingleton.Instance.ResetSelection();
 
         ecb.Playback(state.EntityManager);
