@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311924, g: 0.38073963, b: 0.3587269, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -405,80 +405,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d1bd89a5e15164369bb60817bf92bb1f, type: 3}
---- !u!1 &1062842618
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1062842620}
-  - component: {fileID: 1062842619}
-  - component: {fileID: 1062842621}
-  m_Layer: 0
-  m_Name: GameInfo
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1062842619
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1062842618}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 183a8500e7c3a43acafd3cccbdc7bcde, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ActivatePlayerSpawnerSystem: 1
-  ActivateBaseSpawnerBuildingSystem: 1
-  ActivateUnitSpawnerSystem: 1
-  ActivateUnitSelectableSystem: 1
-  ActivateSelectionRectResizeSystem: 1
-  ActivateUnitMovementSystem: 1
-  ActivateUnitSelectedRendererSystem: 1
-  ActivateUnitAttackSystem: 1
-  ActivateUnitDamageSystem: 1
-  ActivateWinConditions: 1
-  ActivateSlimeBasicUnitMergeSystem: 1
-  ActivateMecaBasicUnitUpgradeSystem: 0
-  ActivateSwitchFocusCameraToPlayersOnSpacePress: 1
---- !u!4 &1062842620
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1062842618}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1062842621
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1062842618}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a7c65d1ab237c434caa3e40a77bbf8eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  instantiatableEntities:
-  - entityID: ECS_SLIME_BASE_SPAWNER
-    entity: {fileID: 2216618471874645061, guid: 888243f85db11483baf93363ac285d84, type: 3}
-  mergeGraph: {fileID: 11400000, guid: aad126b3c80ae9a488b2428a00ff8c0a, type: 2}
 --- !u!1 &1101015496
 GameObject:
   m_ObjectHideFlags: 0
@@ -862,6 +788,84 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UnitSelectedCircleMaterial: {fileID: 2100000, guid: 9df2609dea1a94a7ea5bfdfe2da45399, type: 2}
+--- !u!1 &2095053047
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2095053050}
+  - component: {fileID: 2095053049}
+  - component: {fileID: 2095053048}
+  m_Layer: 0
+  m_Name: GameInfo
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2095053048
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2095053047}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7c65d1ab237c434caa3e40a77bbf8eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  instantiatableEntities:
+  - entityID: ECS_SLIME_BASE_SPAWNER
+    entity: {fileID: 2216618471874645061, guid: 888243f85db11483baf93363ac285d84, type: 3}
+  - entityID: ECS_SLIME_UNIT
+    entity: {fileID: 306399793582707361, guid: fce1ec0bc862144ba9b48c79a2f70711, type: 3}
+  - entityID: ECS_SUPER_SLIME_UNIT
+    entity: {fileID: 5157904157934955495, guid: cfda79e3306d245b79491da6f3cebca4, type: 3}
+  mergeGraph: {fileID: 11400000, guid: aad126b3c80ae9a488b2428a00ff8c0a, type: 2}
+--- !u!114 &2095053049
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2095053047}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 183a8500e7c3a43acafd3cccbdc7bcde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ActivatePlayerSpawnerSystem: 1
+  ActivateBaseSpawnerBuildingSystem: 1
+  ActivateUnitSpawnerSystem: 1
+  ActivateUnitSelectableSystem: 1
+  ActivateSelectionRectResizeSystem: 1
+  ActivateUnitMovementSystem: 1
+  ActivateUnitSelectedRendererSystem: 1
+  ActivateUnitAttackSystem: 1
+  ActivateUnitDamageSystem: 1
+  ActivateWinConditions: 1
+  ActivateSlimeBasicUnitMergeSystem: 1
+  ActivateMecaBasicUnitUpgradeSystem: 0
+  ActivateSwitchFocusCameraToPlayersOnSpacePress: 1
+--- !u!4 &2095053050
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2095053047}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -870,8 +874,8 @@ SceneRoots:
   - {fileID: 1850114948}
   - {fileID: 14296342}
   - {fileID: 31481635}
-  - {fileID: 1062842620}
   - {fileID: 522959850}
   - {fileID: 1101015500}
   - {fileID: 105172278}
   - {fileID: 1027846701}
+  - {fileID: 2095053050}
