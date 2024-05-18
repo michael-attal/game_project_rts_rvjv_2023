@@ -1,8 +1,14 @@
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using EndSimulationEntityCommandBufferSystem = Unity.Entities.EndSimulationEntityCommandBufferSystem;
+using EntityCommandBuffer = Unity.Entities.EntityCommandBuffer;
+using ISystem = Unity.Entities.ISystem;
+using SystemAPI = Unity.Entities.SystemAPI;
+using SystemState = Unity.Entities.SystemState;
 
 [UpdateAfter(typeof(UnitSelectableSystem))]
 public partial struct UnitSelectedRendererSystem : ISystem
@@ -10,12 +16,12 @@ public partial struct UnitSelectedRendererSystem : ISystem
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
+        state.RequireForUpdate<SpawnManager>();
         state.RequireForUpdate<Config>();
-        state.RequireForUpdate<MaterialManager>();
-        state.RequireForUpdate<UnitSelectable>();
     }
 
-    // NOTE: Can't burstcompile : Graphics.DrawMesh & materialManager
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         var configManager = SystemAPI.GetSingleton<Config>();
@@ -26,46 +32,110 @@ public partial struct UnitSelectedRendererSystem : ISystem
             return;
         }
 
-        var materialManagerQuery = SystemAPI.QueryBuilder().WithAll<MaterialManager>().Build();
-        var materialManager = materialManagerQuery.GetSingleton<MaterialManager>();
+        var spawnManager = SystemAPI.GetSingleton<SpawnManager>();
 
-        foreach (var (unitSelectedTransform, unitSelectable) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<UnitSelectable>>().WithAll<UnitSelected>())
+        var ecb = new EntityCommandBuffer(Allocator.TempJob);
+        foreach (var (unitSelectable, entity) in SystemAPI.Query<RefRO<SelectionCircle>>().WithEntityAccess())
         {
-            var meshSize = unitSelectedTransform.ValueRO.Scale * 2.2f; // TODO: Create an enum that get the size based on the type of unit or with a Mesh Manager
-            Graphics.DrawMesh(
-                CreateMesh(meshSize, meshSize),
-                unitSelectedTransform.ValueRO.Position + new float3(0f, -unitSelectedTransform.ValueRO.Position.y + 0.2f, 0f),
-                Quaternion.Euler(90, 0, 0),
-                materialManager.UnitSelectedCircleMaterial, 0);
+            ecb.DestroyEntity(entity);
         }
-    }
 
+        ecb.Playback(state.EntityManager);
+        ecb.Dispose();
 
-    public static Mesh CreateMesh(float meshWidth, float meshHeight)
-    {
-        var vertices = new Vector3[4];
-        var uv = new Vector2[4];
-        var triangles = new int[6];
-        var meshWidthHalf = meshWidth / 2f;
-        var meshHeightHalf = meshHeight / 2f;
-        vertices[0] = new Vector3(-meshWidthHalf, meshHeightHalf);
-        vertices[1] = new Vector3(meshWidthHalf, meshHeightHalf);
-        vertices[2] = new Vector3(-meshWidthHalf, -meshHeightHalf);
-        vertices[3] = new Vector3(meshWidthHalf, -meshHeightHalf);
-        uv[0] = new Vector2(0, 1);
-        uv[1] = new Vector2(1, 1);
-        uv[2] = new Vector2(0, 0);
-        uv[3] = new Vector2(1, 0);
-        triangles[0] = 0;
-        triangles[1] = 1;
-        triangles[2] = 2;
-        triangles[3] = 2;
-        triangles[4] = 1;
-        triangles[5] = 3;
-        var mesh = new Mesh();
-        mesh.vertices = vertices;
-        mesh.uv = uv;
-        mesh.triangles = triangles;
-        return mesh;
+        var ecb2 = new EntityCommandBuffer(Allocator.TempJob);
+        foreach (var unitSelectedTransform in SystemAPI.Query<RefRO<LocalTransform>>().WithAll<UnitSelected>())
+        {
+            var entity = ecb2.Instantiate(spawnManager.SelectionCirclePrefab);
+            ecb2.SetComponent(entity, new LocalTransform
+            {
+                Rotation = Quaternion.Euler(90, 0, 0),
+                Scale = unitSelectedTransform.ValueRO.Scale * 100, // NOTE: The circle is 1cm square,
+                Position = new float3(unitSelectedTransform.ValueRO.Position.x, 0, unitSelectedTransform.ValueRO.Position.z)
+            });
+            ecb2.SetComponent(entity, new SelectionCircle());
+        }
+
+        ecb2.Playback(state.EntityManager);
+        ecb2.Dispose();
+
+        // Destroy existing selection circles
+        // var destroySelectionCircleJob = new DestroySelectionCircleJob
+        // {
+        //     ECB = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>()
+        //         .CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter()
+        // };
+        // destroySelectionCircleJob.ScheduleParallel();
+
+        // Create an EntityQuery to count entities with UnitSelected component
+        // var query = state.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<UnitSelected>(), ComponentType.ReadOnly<LocalTransform>());
+        // var numberOfEntities = query.CalculateEntityCount();
+        //
+        // if (numberOfEntities > 0)
+        // {
+        //     var ecbJob = new EntityCommandBuffer(Allocator.TempJob);
+        //
+        //     var addSelectionCircleJob = new AddSelectionCircleJob
+        //     {
+        //         ECB = ecbJob.AsParallelWriter(),
+        //         SelectionCirclePrefab = spawnManager.SelectionCirclePrefab,
+        //         Positions = new NativeArray<float3>(numberOfEntities, Allocator.TempJob),
+        //         Scales = new NativeArray<float>(numberOfEntities, Allocator.TempJob),
+        //         Rotations = new NativeArray<quaternion>(numberOfEntities, Allocator.TempJob)
+        //     };
+        //
+        //     var index = 0;
+        //     foreach (var unitSelectedTransform in SystemAPI.Query<RefRO<LocalTransform>>().WithAll<UnitSelected>())
+        //     {
+        //         addSelectionCircleJob.Positions[index] = new float3(unitSelectedTransform.ValueRO.Position.x, 0, unitSelectedTransform.ValueRO.Position.z);
+        //         addSelectionCircleJob.Scales[index] = unitSelectedTransform.ValueRO.Scale * 100; // NOTE: The circle is 1cm square,
+        //         addSelectionCircleJob.Rotations[index] = Quaternion.Euler(90, 0, 0);
+        //         index++;
+        //     }
+        //
+        //     var addSelectionCircleJobHandler = addSelectionCircleJob.Schedule(numberOfEntities, 64, state.Dependency);
+        //     state.Dependency = addSelectionCircleJobHandler;
+        //
+        //     addSelectionCircleJobHandler.Complete();
+        //     addSelectionCircleJob.Positions.Dispose();
+        //     addSelectionCircleJob.Scales.Dispose();
+        //     addSelectionCircleJob.Rotations.Dispose();
+        //
+        //     ecbJob.Playback(state.EntityManager);
+        //     ecbJob.Dispose();
+        // }
     }
 }
+
+// [WithAll(typeof(SelectionCircle))]
+// public partial struct DestroySelectionCircleJob : IJobEntity
+// {
+//     public EntityCommandBuffer.ParallelWriter ECB;
+//
+//     private void Execute(Entity entity, RefRO<SelectionCircle> selectionCircle, [ChunkIndexInQuery] int chunkIndex)
+//     {
+//         ECB.DestroyEntity(chunkIndex, entity);
+//     }
+// }
+//
+// public struct AddSelectionCircleJob : IJobParallelFor
+// {
+//     public EntityCommandBuffer.ParallelWriter ECB;
+//     public Entity SelectionCirclePrefab;
+//     public NativeArray<float3> Positions;
+//     public NativeArray<quaternion> Rotations;
+//     public NativeArray<float> Scales;
+//
+//     public void Execute(int index)
+//     {
+//         var entity = ECB.Instantiate(index, SelectionCirclePrefab);
+//         ECB.SetComponent(index, entity, new LocalTransform
+//         {
+//             Position = Positions[index],
+//             Scale = Scales[index],
+//             Rotation = Rotations[index]
+//         });
+//
+//         ECB.SetComponent(index, entity, new SelectionCircle());
+//     }
+// }
