@@ -2,14 +2,13 @@ using AnimCooker;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Transforms;
 
 [UpdateBefore(typeof(TransformSystemGroup))]
 public partial struct UnitAttackSystem : ISystem
 {
-    // NOTE: Ensure that we don't update every frame the animation
-    private bool isIdleAnimationPlayed;
-    private bool isAttackAnimationPlayed;
+    private JobHandle dependency;
 
     [BurstCompile]
     public void OnCreate(ref SystemState state)
@@ -17,8 +16,6 @@ public partial struct UnitAttackSystem : ISystem
         state.RequireForUpdate<AnimDbRefData>();
         state.RequireForUpdate<Config>();
         state.RequireForUpdate<UnitAttack>();
-        isIdleAnimationPlayed = true;
-        isAttackAnimationPlayed = false;
     }
 
     [BurstCompile]
@@ -34,89 +31,121 @@ public partial struct UnitAttackSystem : ISystem
             state.Enabled = false;
             return;
         }
-
-        var ecb = new EntityCommandBuffer(Allocator.Temp);
-
-        foreach (var (attackerTransform, attackerInfo, attackerAttack, entity) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<Unit>, RefRW<UnitAttack>>().WithAll<UnitAttack>().WithEntityAccess())
+        
+        var ecbSystem = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        
+        NativeList<(RefRO<LocalTransform>, RefRO<Unit>, RefRW<UnitDamage>)> targetsList = new NativeList<(RefRO<LocalTransform>, RefRO<Unit>, RefRW<UnitDamage>)>(0, Allocator.Temp);
+        foreach (var value in SystemAPI.Query<RefRO<LocalTransform>, RefRO<Unit>, RefRW<UnitDamage>>())
         {
-            if (attackerAttack.ValueRO.CurrentReloadTime > 0f)
-            {
-                attackerAttack.ValueRW.CurrentReloadTime -= SystemAPI.Time.DeltaTime;
+            targetsList.Add(value);
+        }
+
+        var array = targetsList.ToArray(Allocator.TempJob);
+        targetsList.Dispose();
+
+        var unitAttackJob = new UnitAttackJob()
+        {
+            ECB = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter(),
+            Time = SystemAPI.Time.DeltaTime,
+            Targets = array
+        };
+
+        var jobHandle = unitAttackJob.ScheduleParallel(dependency);
+        jobHandle.Complete();
+
+        array.Dispose();
+
+        dependency = jobHandle;
+    }
+}
+
+[WithAll(typeof(LocalTransform), typeof(UnitAttack))]
+[BurstCompile]
+public partial struct UnitAttackJob : IJobEntity
+{
+    public EntityCommandBuffer.ParallelWriter ECB;
+    public float Time;
+    public AnimDbRefData AnimDbRefData;
+    public NativeArray<(RefRO<LocalTransform>, RefRO<Unit>, RefRW<UnitDamage>)> Targets;
+
+    private void Execute(Entity entity, RefRO<LocalTransform> attackerTransform, RefRO<Unit> attackerInfo, RefRW<UnitAttack> attackerAttack, [ChunkIndexInQuery] int chunkIndex)
+    {
+        if (attackerAttack.ValueRO.CurrentReloadTime > 0f)
+        {
+            attackerAttack.ValueRW.CurrentReloadTime -= Time;
+            return;
+        }
+
+        var attackerPos = attackerTransform.ValueRO.Position;
+        RefRW<UnitDamage>? target = null;
+        var minimumRange = attackerAttack.ValueRO.Range;
+
+        foreach (var (attackableTransform, attackableInfo, attackableDamage) in Targets)
+        {
+            if (attackerInfo.ValueRO.SpeciesType == attackableInfo.ValueRO.SpeciesType)
                 continue;
-            }
+            
+            var attackablePos = attackableTransform.ValueRO.Position;
 
-            var attackerPos = attackerTransform.ValueRO.Position;
-            RefRW<UnitDamage>? target = null;
-            var minimumRange = attackerAttack.ValueRO.Range;
-
-            foreach (var (attackableTransform, attackableInfo, attackableDamage) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<Unit>, RefRW<UnitDamage>>().WithAll<UnitDamage>())
+            var currentDistance = attackerPos.DistanceTo(attackablePos);
+            if (currentDistance <= minimumRange)
             {
-                var attackablePos = attackableTransform.ValueRO.Position;
-
-                var currentDistance = attackerPos.DistanceTo(attackablePos);
-                if (currentDistance <= minimumRange && attackerInfo.ValueRO.SpeciesType != attackableInfo.ValueRO.SpeciesType)
-                {
-                    target = attackableDamage;
-                    minimumRange = currentDistance;
-                }
-            }
-
-            var animDb = SystemAPI.GetSingleton<AnimDbRefData>();
-            var modelIndex = animDb.FindModelIndex(attackerInfo.ValueRO.BakedPrefabName);
-
-            if (target.HasValue)
-            {
-                if (isAttackAnimationPlayed == false && modelIndex >= 0)
-                {
-                    var attackClipIndex = animDb.GetModel(modelIndex).FindClipThatContains(GetAnimationNameFromAnimationsType(AnimationsType.Attack));
-                    if (attackClipIndex < 0)
-                    {
-                        attackClipIndex = 0; // default to first clip if an attack one wasn't found
-                    }
-
-                    ecb.SetComponent(entity, new AnimationCmdData
-                    {
-                        Cmd = AnimationCmd.PlayOnce, ClipIndex = attackClipIndex
-                    });
-                    ecb.SetComponent(entity, new AnimationSpeedData
-                    {
-                        PlaySpeed = attackerAttack.ValueRO.RateOfFire
-                    });
-                    isAttackAnimationPlayed = true;
-                    isIdleAnimationPlayed = false;
-                }
-
-                target.Value.ValueRW.Health -= attackerAttack.ValueRO.Strength;
-                attackerAttack.ValueRW.CurrentReloadTime = attackerAttack.ValueRO.RateOfFire;
-            }
-            else
-            {
-                if (isIdleAnimationPlayed == false && modelIndex >= 0)
-                {
-                    var idleClipIndex = animDb.GetModel(modelIndex).FindClipThatContains(GetAnimationNameFromAnimationsType(AnimationsType.Idle));
-                    if (idleClipIndex < 0)
-                    {
-                        idleClipIndex = 0;
-                    }
-
-                    // NOTE: Reset animation state
-                    ecb.SetComponent(entity, new AnimationCmdData
-                    {
-                        Cmd = AnimationCmd.SetPlayForever, ClipIndex = idleClipIndex
-                    });
-                    ecb.SetComponent(entity, new AnimationSpeedData
-                    {
-                        PlaySpeed = 1f
-                    });
-                    isIdleAnimationPlayed = true;
-                    isAttackAnimationPlayed = false;
-                }
+                target = attackableDamage;
+                minimumRange = currentDistance;
             }
         }
 
-        ecb.Playback(state.EntityManager);
-        ecb.Dispose();
+        var modelIndex = AnimDbRefData.FindModelIndex(attackerInfo.ValueRO.BakedPrefabName);
+
+        if (target.HasValue)
+        {
+            if (!attackerAttack.ValueRO.IsAttackAnimationPlayed && modelIndex >= 0)
+            {
+                var attackClipIndex = AnimDbRefData.GetModel(modelIndex).FindClipThatContains(GetAnimationNameFromAnimationsType(AnimationsType.Attack));
+                if (attackClipIndex < 0)
+                {
+                    attackClipIndex = 0; // default to first clip if an attack one wasn't found
+                }
+
+                ECB.SetComponent(chunkIndex, entity, new AnimationCmdData
+                {
+                    Cmd = AnimationCmd.PlayOnce, ClipIndex = attackClipIndex
+                });
+                ECB.SetComponent(chunkIndex, entity, new AnimationSpeedData
+                {
+                    PlaySpeed = attackerAttack.ValueRO.RateOfFire
+                });
+                attackerAttack.ValueRW.IsAttackAnimationPlayed = true;
+            }
+
+            target.Value.ValueRW.Health -= attackerAttack.ValueRO.Strength;
+            attackerAttack.ValueRW.CurrentReloadTime = attackerAttack.ValueRO.RateOfFire;
+        }
+        else
+        {
+            if (attackerAttack.ValueRO.IsAttackAnimationPlayed && modelIndex >= 0)
+            {
+                var idleClipIndex = AnimDbRefData.GetModel(modelIndex).FindClipThatContains(GetAnimationNameFromAnimationsType(AnimationsType.Idle));
+                if (idleClipIndex < 0)
+                {
+                    idleClipIndex = 0;
+                }
+
+                // NOTE: Reset animation state
+                ECB.SetComponent(chunkIndex, entity, new AnimationCmdData
+                {
+                    Cmd = AnimationCmd.SetPlayForever, ClipIndex = idleClipIndex
+                });
+                ECB.SetComponent(chunkIndex, entity, new AnimationSpeedData
+                {
+                    PlaySpeed = 1f
+                });
+
+                attackerAttack.ValueRW.IsAttackAnimationPlayed = false;
+            }
+        }
     }
+    
 
     private FixedString32Bytes GetAnimationNameFromAnimationsType(AnimationsType animationType)
     {
