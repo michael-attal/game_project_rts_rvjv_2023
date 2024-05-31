@@ -134,4 +134,5 @@ public struct UnitAttack : IComponentData
     public float Range;
     public float RateOfFire;
     public float CurrentReloadTime;
+    public bool IsAttackAnimationPlayed;
 }
