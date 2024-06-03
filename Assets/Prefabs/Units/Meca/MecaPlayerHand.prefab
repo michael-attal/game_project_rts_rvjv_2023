@@ -105,4 +105,4 @@ MonoBehaviour:
     y: 0
     z: 0
   BaseSpawnerBuildingPrefab: {fileID: 6851779870681047773, guid: c11a9cb22bf814101a676687080166dd, type: 3}
-  BasicUnitPrefab: {fileID: 6087196481752196242, guid: 03ed2dbcd6a084717b4e1c2bde44dc88, type: 3}
+  BasicUnitPrefab: {fileID: 2217984132830471510, guid: f303e5a99dc1542fcaf946349fd94c0f, type: 3}

@@ -104,7 +104,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   NbOfUnitPerBase: 1
   GenerationInterval: 2
-  SpawnedUnitPrefab: {fileID: 306399793582707361, guid: fce1ec0bc862144ba9b48c79a2f70711, type: 3}
+  SpawnedUnitPrefab: {fileID: 392048310712016098, guid: fce1ec0bc862144ba9b48c79a2f70711, type: 3}
+  SpawnedUnitInitialPosition:
+    x: 0
+    y: 0
+    z: 0
+  SpawnedUnitInitialRotation:
+    value:
+      x: 0
+      y: 0
+      z: 0
+      w: 1
+  SpawnedUnitInitialScale: 1
 --- !u!114 &1104375481110696576
 MonoBehaviour:
   m_ObjectHideFlags: 0
