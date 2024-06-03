@@ -1,11 +1,11 @@
 
-Model: SlimeBasicUnitPrefab
-Skin: 0, Root Bone: Base
-  24fps, 2048x1024, 33554KB
-Skin: 1, Root Bone: Base
-  24fps, 2048x1024, 33554KB
-Skin: 2, Root Bone: Base
-  24fps, 1024x1024, 16777KB
+Model: BasicMecaUnit
+Skin: 0, Root Bone: Bone
+  24fps, 4096x2048, 134217KB
+Skin: 1, Root Bone: Bone
+  24fps, 4096x2048, 134217KB
+Skin: 2, Root Bone: Bone
+  24fps, 4096x2048, 134217KB
 Play Shader: AnimationCooker/VtxAnimSimpleLit
 
 Enum Declaration: enabled
@@ -19,7 +19,7 @@ Post Domain Reload: enabled
 R10G11B11: enabled
 
 
-Started: 6/3/2024 2:20:48 AM
-Output files were saved to: Assets/ExampleScene/Baked/SlimeBasicUnitPrefab
+Started: 6/2/2024 7:49:49 PM
+Output files were saved to: Assets/ExampleScene/Baked/BasicMecaUnit
 Animation enums saved to: Assets/ExampleScene/Scripts/Generated/AnimEnums.cs
-Completed in 250.1281 seconds.
+Completed in 11776.1471 seconds.

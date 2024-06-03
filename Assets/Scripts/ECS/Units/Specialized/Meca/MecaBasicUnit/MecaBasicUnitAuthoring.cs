@@ -1,5 +1,4 @@
 using Unity.Entities;
-using Unity.Rendering;
 using UnityEngine;
 
 public class MecaBasicUnitAuthoring : MonoBehaviour
@@ -14,13 +13,6 @@ public class MecaBasicUnitAuthoring : MonoBehaviour
             AddComponent<MecaBasicUnit>(entity);
 
             // Add generic system, but we can implement dedicated system for this component like BasicMecaMovementSystem for example.
-            AddComponent<UnitSelectable>(entity);
-            AddComponent<UnitMovement>(entity);
-            AddComponent<UnitDamage>(entity);
-            AddComponent<UnitAttack>(entity);
-            AddComponent<Velocity>(entity);
-            AddComponent<Player>(entity);
-            AddComponent<URPMaterialPropertyBaseColor>(entity);
         }
     }
 }

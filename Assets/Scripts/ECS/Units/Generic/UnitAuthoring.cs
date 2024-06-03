@@ -69,14 +69,6 @@ public enum SpeciesType
     Meca
 }
 
-// NOTE: It's important that each prefab has the same order for the animations
-// TODO: Refactoring to make it more open and easy to modify
-public enum AnimationsType
-{
-    Idle,
-    Attack
-}
-
 public enum UnitType
 {
     SlimeBasic,
@@ -121,7 +113,9 @@ public struct WantsToMove : IComponentData, IEnableableComponent
     public float3 Destination;
 }
 
-public struct DestinationReached : IComponentData {}
+public struct DestinationReached : IComponentData
+{
+}
 
 public struct UnitDamage : IComponentData
 {

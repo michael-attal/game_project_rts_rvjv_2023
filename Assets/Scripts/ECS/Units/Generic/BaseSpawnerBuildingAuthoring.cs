@@ -1,4 +1,5 @@
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 
 // NOTE: If we want distinct spawning systems for each species (meca or slime),
@@ -8,6 +9,9 @@ public class BaseSpawnerBuildingAuthoring : MonoBehaviour
     public uint NbOfUnitPerBase = 50; // NOTE: Put 50 by default for the moment
     public float GenerationInterval;
     public GameObject SpawnedUnitPrefab;
+    public float3 SpawnedUnitInitialPosition;
+    public quaternion SpawnedUnitInitialRotation;
+    public float SpawnedUnitInitialScale;
 
     private class Baker : Baker<BaseSpawnerBuildingAuthoring>
     {
@@ -21,7 +25,10 @@ public class BaseSpawnerBuildingAuthoring : MonoBehaviour
                 GenerationInterval = authoring.GenerationInterval,
                 TimeToNextGeneration = 0f,
                 SpawnedUnitPrefab =
-                    GetEntity(authoring.SpawnedUnitPrefab, TransformUsageFlags.Dynamic)
+                    GetEntity(authoring.SpawnedUnitPrefab, TransformUsageFlags.Dynamic),
+                UnitInitialRotation = authoring.SpawnedUnitInitialRotation,
+                UnitInitialPosition = authoring.SpawnedUnitInitialPosition,
+                UnitInitialScale = authoring.SpawnedUnitInitialScale
             });
         }
     }
@@ -33,4 +40,7 @@ public struct BaseSpawnerBuilding : IComponentData
     public float GenerationInterval;
     public float TimeToNextGeneration;
     public Entity SpawnedUnitPrefab;
+    public float3 UnitInitialPosition;
+    public Quaternion UnitInitialRotation;
+    public float UnitInitialScale;
 }
