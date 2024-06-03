@@ -13,43 +13,99 @@ MonoBehaviour:
   m_Name: AnimDbData
   m_EditorClassIdentifier: 
   Models:
+  - ModelName: MecaBasicUnitPrefab
+    Skins:
+    - SkinClips:
+      - BeginFrame: 0
+        EndFrame: 46
+      - BeginFrame: 47
+        EndFrame: 93
+      - BeginFrame: 94
+        EndFrame: 140
+      Width: 4096
+      Height: 2048
+      Interval: 0.041666668
+      Pow2: 12
+      FrameRate: 24
+      VertCount: 53227
+    - SkinClips:
+      - BeginFrame: 0
+        EndFrame: 46
+      - BeginFrame: 47
+        EndFrame: 93
+      - BeginFrame: 94
+        EndFrame: 140
+      Width: 4096
+      Height: 2048
+      Interval: 0.041666668
+      Pow2: 12
+      FrameRate: 24
+      VertCount: 41994
+    - SkinClips:
+      - BeginFrame: 0
+        EndFrame: 46
+      - BeginFrame: 47
+        EndFrame: 93
+      - BeginFrame: 94
+        EndFrame: 140
+      Width: 4096
+      Height: 2048
+      Interval: 0.041666668
+      Pow2: 12
+      FrameRate: 24
+      VertCount: 32683
+    Clips:
+    - ClipName: Idle
+      Length: 1.9583334
+    - ClipName: Attack
+      Length: 1.9583334
+    - ClipName: Move
+      Length: 1.9583334
   - ModelName: SlimeBasicUnitPrefab
     Skins:
     - SkinClips:
       - BeginFrame: 0
-        EndFrame: 2
-      - BeginFrame: 3
-        EndFrame: 5
-      Width: 256
-      Height: 256
-      Interval: 1
-      Pow2: 8
-      FrameRate: 1
+        EndFrame: 94
+      - BeginFrame: 95
+        EndFrame: 189
+      - BeginFrame: 190
+        EndFrame: 284
+      Width: 2048
+      Height: 1024
+      Interval: 0.041666668
+      Pow2: 11
+      FrameRate: 24
       VertCount: 5423
     - SkinClips:
       - BeginFrame: 0
-        EndFrame: 2
-      - BeginFrame: 3
-        EndFrame: 5
-      Width: 256
-      Height: 128
-      Interval: 1
-      Pow2: 8
-      FrameRate: 1
+        EndFrame: 94
+      - BeginFrame: 95
+        EndFrame: 189
+      - BeginFrame: 190
+        EndFrame: 284
+      Width: 2048
+      Height: 1024
+      Interval: 0.041666668
+      Pow2: 11
+      FrameRate: 24
       VertCount: 3913
     - SkinClips:
       - BeginFrame: 0
-        EndFrame: 2
-      - BeginFrame: 3
-        EndFrame: 5
-      Width: 256
-      Height: 128
-      Interval: 1
-      Pow2: 8
-      FrameRate: 1
+        EndFrame: 94
+      - BeginFrame: 95
+        EndFrame: 189
+      - BeginFrame: 190
+        EndFrame: 284
+      Width: 1024
+      Height: 1024
+      Interval: 0.041666668
+      Pow2: 10
+      FrameRate: 24
       VertCount: 2853
     Clips:
     - ClipName: Idle
       Length: 3.9583335
     - ClipName: Attack
+      Length: 3.9583335
+    - ClipName: Move
       Length: 3.9583335

@@ -1,3 +1,4 @@
+using AnimCooker;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -40,8 +41,9 @@ internal partial struct UnitMoveOrderSystem : ISystem
         if (!isNewClickEventDetected)
             return;
 
-        foreach (var (_, entity) in SystemAPI
-                     .Query<RefRO<UnitSelected>>()
+        foreach (var (unit, unitMovement, entity) in SystemAPI
+                     .Query<RefRO<Unit>, RefRO<UnitMovement>>()
+                     .WithAll<UnitSelected>()
                      .WithEntityAccess())
         {
             ecb.SetComponentEnabled<WantsToMove>(entity, true);
@@ -49,9 +51,19 @@ internal partial struct UnitMoveOrderSystem : ISystem
             {
                 Destination = mouseRightClickEventData.Position
             });
-            
+
             if (SystemAPI.HasComponent<DestinationReached>(entity))
                 ecb.RemoveComponent<DestinationReached>(entity);
+
+            // NOTE: Start move animation
+            ecb.SetComponent(entity, new AnimationCmdData
+            {
+                Cmd = AnimationCmd.SetPlayForever, ClipIndex = (short)AnimationsType.Move
+            });
+            ecb.SetComponent(entity, new AnimationSpeedData
+            {
+                PlaySpeed = unitMovement.ValueRO.Speed
+            });
         }
 
         lastClickID = mouseRightClickEventData.RightClickID;

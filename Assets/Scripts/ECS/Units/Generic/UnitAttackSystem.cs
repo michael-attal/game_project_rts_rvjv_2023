@@ -14,7 +14,6 @@ public partial struct UnitAttackSystem : ISystem
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<AnimDbRefData>();
         state.RequireForUpdate<Config>();
         state.RequireForUpdate<UnitAttack>();
         isIdleAnimationPlayed = true;
@@ -61,22 +60,13 @@ public partial struct UnitAttackSystem : ISystem
                 }
             }
 
-            var animDb = SystemAPI.GetSingleton<AnimDbRefData>();
-            var modelIndex = animDb.FindModelIndex(attackerInfo.ValueRO.BakedPrefabName);
-
             if (target.HasValue)
             {
-                if (isAttackAnimationPlayed == false && modelIndex >= 0)
+                if (isAttackAnimationPlayed == false)
                 {
-                    var attackClipIndex = animDb.GetModel(modelIndex).FindClipThatContains(GetAnimationNameFromAnimationsType(AnimationsType.Attack));
-                    if (attackClipIndex < 0)
-                    {
-                        attackClipIndex = 0; // default to first clip if an attack one wasn't found
-                    }
-
                     ecb.SetComponent(entity, new AnimationCmdData
                     {
-                        Cmd = AnimationCmd.PlayOnce, ClipIndex = attackClipIndex
+                        Cmd = AnimationCmd.PlayOnce, ClipIndex = (short)AnimationsType.Attack
                     });
                     ecb.SetComponent(entity, new AnimationSpeedData
                     {
@@ -91,18 +81,12 @@ public partial struct UnitAttackSystem : ISystem
             }
             else
             {
-                if (isIdleAnimationPlayed == false && modelIndex >= 0)
+                if (isIdleAnimationPlayed == false)
                 {
-                    var idleClipIndex = animDb.GetModel(modelIndex).FindClipThatContains(GetAnimationNameFromAnimationsType(AnimationsType.Idle));
-                    if (idleClipIndex < 0)
-                    {
-                        idleClipIndex = 0;
-                    }
-
                     // NOTE: Reset animation state
                     ecb.SetComponent(entity, new AnimationCmdData
                     {
-                        Cmd = AnimationCmd.SetPlayForever, ClipIndex = idleClipIndex
+                        Cmd = AnimationCmd.SetPlayForever, ClipIndex = (short)AnimationsType.Idle
                     });
                     ecb.SetComponent(entity, new AnimationSpeedData
                     {
@@ -116,20 +100,5 @@ public partial struct UnitAttackSystem : ISystem
 
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
-    }
-
-    private FixedString32Bytes GetAnimationNameFromAnimationsType(AnimationsType animationType)
-    {
-        switch (animationType)
-        {
-            case AnimationsType.Idle:
-                return new FixedString32Bytes("Idle");
-
-            case AnimationsType.Attack:
-                return new FixedString32Bytes("Attack");
-
-            default:
-                return new FixedString32Bytes("Idle");
-        }
     }
 }
