@@ -870,11 +870,11 @@ MonoBehaviour:
   SelectionCirclePrefab: {fileID: 7370947266852994130, guid: d15410bcecb664ca69f6b97c5d3bf07d, type: 3}
   SlimePlayerHandPrefab: {fileID: 6320164834673837995, guid: f571fa7df0f264f0a866e82fe099d7b5, type: 3}
   SlimeBaseSpawnerBuildingPrefab: {fileID: 2216618471874645061, guid: 888243f85db11483baf93363ac285d84, type: 3}
-  SlimeBasicUnitPrefab: {fileID: 7369921848103496935, guid: 8b5e0f8d6a54c4fd7add410a44958b2b, type: 3}
+  SlimeBasicUnitPrefab: {fileID: 392048310712016098, guid: fce1ec0bc862144ba9b48c79a2f70711, type: 3}
   SlimeStrongerUnitPrefab: {fileID: 5157904157934955495, guid: cfda79e3306d245b79491da6f3cebca4, type: 3}
   MecaPlayerHandPrefab: {fileID: 1259044049793980661, guid: 2b27e280aca8e4416bf77212c6bd837d, type: 3}
   MecaBaseSpawnerBuildingPrefab: {fileID: 6851779870681047773, guid: c11a9cb22bf814101a676687080166dd, type: 3}
-  MecaBasicUnitPrefab: {fileID: 6087196481752196242, guid: 03ed2dbcd6a084717b4e1c2bde44dc88, type: 3}
+  MecaBasicUnitPrefab: {fileID: 2217984132830471510, guid: f303e5a99dc1542fcaf946349fd94c0f, type: 3}
 --- !u!4 &1383968348
 Transform:
   m_ObjectHideFlags: 0
@@ -1022,7 +1022,7 @@ MonoBehaviour:
   - entityID: ECS_SLIME_BASE_SPAWNER
     entity: {fileID: 2216618471874645061, guid: 888243f85db11483baf93363ac285d84, type: 3}
   - entityID: ECS_SLIME_UNIT
-    entity: {fileID: 306399793582707361, guid: fce1ec0bc862144ba9b48c79a2f70711, type: 3}
+    entity: {fileID: 392048310712016098, guid: fce1ec0bc862144ba9b48c79a2f70711, type: 3}
   - entityID: ECS_SUPER_SLIME_UNIT
     entity: {fileID: 5157904157934955495, guid: cfda79e3306d245b79491da6f3cebca4, type: 3}
   mergeGraph: {fileID: 11400000, guid: aad126b3c80ae9a488b2428a00ff8c0a, type: 2}
