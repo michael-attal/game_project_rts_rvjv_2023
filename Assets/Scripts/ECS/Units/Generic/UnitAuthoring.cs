@@ -82,7 +82,7 @@ public enum UnitType
 {
     SlimeBasic,
     MecaBasic,
-    SlimeStronger,
+    SlimeStrongerWater,
     MecaStronger
 
     // SlimeFire,
