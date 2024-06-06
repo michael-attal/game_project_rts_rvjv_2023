@@ -26,6 +26,9 @@ public partial struct BaseSpawnerBuildingSystem : ISystem
             return;
         }
 
+        if (configManager.IsGamePaused)
+            return;
+
         // We only want to spawn base spawners players one time. Disabling the system stops subsequent updates.
         state.Enabled = false;
 

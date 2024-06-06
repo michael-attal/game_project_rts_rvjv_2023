@@ -29,6 +29,9 @@ public partial struct UnitMovementSystem : ISystem
             return;
         }
 
+        if (configManager.IsGamePaused)
+            return;
+
         var ecbSystem = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
 
         var unitMovementJob = new UnitMovementJob
