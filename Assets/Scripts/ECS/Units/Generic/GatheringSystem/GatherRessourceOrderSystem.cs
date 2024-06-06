@@ -4,11 +4,12 @@ using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine;
 
-partial struct GatherRessourceOrderSystem : ISystem
+internal partial struct GatherRessourceOrderSystem : ISystem
 {
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<Config>();
         state.RequireForUpdate<UnitSelectable>();
         state.RequireForUpdate<UnitMovement>();
     }
@@ -16,23 +17,35 @@ partial struct GatherRessourceOrderSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
+        var configManager = SystemAPI.GetSingleton<Config>();
+        if (!configManager.ActivateGatheringSystem)
+        {
+            state.Enabled = false;
+            return;
+        }
+
+        if (configManager.IsGamePaused)
+            return;
+
         if (!Input.GetKeyDown(KeyCode.G))
             return;
-        
+
         var ecb = new EntityCommandBuffer(Allocator.Temp);
 
-        foreach (var (transform, entity) in 
+        foreach (var (transform, entity) in
                  SystemAPI.Query<RefRO<LocalTransform>>()
                      .WithAll<UnitSelected, UnitMovement>()
                      .WithEntityAccess())
         {
             if (SystemAPI.HasComponent<GatheringIntent>(entity))
+            {
                 ecb.RemoveComponent<GatheringIntent>(entity);
+            }
             else
             {
-                float minDistance = float.MaxValue;
+                var minDistance = float.MaxValue;
                 Entity? minLocation = null;
-                foreach (var (gatherableTransform, gatherableEntity) in 
+                foreach (var (gatherableTransform, gatherableEntity) in
                          SystemAPI.Query<RefRO<LocalTransform>>()
                              .WithAll<GatherableSpot>()
                              .WithEntityAccess())
@@ -48,17 +61,17 @@ partial struct GatherRessourceOrderSystem : ISystem
 
                 if (minLocation.HasValue)
                 {
-                    ecb.AddComponent(entity, new GatheringIntent()
+                    ecb.AddComponent(entity, new GatheringIntent
                     {
                         AssignedSpot = minLocation.Value
                     });
-                    
+
                     if (SystemAPI.IsComponentEnabled<WantsToMove>(entity))
                         ecb.SetComponentEnabled<WantsToMove>(entity, false);
                 }
             }
         }
-        
+
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
     }

@@ -4,19 +4,30 @@ using Unity.Entities;
 using UnityEngine;
 
 [UpdateAfter(typeof(SeekDepotSystem))]
-partial struct DepositRessourceSystem : ISystem
+internal partial struct DepositRessourceSystem : ISystem
 {
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<Game>();
+        state.RequireForUpdate<Config>();
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
+        var configManager = SystemAPI.GetSingleton<Config>();
+        if (!configManager.ActivateGatheringSystem)
+        {
+            state.Enabled = false;
+            return;
+        }
+
+        if (configManager.IsGamePaused)
+            return;
+
         var ecb = new EntityCommandBuffer(Allocator.Temp);
-        
+
         foreach (var (ressource, entity) in
                  SystemAPI.Query<RefRO<HasRessource>>()
                      .WithAll<DestinationReached, GatheringIntent>()
@@ -29,7 +40,7 @@ partial struct DepositRessourceSystem : ISystem
 
             var move = SystemAPI.GetComponent<WantsToMove>(entity);
             Debug.Log($"Depot when destination is {move.Destination.x} {move.Destination.y} {move.Destination.z}");
-            
+
             ecb.RemoveComponent<HasRessource>(entity);
             ecb.SetComponentEnabled<WantsToMove>(entity, false);
             ecb.RemoveComponent<DestinationReached>(entity);
@@ -40,4 +51,6 @@ partial struct DepositRessourceSystem : ISystem
     }
 }
 
-public struct DepositPoint : IComponentData {}
+public struct DepositPoint : IComponentData
+{
+}

@@ -32,39 +32,42 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
             return;
         }
 
+        if (configManager.IsGamePaused)
+            return;
+
         // NOTE: We have to press multiple time F to merge unit if we have like 50 unit selected.
         if (!Input.GetKeyDown(KeyCode.F))
             return;
-        
+
         // TODO: Implement a component, IsSelected, which is dynamically added or removed when a unit is selected (similar to the IsMovingTag component). This will eliminate the need for a nested loop to determine the number of selected entities, as the where option cannot be used in a Unity ECS query.
 
         var ecb = new EntityCommandBuffer(Allocator.Temp);
-        
+
         var sumPositions = float3.zero;
-        int totalEntities = 0;
-        
+        var totalEntities = 0;
+
         var fusionInfo = new FusionInfo();
-        foreach (var (transform, merge, entity) 
+        foreach (var (transform, merge, entity)
                  in SystemAPI.Query<RefRO<LocalToWorld>, RefRO<SlimeBasicUnitMerge>>()
                      .WithAll<UnitSelected>()
                      .WithEntityAccess())
         {
             ecb.DestroyEntity(entity);
-            
+
             fusionInfo += merge.ValueRO.FusionInfo;
             sumPositions += transform.ValueRO.Position;
             ++totalEntities;
         }
 
         var gameInfo = SystemAPI.GetSingleton<Game>();
-        for (int i = 0; i < gameInfo.SlimeRecipes.Value.Data.Length; ++i)
+        for (var i = 0; i < gameInfo.SlimeRecipes.Value.Data.Length; ++i)
         {
             while (gameInfo.SlimeRecipes.Value.Data[i].Cost <= fusionInfo)
             {
                 fusionInfo -= gameInfo.SlimeRecipes.Value.Data[i].Cost;
-                
+
                 var newEntity = InstantiateEntity(ref state, ecb, gameInfo.SlimeRecipes.Value.Data[i].PrefabId);
-                ecb.SetComponent(newEntity, new LocalTransform()
+                ecb.SetComponent(newEntity, new LocalTransform
                 {
                     Position = sumPositions / totalEntities,
                     Rotation = quaternion.identity,
@@ -72,7 +75,7 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
                 });
             }
         }
-        
+
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
     }
@@ -80,12 +83,12 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
     private Entity InstantiateEntity(ref SystemState state, EntityCommandBuffer ecb, int id)
     {
         var buffer = SystemAPI.GetBuffer<InstantiatableEntityData>(SystemAPI.GetSingletonEntity<Game>());
-        for (int i = 0; i < buffer.Length; ++i)
+        for (var i = 0; i < buffer.Length; ++i)
         {
             if (buffer[i].EntityID == id)
                 return ecb.Instantiate(buffer[i].Entity);
         }
-        
+
         return Entity.Null;
     }
 }
