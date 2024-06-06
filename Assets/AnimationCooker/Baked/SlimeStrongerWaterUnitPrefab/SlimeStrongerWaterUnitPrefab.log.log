@@ -1,0 +1,25 @@
+
+Model: SlimeStrongerWaterUnitPrefab
+Skin: 0, Root Bone: Base
+  24fps, 2048x1024, 33554KB
+Skin: 1, Root Bone: Base
+  24fps, 2048x1024, 33554KB
+Skin: 2, Root Bone: Base
+  24fps, 2048x1024, 33554KB
+Play Shader: AnimationCooker/VtxAnimSimpleLit
+
+Enum Declaration: enabled
+Reset Rotation Before Bake: disabled
+Reset Position Before Bake: disabled
+Reset Scale Before Bake: disabled
+Ignore Bone Meshes: disabled
+Bone Adjust: disabled
+
+Post Domain Reload: enabled
+R10G11B11: enabled
+
+
+Started: 6/6/2024 6:09:23 PM
+Output files were saved to: Assets/ExampleScene/Baked/SlimeStrongerWaterUnitPrefab
+Animation enums saved to: Assets/ExampleScene/Scripts/Generated/AnimEnums.cs
+Completed in 843.6099 seconds.

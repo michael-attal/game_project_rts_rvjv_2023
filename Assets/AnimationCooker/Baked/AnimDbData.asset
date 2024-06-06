@@ -109,3 +109,51 @@ MonoBehaviour:
       Length: 3.9583335
     - ClipName: Move
       Length: 3.9583335
+  - ModelName: SlimeStrongerWaterUnitPrefab
+    Skins:
+    - SkinClips:
+      - BeginFrame: 0
+        EndFrame: 46
+      - BeginFrame: 47
+        EndFrame: 93
+      - BeginFrame: 94
+        EndFrame: 140
+      Width: 2048
+      Height: 1024
+      Interval: 0.041666668
+      Pow2: 11
+      FrameRate: 24
+      VertCount: 14104
+    - SkinClips:
+      - BeginFrame: 0
+        EndFrame: 46
+      - BeginFrame: 47
+        EndFrame: 93
+      - BeginFrame: 94
+        EndFrame: 140
+      Width: 2048
+      Height: 1024
+      Interval: 0.041666668
+      Pow2: 11
+      FrameRate: 24
+      VertCount: 10133
+    - SkinClips:
+      - BeginFrame: 0
+        EndFrame: 46
+      - BeginFrame: 47
+        EndFrame: 93
+      - BeginFrame: 94
+        EndFrame: 140
+      Width: 2048
+      Height: 1024
+      Interval: 0.041666668
+      Pow2: 11
+      FrameRate: 24
+      VertCount: 7527
+    Clips:
+    - ClipName: Idle
+      Length: 1.9583334
+    - ClipName: Attack
+      Length: 1.9583334
+    - ClipName: Move
+      Length: 1.9583334
