@@ -848,7 +848,10 @@ MonoBehaviour:
   ActivateUnitSelectedRendererSystem: 1
   ActivateUnitAttackSystem: 1
   ActivateUnitDamageSystem: 1
+  ActivatePauseScreenSystem: 1
+  IsGamePaused: 0
   ActivateWinConditions: 1
+  ActivateBuildingScreenSystem: 0
   ActivateSlimeBasicUnitMergeSystem: 1
   ActivateMecaBasicUnitUpgradeSystem: 0
   ActivateSwitchFocusCameraToPlayersOnSpacePress: 1

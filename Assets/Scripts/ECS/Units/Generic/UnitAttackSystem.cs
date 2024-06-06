@@ -34,6 +34,9 @@ public partial struct UnitAttackSystem : ISystem
             return;
         }
 
+        if (configManager.IsGamePaused)
+            return;
+
         var ecb = new EntityCommandBuffer(Allocator.Temp);
 
         foreach (var (attackerTransform, attackerInfo, attackerAttack, entity) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<Unit>, RefRW<UnitAttack>>().WithAll<UnitAttack>().WithEntityAccess())
@@ -66,11 +69,7 @@ public partial struct UnitAttackSystem : ISystem
                 {
                     ecb.SetComponent(entity, new AnimationCmdData
                     {
-                        Cmd = AnimationCmd.PlayOnce, ClipIndex = (short)AnimationsType.Attack
-                    });
-                    ecb.SetComponent(entity, new AnimationSpeedData
-                    {
-                        PlaySpeed = attackerAttack.ValueRO.RateOfFire
+                        Cmd = AnimationCmd.PlayOnce, ClipIndex = (short)AnimationsType.Attack, Speed = attackerAttack.ValueRO.RateOfFire
                     });
                     isAttackAnimationPlayed = true;
                     isIdleAnimationPlayed = false;
@@ -88,6 +87,7 @@ public partial struct UnitAttackSystem : ISystem
                     {
                         Cmd = AnimationCmd.SetPlayForever, ClipIndex = (short)AnimationsType.Idle
                     });
+                    // NOTE: The doc states that the Speed in AnimationCmdData only works with PlayOnce and PlayOnceAndStop. Therefore, I need to update it in AnimationSpeedData.
                     ecb.SetComponent(entity, new AnimationSpeedData
                     {
                         PlaySpeed = 1f

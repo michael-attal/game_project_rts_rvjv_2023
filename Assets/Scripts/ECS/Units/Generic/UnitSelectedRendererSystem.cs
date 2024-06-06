@@ -32,6 +32,9 @@ public partial struct UnitSelectedRendererSystem : ISystem
             return;
         }
 
+        if (configManager.IsGamePaused)
+            return;
+
         var spawnManager = SystemAPI.GetSingleton<SpawnManager>();
 
         var ecb = new EntityCommandBuffer(Allocator.TempJob);

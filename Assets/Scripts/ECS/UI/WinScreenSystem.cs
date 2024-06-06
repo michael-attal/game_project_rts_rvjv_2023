@@ -13,15 +13,22 @@ public partial struct WinScreenSystem : ISystem
     // Accessing WinScreenPresenter class, can't use BurstCompile.
     public void OnUpdate(ref SystemState state)
     {
-        if (!SystemAPI.GetSingleton<Config>().ActivateWinConditions)
+        var configManager = SystemAPI.GetSingleton<Config>();
+        if (!configManager.ActivateWinConditions)
+        {
             state.Enabled = false;
+            return;
+        }
+
+        if (configManager.IsGamePaused)
+            return;
 
         if (SystemAPI.GetSingleton<Game>().State != GameState.Running)
             return;
-        
+
         // Count remaining units on both sides
-        int mecaCount = 0;
-        int slimeCount = 0;
+        var mecaCount = 0;
+        var slimeCount = 0;
         foreach (var unit in SystemAPI.Query<RefRO<Unit>>())
         {
             if (unit.ValueRO.SpeciesType == SpeciesType.Slime)
@@ -36,7 +43,7 @@ public partial struct WinScreenSystem : ISystem
         {
             WinScreenSingleton.Instance.DeclareWinner(SpeciesType.Slime);
         }
-        
+
         // Mecas victory
         if (slimeCount == 0)
         {

@@ -12,11 +12,22 @@ internal partial struct BuildingScreenSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<Game>();
+        state.RequireForUpdate<Config>();
     }
 
     // Accessing BuildingScreen, can't use BurstCompile
     public void OnUpdate(ref SystemState state)
     {
+        var configManager = SystemAPI.GetSingleton<Config>();
+        if (!configManager.ActivateBuildingScreenSystem)
+        {
+            state.Enabled = false;
+            return;
+        }
+
+        if (configManager.IsGamePaused)
+            return;
+
         if (!Input.GetMouseButtonDown(0))
             return;
 

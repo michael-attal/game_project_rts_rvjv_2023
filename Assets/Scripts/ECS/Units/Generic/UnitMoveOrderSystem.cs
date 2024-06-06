@@ -33,6 +33,9 @@ internal partial struct UnitMoveOrderSystem : ISystem
             return;
         }
 
+        if (configManager.IsGamePaused)
+            return;
+
         // Get the mouse click event
         var mouseRightClickEventData = state.EntityManager.GetComponentData<MouseRightClickEvent>(mouseManagerEntity);
 
