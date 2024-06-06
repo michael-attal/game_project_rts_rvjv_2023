@@ -5,22 +5,38 @@ using Unity.Mathematics;
 using Unity.Transforms;
 
 [UpdateAfter(typeof(GatherRessourceSystem))]
-partial struct SeekDepotSystem : ISystem
+internal partial struct SeekDepotSystem : ISystem
 {
+    [BurstCompile]
+    public void OnCreate(ref SystemState state)
+    {
+        state.RequireForUpdate<Config>();
+    }
+
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
+        var configManager = SystemAPI.GetSingleton<Config>();
+        if (!configManager.ActivateGatheringSystem)
+        {
+            state.Enabled = false;
+            return;
+        }
+
+        if (configManager.IsGamePaused)
+            return;
+
         var ecb = new EntityCommandBuffer(Allocator.Temp);
-        
+
         foreach (var (transform, entity) in
                  SystemAPI.Query<RefRO<LocalTransform>>()
                      .WithAll<HasRessource, GatheringIntent>()
                      .WithNone<WantsToMove, DestinationReached>()
                      .WithEntityAccess())
         {
-            float minDistance = float.MaxValue;
+            var minDistance = float.MaxValue;
             float3? minLocation = null;
-            foreach (var (depositTransform, localToWorld) in 
+            foreach (var (depositTransform, localToWorld) in
                      SystemAPI.Query<RefRO<LocalTransform>, RefRO<LocalToWorld>>()
                          .WithAll<DepositPoint>())
             {
@@ -35,7 +51,7 @@ partial struct SeekDepotSystem : ISystem
 
             if (minLocation.HasValue)
             {
-                ecb.SetComponent(entity, new WantsToMove()
+                ecb.SetComponent(entity, new WantsToMove
                 {
                     Destination = minLocation.Value
                 });
@@ -43,7 +59,7 @@ partial struct SeekDepotSystem : ISystem
                 ecb.RemoveComponent<DestinationReached>(entity);
             }
         }
-        
+
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
     }

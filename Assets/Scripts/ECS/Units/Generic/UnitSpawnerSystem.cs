@@ -33,6 +33,9 @@ public partial struct UnitSpawnerSystem : ISystem
             return;
         }
 
+        if (configManager.IsGamePaused)
+            return;
+
         var spawnManager = SystemAPI.GetSingleton<SpawnManager>();
 
         if (spawnManager.SpawnUnitWhenPressEnter)

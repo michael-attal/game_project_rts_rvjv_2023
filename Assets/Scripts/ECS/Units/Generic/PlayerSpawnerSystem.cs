@@ -25,6 +25,9 @@ public partial struct PlayerSpawnerSystem : ISystem
             return;
         }
 
+        if (configManager.IsGamePaused)
+            return;
+
         // We only want to spawn players one time. Disabling the system stops subsequent updates.
         state.Enabled = false;
 

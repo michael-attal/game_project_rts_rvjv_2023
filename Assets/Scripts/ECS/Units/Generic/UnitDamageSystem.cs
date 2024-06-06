@@ -27,6 +27,9 @@ public partial struct UnitDamageSystem : ISystem
             return;
         }
 
+        if (configManager.IsGamePaused)
+            return;
+
         var job = new UnitDamageJob
         {
             ECB = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>()

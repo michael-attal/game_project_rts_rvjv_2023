@@ -25,6 +25,9 @@ public partial struct MecaBasicUnitUpgradeSystem : ISystem
             return;
         }
 
+        if (configManager.IsGamePaused)
+            return;
+
         Debug.Log("Upgrade now!");
     }
 }

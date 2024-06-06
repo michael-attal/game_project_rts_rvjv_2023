@@ -34,6 +34,9 @@ public partial struct UnitSelectableSystem : ISystem
             return;
         }
 
+        if (configManager.IsGamePaused)
+            return;
+
         // Check if the left mouse button is clicked down
         if (Input.GetMouseButtonDown(0) && !isClicked)
         {

@@ -25,8 +25,15 @@ public partial struct CameraSystem : ISystem
     // Because this OnUpdate accesses managed objects, it cannot be Burst-compiled.
     public void OnUpdate(ref SystemState state)
     {
-        var config = SystemAPI.GetSingleton<Config>();
-        if (config.ActivateSwitchFocusCameraToPlayersOnSpacePress == false) state.Enabled = false;
+        var configManager = SystemAPI.GetSingleton<Config>();
+        if (configManager.ActivateSwitchFocusCameraToPlayersOnSpacePress == false)
+        {
+            state.Enabled = false;
+            return;
+        }
+
+        if (configManager.IsGamePaused)
+            return;
 
         // Change camera focus on enter to switch between players.
         if (!Input.GetKeyDown(KeyCode.Space))
