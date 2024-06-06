@@ -825,7 +825,7 @@ MonoBehaviour:
   - entityID: ECS_SLIME_UNIT
     entity: {fileID: 392048310712016098, guid: fce1ec0bc862144ba9b48c79a2f70711, type: 3}
   - entityID: ECS_SUPER_SLIME_UNIT
-    entity: {fileID: 5157904157934955495, guid: cfda79e3306d245b79491da6f3cebca4, type: 3}
+    entity: {fileID: 5786252611782199926, guid: f90f636104df74ba581f1be346a37db7, type: 3}
   mergeGraph: {fileID: 11400000, guid: aad126b3c80ae9a488b2428a00ff8c0a, type: 2}
 --- !u!114 &2095053049
 MonoBehaviour:
@@ -852,6 +852,7 @@ MonoBehaviour:
   IsGamePaused: 0
   ActivateWinConditions: 1
   ActivateBuildingScreenSystem: 0
+  ActivateGatheringSystem: 0
   ActivateSlimeBasicUnitMergeSystem: 1
   ActivateMecaBasicUnitUpgradeSystem: 0
   ActivateSwitchFocusCameraToPlayersOnSpacePress: 1
