@@ -26,28 +26,18 @@ public partial struct WinScreenSystem : ISystem
         if (SystemAPI.GetSingleton<Game>().State != GameState.Running)
             return;
 
-        // Count remaining units on both sides
-        var mecaCount = 0;
-        var slimeCount = 0;
-        foreach (var unit in SystemAPI.Query<RefRO<Unit>>())
-        {
-            if (unit.ValueRO.SpeciesType == SpeciesType.Slime)
-                slimeCount++;
-            else
-                mecaCount++;
-        }
+        // NOTE: Count remaining units on both sides (faster with CalculateEntityCount)
+        var slimeCount = SystemAPI.QueryBuilder().WithAll<Unit, SlimeUnitTag>().Build().CalculateEntityCount();
+        var mecaCount = SystemAPI.QueryBuilder().WithAll<Unit, MecaUnitTag>().Build().CalculateEntityCount();
 
-        // Check victory on both sides
-        // Slimes victory
-        if (mecaCount == 0)
-        {
-            WinScreenSingleton.Instance.DeclareWinner(SpeciesType.Slime);
-        }
-
-        // Mecas victory
+        // Meca victory
         if (slimeCount == 0)
         {
             WinScreenSingleton.Instance.DeclareWinner(SpeciesType.Meca);
+        }
+        else if (mecaCount == 0)
+        {
+            WinScreenSingleton.Instance.DeclareWinner(SpeciesType.Slime);
         }
     }
 }

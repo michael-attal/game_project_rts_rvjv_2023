@@ -59,6 +59,15 @@ public class UnitAuthoring : MonoBehaviour
             });
 
             AddComponent<Velocity>(entity);
+
+            if (authoring.SpeciesType == SpeciesType.Slime)
+            {
+                AddComponent<SlimeUnitTag>(entity);
+            }
+            else
+            {
+                AddComponent<MecaUnitTag>(entity);
+            }
         }
     }
 }
@@ -79,6 +88,14 @@ public enum UnitType
     // SlimeFire,
     // SlimeWater,
     // ...
+}
+
+public struct SlimeUnitTag : IComponentData
+{
+}
+
+public struct MecaUnitTag : IComponentData
+{
 }
 
 public struct Unit : IComponentData
