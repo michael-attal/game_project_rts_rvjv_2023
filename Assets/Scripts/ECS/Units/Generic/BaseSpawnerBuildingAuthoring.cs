@@ -30,6 +30,9 @@ public class BaseSpawnerBuildingAuthoring : MonoBehaviour
                 UnitInitialPosition = authoring.SpawnedUnitInitialPosition,
                 UnitInitialScale = authoring.SpawnedUnitInitialScale
             });
+            AddComponent<UnitSelected>(entity);
+            SetComponentEnabled<UnitSelected>(entity, false);
+            AddComponent<UnitSelectable>(entity);
         }
     }
 }
