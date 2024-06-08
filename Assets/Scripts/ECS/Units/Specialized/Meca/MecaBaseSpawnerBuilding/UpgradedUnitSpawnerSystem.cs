@@ -11,7 +11,7 @@ using UnityEngine;
 // If the unit spawning system differs significantly between units, we should implement a specialized system, such as MySlimeUnitSpawningSystem, instead of a generic one like this one.
 [BurstCompile]
 [UpdateBefore(typeof(TransformSystemGroup))]
-public partial struct UnitSpawnerSystem : ISystem
+public partial struct UpgradedUnitSpawnerSystem : ISystem
 {
     [BurstCompile]
     public void OnCreate(ref SystemState state)
@@ -33,9 +33,6 @@ public partial struct UnitSpawnerSystem : ISystem
             return;
         }
 
-        if (configManager.IsGamePaused)
-            return;
-
         var spawnManager = SystemAPI.GetSingleton<SpawnManager>();
 
         if (spawnManager.SpawnUnitWhenPressEnter)
@@ -47,29 +44,25 @@ public partial struct UnitSpawnerSystem : ISystem
 
         var ecbJob = new EntityCommandBuffer(Allocator.TempJob);
 
-        foreach (var (transform, spawner) 
-                 in SystemAPI.Query<RefRO<LocalTransform>, RefRW<BaseSpawnerBuilding>>()
-                     .WithNone<SpawnerUpgradesRegisterAuthoring>())
+        foreach (var (transform, spawner, upgrades) 
+                 in SystemAPI.Query<RefRO<LocalTransform>, RefRW<BaseSpawnerBuilding>, RefRO<SpawnerUpgradesRegister>>())
         {
             if (spawner.ValueRO.TimeToNextGeneration > 0f)
             {
                 spawner.ValueRW.TimeToNextGeneration -= SystemAPI.Time.DeltaTime;
                 continue;
             }
-
             spawner.ValueRW.TimeToNextGeneration = spawner.ValueRO.GenerationInterval;
 
-            var unitSpawnJob = new UnitSpawnJob
+            var unitSpawnJob = new UpgradedUnitSpawnJob
             {
                 CommandBuffer = ecbJob.AsParallelWriter(),
                 Prefab = spawner.ValueRO.SpawnedUnitPrefab,
-                UnitPosition = spawner.ValueRO.UnitInitialPosition,
-                UnitRotation = spawner.ValueRO.UnitInitialRotation,
-                UnitScale = spawner.ValueRO.UnitInitialScale,
                 BasePosition = transform.ValueRO.Position, // Spawn a unit, position it at near the base spawner player's location
                 TotalUnits = spawner.ValueRO.NbOfUnitPerBase,
                 UnitSpace = 2f, // NOTE: Default space to 2f for x and y axis
-                GroupUnitsBy = GroupUnitShape.Line
+                GroupUnitsBy = GroupUnitShape.Line,
+                UpgradesRegister = upgrades.ValueRO
             };
             var unitSpawnJobHandler = unitSpawnJob.Schedule((int)spawner.ValueRO.NbOfUnitPerBase, 64, state.Dependency);
             state.Dependency = unitSpawnJobHandler;
@@ -90,25 +83,16 @@ public partial struct UnitSpawnerSystem : ISystem
     }
 }
 
-public enum GroupUnitShape
-{
-    BlocsSquare,
-    Square,
-    Line
-}
-
 [BurstCompile]
-public struct UnitSpawnJob : IJobParallelFor
+public struct UpgradedUnitSpawnJob : IJobParallelFor
 {
     public EntityCommandBuffer.ParallelWriter CommandBuffer;
     public Entity Prefab;
-    public float3 UnitPosition;
-    public Quaternion UnitRotation;
-    public float UnitScale;
     public float3 BasePosition;
     public uint TotalUnits;
     public float UnitSpace;
     public GroupUnitShape GroupUnitsBy;
+    public SpawnerUpgradesRegister UpgradesRegister;
 
     public void Execute(int index)
     {
@@ -180,8 +164,16 @@ public struct UnitSpawnJob : IJobParallelFor
         CommandBuffer.SetComponent(index, instance, new LocalTransform
         {
             Position = position,
-            Rotation = UnitRotation,
-            Scale = UnitScale
+            Rotation = quaternion.identity,
+            Scale = 1
         });
+        ApplyUpgrades(index, instance);
+    }
+
+    private void ApplyUpgrades(int index, Entity entity)
+    {
+        Debug.Log("Applying upgrades...");
+        if (UpgradesRegister.HasGlassCannon)
+            CommandBuffer.AddComponent<GlassCannonUpgrade>(index, entity);
     }
 }
