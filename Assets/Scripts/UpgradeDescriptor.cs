@@ -14,9 +14,3 @@ public class UpgradeDescriptor : ScriptableObject
     [TextArea] public string description;
     public MecaUpgrade upgrade;
 }
-
-[CreateAssetMenu(menuName = "Rust Vs Goo/Mecas/UpgradeGraph", fileName = "UpgradeGraph")]
-public class UpgradeGraph : ScriptableObject
-{
-    public List<UpgradeDescriptor> upgrades;
-}
