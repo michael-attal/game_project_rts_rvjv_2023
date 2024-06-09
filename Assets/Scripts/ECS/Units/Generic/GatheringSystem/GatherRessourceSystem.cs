@@ -10,7 +10,6 @@ internal partial struct GatherRessourceSystem : ISystem
     {
         state.RequireForUpdate<Config>();
         state.RequireForUpdate<GatheringIntent>();
-        state.RequireForUpdate<UnitMovement>();
     }
 
     [BurstCompile]
@@ -27,7 +26,6 @@ internal partial struct GatherRessourceSystem : ISystem
             return;
 
         var ecb = new EntityCommandBuffer(Allocator.Temp);
-
 
         foreach (var (gatherer, entity) in
                  SystemAPI.Query<RefRO<GatheringIntent>>()

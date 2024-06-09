@@ -10,8 +10,14 @@ public class ConfigAuthoring : MonoBehaviour
     public bool ActivateUnitSpawnerSystem;
     public bool ActivateUnitSelectableSystem;
     public bool ActivateSelectionRectResizeSystem;
+    public bool ActivateMoveOrderSystem;
     public bool ActivateUnitMovementSystem;
+    public bool ActivateMovementManualSystem;
+    public bool ActivateMovementVelocitySystem;
+    public bool ActivateMovementPositionMotorSystem;
+    public bool ActivateDestinationReachedCleanupSystem;
     public bool ActivateUnitSelectedRendererSystem;
+    public bool ActivateProjectileRendererSystem;
     public bool ActivateUnitAttackSystem;
     public bool ActivateUnitDamageSystem;
     public bool ActivatePauseScreenSystem;
@@ -21,6 +27,7 @@ public class ConfigAuthoring : MonoBehaviour
     public bool ActivateGatheringSystem;
     public bool ActivateSlimeBasicUnitMergeSystem;
     public bool ActivateMecaBasicUnitUpgradeSystem;
+
     public bool ActivateSwitchFocusCameraToPlayersOnSpacePress;
 
     public static Config UpdateConfigWithPause(Config currentConfig, bool isPaused)
@@ -32,17 +39,23 @@ public class ConfigAuthoring : MonoBehaviour
             ActivateUnitSpawnerSystem = currentConfig.ActivateUnitSpawnerSystem,
             ActivateUnitSelectableSystem = currentConfig.ActivateUnitSelectableSystem,
             ActivateSelectionRectResizeSystem = currentConfig.ActivateSelectionRectResizeSystem,
+            ActivateMoveOrderSystem = currentConfig.ActivateMoveOrderSystem,
             ActivateUnitMovementSystem = currentConfig.ActivateUnitMovementSystem,
+            ActivateMovementPositionMotorSystem = currentConfig.ActivateMovementPositionMotorSystem,
             ActivateUnitSelectedRendererSystem = currentConfig.ActivateUnitSelectedRendererSystem,
+            ActivateProjectileRendererSystem = currentConfig.ActivateProjectileRendererSystem,
             ActivateUnitAttackSystem = currentConfig.ActivateUnitAttackSystem,
             ActivateUnitDamageSystem = currentConfig.ActivateUnitDamageSystem,
             ActivatePauseScreenSystem = currentConfig.ActivatePauseScreenSystem,
             IsGamePaused = isPaused, // Here
             ActivateWinConditions = currentConfig.ActivateWinConditions,
-            ActivateGatheringSystem = currentConfig.ActivateBuildingScreenSystem,
             ActivateBuildingScreenSystem = currentConfig.ActivateBuildingScreenSystem,
+            ActivateGatheringSystem = currentConfig.ActivateGatheringSystem,
             ActivateSlimeBasicUnitMergeSystem = currentConfig.ActivateSlimeBasicUnitMergeSystem,
             ActivateMecaBasicUnitUpgradeSystem = currentConfig.ActivateMecaBasicUnitUpgradeSystem,
+            ActivateDestinationReachedCleanupSystem = currentConfig.ActivateDestinationReachedCleanupSystem,
+            ActivateMovementManualSystem = currentConfig.ActivateMovementManualSystem,
+            ActivateMovementVelocitySystem = currentConfig.ActivateMovementVelocitySystem,
             ActivateSwitchFocusCameraToPlayersOnSpacePress =
                 currentConfig.ActivateSwitchFocusCameraToPlayersOnSpacePress
         };
@@ -67,8 +80,11 @@ public class ConfigAuthoring : MonoBehaviour
                 ActivateUnitSpawnerSystem = authoring.ActivateUnitSpawnerSystem,
                 ActivateUnitSelectableSystem = authoring.ActivateUnitSelectableSystem,
                 ActivateSelectionRectResizeSystem = authoring.ActivateSelectionRectResizeSystem,
+                ActivateMoveOrderSystem = authoring.ActivateMoveOrderSystem,
                 ActivateUnitMovementSystem = authoring.ActivateUnitMovementSystem,
+                ActivateMovementPositionMotorSystem = authoring.ActivateMovementPositionMotorSystem,
                 ActivateUnitSelectedRendererSystem = authoring.ActivateUnitSelectedRendererSystem,
+                ActivateProjectileRendererSystem = authoring.ActivateProjectileRendererSystem,
                 ActivateUnitAttackSystem = authoring.ActivateUnitAttackSystem,
                 ActivateUnitDamageSystem = authoring.ActivateUnitDamageSystem,
                 ActivatePauseScreenSystem = authoring.ActivatePauseScreenSystem,
@@ -78,6 +94,9 @@ public class ConfigAuthoring : MonoBehaviour
                 ActivateGatheringSystem = authoring.ActivateGatheringSystem,
                 ActivateSlimeBasicUnitMergeSystem = authoring.ActivateSlimeBasicUnitMergeSystem,
                 ActivateMecaBasicUnitUpgradeSystem = authoring.ActivateMecaBasicUnitUpgradeSystem,
+                ActivateDestinationReachedCleanupSystem = authoring.ActivateDestinationReachedCleanupSystem,
+                ActivateMovementManualSystem = authoring.ActivateMovementManualSystem,
+                ActivateMovementVelocitySystem = authoring.ActivateMovementVelocitySystem,
 
                 ActivateSwitchFocusCameraToPlayersOnSpacePress =
                     authoring.ActivateSwitchFocusCameraToPlayersOnSpacePress
@@ -95,8 +114,14 @@ public struct Config : IComponentData
     public bool ActivateUnitSpawnerSystem;
     public bool ActivateUnitSelectableSystem;
     public bool ActivateSelectionRectResizeSystem;
+    public bool ActivateMoveOrderSystem;
     public bool ActivateUnitMovementSystem;
+    public bool ActivateMovementManualSystem;
+    public bool ActivateMovementVelocitySystem;
+    public bool ActivateMovementPositionMotorSystem;
+    public bool ActivateDestinationReachedCleanupSystem;
     public bool ActivateUnitSelectedRendererSystem;
+    public bool ActivateProjectileRendererSystem;
     public bool ActivateUnitAttackSystem;
     public bool ActivateUnitDamageSystem;
     public bool ActivatePauseScreenSystem;
