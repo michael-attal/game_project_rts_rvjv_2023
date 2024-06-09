@@ -162,22 +162,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SpeciesType: 0
   UnitType: 0
-  BakedPrefabName: SlimeBasicUnitPrefab
   IsMovementAnimated: 1
   UnitSpeed: 10
   MovementType: 0
-  AxisBlockedForMovementWithPositionMotor:
+  AxisBlockedForMovementPositionMotor:
     x: 0
     y: 0
     z: 0
-  PerpendicularAxisForMovementWithPositionMotor:
+  PerpendicularAxisForMovementPositionMotor:
     x: 0
     y: 0
     z: 0
   UnitStandardHealth: 100
   UnitAttackType: 0
   UnitAttack: 10
-  UnitRange: 3
+  UnitRange: 4
   UnitRateOfFire: 3
   IsAttackAnimated: 1
 --- !u!114 &-5628424398251226775
