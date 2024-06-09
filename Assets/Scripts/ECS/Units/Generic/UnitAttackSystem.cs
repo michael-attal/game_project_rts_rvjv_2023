@@ -2,6 +2,7 @@ using AnimCooker;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 using Unity.Transforms;
 
 [UpdateBefore(typeof(TransformSystemGroup))]
@@ -39,7 +40,7 @@ public partial struct UnitAttackSystem : ISystem
 
         var ecb = new EntityCommandBuffer(Allocator.Temp);
 
-        foreach (var (attackerTransform, attackerInfo, attackerAttack, entity) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<Unit>, RefRW<UnitAttack>>().WithAll<UnitAttack>().WithEntityAccess())
+        foreach (var (attackerTransform, attackerInfo, attackerAttack, entity) in SystemAPI.Query<RefRW<LocalTransform>, RefRO<Unit>, RefRW<UnitAttack>>().WithAll<UnitAttack>().WithEntityAccess())
         {
             if (attackerAttack.ValueRO.CurrentReloadTime > 0f)
             {
@@ -49,23 +50,25 @@ public partial struct UnitAttackSystem : ISystem
 
             var attackerPos = attackerTransform.ValueRO.Position;
             RefRW<UnitDamage>? target = null;
+            var attackablePos = float3.zero;
             var minimumRange = attackerAttack.ValueRO.Range;
 
             foreach (var (attackableTransform, attackableInfo, attackableDamage) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<Unit>, RefRW<UnitDamage>>().WithAll<UnitDamage>())
             {
-                var attackablePos = attackableTransform.ValueRO.Position;
+                attackablePos = attackableTransform.ValueRO.Position;
 
                 var currentDistance = attackerPos.DistanceTo(attackablePos);
                 if (currentDistance <= minimumRange && attackerInfo.ValueRO.SpeciesType != attackableInfo.ValueRO.SpeciesType)
                 {
                     target = attackableDamage;
                     minimumRange = currentDistance;
+                    break; // NOTE: When a target is find, exit the loop
                 }
             }
 
             if (target.HasValue)
             {
-                if (isAttackAnimationPlayed == false)
+                if (isAttackAnimationPlayed == false && attackerAttack.ValueRO.IsAttackAnimated)
                 {
                     ecb.SetComponent(entity, new AnimationCmdData
                     {
@@ -75,12 +78,24 @@ public partial struct UnitAttackSystem : ISystem
                     isIdleAnimationPlayed = false;
                 }
 
+                if (attackerAttack.ValueRO.UnitAttackType == UnitAttackType.Ranged)
+                {
+                    ecb.SetComponent(entity, new WantsToThrowProjectile
+                    {
+                        Destination = attackablePos
+                    });
+                    ecb.SetComponentEnabled<WantsToThrowProjectile>(entity, true);
+                }
+
+                var direction = math.normalize(new float3(attackablePos.x - attackerTransform.ValueRO.Position.x, 0, attackablePos.z - attackerTransform.ValueRO.Position.z));
+                ; // Rotate the attacker towards the enemy.
+                attackerTransform.ValueRW.Rotation = quaternion.LookRotationSafe(direction, math.up());
                 target.Value.ValueRW.Health -= attackerAttack.ValueRO.Strength;
                 attackerAttack.ValueRW.CurrentReloadTime = attackerAttack.ValueRO.RateOfFire;
             }
             else
             {
-                if (isIdleAnimationPlayed == false)
+                if (isIdleAnimationPlayed == false && attackerAttack.ValueRO.IsAttackAnimated)
                 {
                     // NOTE: Reset animation state
                     ecb.SetComponent(entity, new AnimationCmdData

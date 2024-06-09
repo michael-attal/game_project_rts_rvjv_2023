@@ -11,7 +11,6 @@ internal partial struct GatherRessourceOrderSystem : ISystem
     {
         state.RequireForUpdate<Config>();
         state.RequireForUpdate<UnitSelectable>();
-        state.RequireForUpdate<UnitMovement>();
     }
 
     [BurstCompile]
@@ -34,7 +33,8 @@ internal partial struct GatherRessourceOrderSystem : ISystem
 
         foreach (var (transform, entity) in
                  SystemAPI.Query<RefRO<LocalTransform>>()
-                     .WithAll<UnitSelected, UnitMovement>()
+                     .WithAll<UnitSelected>()
+                     .WithAny<MovementManual, MovementVelocity, MovementPositionMotor>()
                      .WithEntityAccess())
         {
             if (SystemAPI.HasComponent<GatheringIntent>(entity))

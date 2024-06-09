@@ -27,12 +27,15 @@ public partial struct UpgradedUnitSpawnerSystem : ISystem
     {
         var configManager = SystemAPI.GetSingleton<Config>();
 
-        if (!configManager.ActivateUnitSpawnerSystem)
+        if (!configManager.ActivateMecaBasicUnitUpgradeSystem)
         {
             state.Enabled = false;
             return;
         }
 
+        if (configManager.IsGamePaused)
+            return;
+        
         var spawnManager = SystemAPI.GetSingleton<SpawnManager>();
 
         if (spawnManager.SpawnUnitWhenPressEnter)
@@ -58,6 +61,9 @@ public partial struct UpgradedUnitSpawnerSystem : ISystem
             {
                 CommandBuffer = ecbJob.AsParallelWriter(),
                 Prefab = spawner.ValueRO.SpawnedUnitPrefab,
+                UnitPosition = spawner.ValueRO.UnitInitialPosition,
+                UnitRotation = spawner.ValueRO.UnitInitialRotation,
+                UnitScale = spawner.ValueRO.UnitInitialScale,
                 BasePosition = transform.ValueRO.Position, // Spawn a unit, position it at near the base spawner player's location
                 TotalUnits = spawner.ValueRO.NbOfUnitPerBase,
                 UnitSpace = 2f, // NOTE: Default space to 2f for x and y axis
@@ -88,6 +94,9 @@ public struct UpgradedUnitSpawnJob : IJobParallelFor
 {
     public EntityCommandBuffer.ParallelWriter CommandBuffer;
     public Entity Prefab;
+    public float3 UnitPosition;
+    public Quaternion UnitRotation;
+    public float UnitScale;
     public float3 BasePosition;
     public uint TotalUnits;
     public float UnitSpace;
@@ -164,8 +173,8 @@ public struct UpgradedUnitSpawnJob : IJobParallelFor
         CommandBuffer.SetComponent(index, instance, new LocalTransform
         {
             Position = position,
-            Rotation = quaternion.identity,
-            Scale = 1
+            Rotation = UnitRotation,
+            Scale = UnitScale
         });
         ApplyUpgrades(index, instance);
     }

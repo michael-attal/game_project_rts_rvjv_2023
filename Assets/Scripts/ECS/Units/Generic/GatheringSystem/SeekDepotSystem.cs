@@ -1,3 +1,4 @@
+using AnimCooker;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -57,6 +58,20 @@ internal partial struct SeekDepotSystem : ISystem
                 });
                 ecb.SetComponentEnabled<WantsToMove>(entity, true);
                 ecb.RemoveComponent<DestinationReached>(entity);
+
+                // TODO: If we allow buildings to seek depot adapt this code
+                if (SystemAPI.HasComponent<Unit>(entity) && SystemAPI.HasComponent<AnimationCmdData>(entity))
+                {
+                    // NOTE: Start move animation
+                    ecb.SetComponent(entity, new AnimationCmdData
+                    {
+                        Cmd = AnimationCmd.SetPlayForever, ClipIndex = (short)AnimationsType.Move
+                    });
+                    ecb.SetComponent(entity, new AnimationSpeedData
+                    {
+                        PlaySpeed = SystemAPI.GetComponent<Unit>(entity).UnitSpeed
+                    });
+                }
             }
         }
 
