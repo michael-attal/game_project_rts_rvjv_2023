@@ -1043,8 +1043,14 @@ MonoBehaviour:
   ActivateUnitSpawnerSystem: 1
   ActivateUnitSelectableSystem: 1
   ActivateSelectionRectResizeSystem: 1
+  ActivateMoveOrderSystem: 1
   ActivateUnitMovementSystem: 1
+  ActivateMovementManualSystem: 1
+  ActivateMovementVelocitySystem: 1
+  ActivateMovementPositionMotorSystem: 0
+  ActivateDestinationReachedCleanupSystem: 1
   ActivateUnitSelectedRendererSystem: 1
+  ActivateProjectileRendererSystem: 1
   ActivateUnitAttackSystem: 1
   ActivateUnitDamageSystem: 1
   ActivatePauseScreenSystem: 1

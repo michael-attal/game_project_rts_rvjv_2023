@@ -29,3 +29,7 @@ public struct Building : IComponentData
 {
     public BuildingType BuildingType;
 }
+
+public struct BuildingSelected : IComponentData, IEnableableComponent
+{
+}
