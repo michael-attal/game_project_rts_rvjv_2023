@@ -162,7 +162,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SpeciesType: 0
   UnitType: 2
-  BakedPrefabName: SlimeStrongerWaterUnitPrefab
   IsMovementAnimated: 1
   UnitSpeed: 5
   MovementType: 0
@@ -177,7 +176,7 @@ MonoBehaviour:
   UnitStandardHealth: 1000
   UnitAttackType: 1
   UnitAttack: 50
-  UnitRange: 20
+  UnitRange: 15
   UnitRateOfFire: 0.5
   IsAttackAnimated: 1
 --- !u!114 &4767943786188371133
