@@ -5,13 +5,12 @@ using Unity.Entities;
 using ISystem = Unity.Entities.ISystem;
 using SystemState = Unity.Entities.SystemState;
 
+[UpdateAfter(typeof(MovementManualSystem))]
 [UpdateAfter(typeof(MovementVelocitySystem))]
 [UpdateAfter(typeof(MovementPositionMotorSystem))]
-[UpdateAfter(typeof(MovementManualSystem))]
+[BurstCompile]
 internal partial struct DestinationReachedCleanupSystem : ISystem
 {
-    private int lastClickID;
-
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
@@ -21,8 +20,6 @@ internal partial struct DestinationReachedCleanupSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        var ecb = new EntityCommandBuffer(Allocator.Temp);
-
         var configManager = SystemAPI.GetSingleton<Config>();
 
         if (!configManager.ActivateDestinationReachedCleanupSystem)
@@ -33,6 +30,8 @@ internal partial struct DestinationReachedCleanupSystem : ISystem
 
         if (configManager.IsGamePaused)
             return;
+
+        var ecb = new EntityCommandBuffer(Allocator.Temp);
 
         // NOTE: Set Idle animation back when destination reached
         foreach (var (reached, entity) in SystemAPI

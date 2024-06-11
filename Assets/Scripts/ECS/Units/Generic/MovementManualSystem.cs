@@ -3,8 +3,8 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 
-[BurstCompile]
 [UpdateBefore(typeof(TransformSystemGroup))]
+[BurstCompile]
 public partial struct MovementManualSystem : ISystem
 {
     private float deltaTime;
