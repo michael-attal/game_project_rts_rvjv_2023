@@ -5,6 +5,7 @@ using Unity.Transforms;
 using UnityEngine;
 
 [UpdateBefore(typeof(TransformSystemGroup))]
+[BurstCompile]
 public partial struct UnitSelectableSystem : ISystem
 {
     private const float minimumSelectionArea = 12f;

@@ -766,6 +766,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1206889699
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1206889701}
+  - component: {fileID: 1206889700}
+  m_Layer: 0
+  m_Name: ParticleManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1206889700
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1206889699}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c93bcfd12f9f1448ba33cad6292e82d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ParticleGeneratorPrefab: {fileID: 4834932303984659504, guid: beb3eb646753f44608fad23f7caa0fbe, type: 3}
+--- !u!4 &1206889701
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1206889699}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1349165427
 GameObject:
   m_ObjectHideFlags: 0
@@ -972,7 +1017,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 822040cd9f3314bf790235ea1d9fa180, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ActivateRightClickEventSystem: 1
+  activateRightClickEventSystem: 1
 --- !u!4 &1405089680
 Transform:
   m_ObjectHideFlags: 0
@@ -1038,29 +1083,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 183a8500e7c3a43acafd3cccbdc7bcde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ActivatePlayerSpawnerSystem: 1
-  ActivateBaseSpawnerBuildingSystem: 1
-  ActivateUnitSpawnerSystem: 1
-  ActivateUnitSelectableSystem: 1
-  ActivateSelectionRectResizeSystem: 1
-  ActivateMoveOrderSystem: 1
-  ActivateUnitMovementSystem: 1
-  ActivateMovementManualSystem: 1
-  ActivateMovementVelocitySystem: 1
-  ActivateMovementPositionMotorSystem: 0
-  ActivateDestinationReachedCleanupSystem: 1
-  ActivateUnitSelectedRendererSystem: 1
-  ActivateProjectileRendererSystem: 1
-  ActivateUnitAttackSystem: 1
-  ActivateUnitDamageSystem: 1
-  ActivatePauseScreenSystem: 1
-  IsGamePaused: 0
-  ActivateWinConditions: 1
-  ActivateBuildingScreenSystem: 1
-  ActivateGatheringSystem: 1
-  ActivateSlimeBasicUnitMergeSystem: 1
-  ActivateMecaBasicUnitUpgradeSystem: 1
-  ActivateSwitchFocusCameraToPlayersOnSpacePress: 0
+  activatePlayerSpawnerSystem: 1
+  activateBaseSpawnerBuildingSystem: 1
+  activateUnitSpawnerSystem: 1
+  activateUnitSelectableSystem: 1
+  activateSelectionRectResizeSystem: 1
+  activateMoveOrderSystem: 1
+  activateUnitMovementSystem: 1
+  activateMovementManualSystem: 1
+  activateMovementVelocitySystem: 1
+  activateMovementPositionMotorSystem: 0
+  activateDestinationReachedCleanupSystem: 1
+  activateUnitSelectedRendererSystem: 1
+  activateProjectileRendererSystem: 1
+  activateUnitAttackSystem: 1
+  activateUnitDamageSystem: 1
+  activatePauseScreenSystem: 1
+  isGamePaused: 0
+  activateWinConditions: 1
+  activateBuildingScreenSystem: 1
+  activateGatheringSystem: 1
+  activateSlimeBasicUnitMergeSystem: 1
+  activateMecaBasicUnitUpgradeSystem: 1
+  activateParticleSystems: 1
+  activateSwitchFocusCameraToPlayersOnSpacePress: 0
 --- !u!4 &1732016748
 Transform:
   m_ObjectHideFlags: 0
@@ -1471,6 +1517,7 @@ SceneRoots:
   - {fileID: 1802175985}
   - {fileID: 1405089680}
   - {fileID: 1383968348}
+  - {fileID: 1206889701}
   - {fileID: 908765153}
   - {fileID: 622708283}
   - {fileID: 248255555}
