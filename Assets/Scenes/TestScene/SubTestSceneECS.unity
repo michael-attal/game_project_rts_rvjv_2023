@@ -1151,6 +1151,7 @@ MonoBehaviour:
   activateSlimeBasicUnitMergeSystem: 1
   activateMecaBasicUnitUpgradeSystem: 0
   activateParticleSystems: 1
+  unitMovementFormationType: 0
   activateSwitchFocusCameraToPlayersOnSpacePress: 0
 --- !u!4 &2095053050
 Transform:
