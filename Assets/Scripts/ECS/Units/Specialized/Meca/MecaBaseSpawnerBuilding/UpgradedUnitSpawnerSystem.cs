@@ -181,8 +181,16 @@ public struct UpgradedUnitSpawnJob : IJobParallelFor
 
     private void ApplyUpgrades(int index, Entity entity)
     {
-        Debug.Log("Applying upgrades...");
         if (UpgradesRegister.HasGlassCannon)
             CommandBuffer.AddComponent<GlassCannonUpgrade>(index, entity);
+        
+        if (UpgradesRegister.HasArtillery)
+            CommandBuffer.AddComponent<ArtilleryUpgrade>(index, entity);
+
+        if (UpgradesRegister.HasGatling)
+            CommandBuffer.AddComponent<GatlingUpgrade>(index, entity);
+        
+        if (UpgradesRegister.HasScout)
+            CommandBuffer.AddComponent<ScoutUpgrade>(index, entity);
     }
 }

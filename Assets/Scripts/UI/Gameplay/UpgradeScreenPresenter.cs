@@ -32,7 +32,6 @@ public class UpgradeScreenPresenter : MonoBehaviour
         
         foreach (var upgrade in _upgradeGraph.upgrades)
         {
-            Debug.Log("Test");
             var upgradeItem = Instantiate(_upgradePrefab, _availableUpgradesParent);
             upgradeItem.Present(upgrade);
             upgradeItem.Button.onClick.AddListener(() =>
@@ -88,6 +87,15 @@ public class UpgradeScreenPresenter : MonoBehaviour
             {
                 case MecaUpgrade.GLASS_CANNON:
                     upgradeComponent.HasGlassCannon = true;
+                    break;
+                case MecaUpgrade.ARTILLERY:
+                    upgradeComponent.HasArtillery = true;
+                    break;
+                case MecaUpgrade.GATLING:
+                    upgradeComponent.HasGatling = true;
+                    break;
+                case MecaUpgrade.SCOUT:
+                    upgradeComponent.HasScout = true;
                     break;
             }
         }
