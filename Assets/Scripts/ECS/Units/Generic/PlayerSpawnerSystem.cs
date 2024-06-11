@@ -5,6 +5,7 @@ using Unity.Transforms;
 using UnityEngine;
 
 [UpdateBefore(typeof(TransformSystemGroup))]
+[BurstCompile]
 public partial struct PlayerSpawnerSystem : ISystem
 {
     [BurstCompile]

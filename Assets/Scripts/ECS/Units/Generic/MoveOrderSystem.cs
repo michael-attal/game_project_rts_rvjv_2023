@@ -25,10 +25,7 @@ internal partial struct MoveOrderSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        var ecb = new EntityCommandBuffer(Allocator.Temp);
-
         var configManager = SystemAPI.GetSingleton<Config>();
-        var mouseManagerEntity = SystemAPI.GetSingletonEntity<MouseManager>();
 
         if (!configManager.ActivateMoveOrderSystem)
         {
@@ -38,6 +35,10 @@ internal partial struct MoveOrderSystem : ISystem
 
         if (configManager.IsGamePaused)
             return;
+        
+        var ecb = new EntityCommandBuffer(Allocator.Temp);
+        
+        var mouseManagerEntity = SystemAPI.GetSingletonEntity<MouseManager>();
 
         // Get the mouse click event
         var mouseRightClickEventData = state.EntityManager.GetComponentData<MouseRightClickEvent>(mouseManagerEntity);

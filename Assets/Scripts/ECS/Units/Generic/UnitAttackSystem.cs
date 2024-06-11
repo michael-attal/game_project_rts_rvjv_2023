@@ -6,6 +6,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 
 [UpdateBefore(typeof(TransformSystemGroup))]
+[BurstCompile]
 public partial struct UnitAttackSystem : ISystem
 {
     // NOTE: Ensure that we don't update every frame the animation

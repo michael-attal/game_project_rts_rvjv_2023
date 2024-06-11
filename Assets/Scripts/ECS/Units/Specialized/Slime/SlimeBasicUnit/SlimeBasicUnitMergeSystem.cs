@@ -60,6 +60,7 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
         }
 
         var gameInfo = SystemAPI.GetSingleton<Game>();
+        var particleManager = SystemAPI.GetSingleton<ParticleManager>();
         for (var i = 0; i < gameInfo.SlimeRecipes.Value.Data.Length; ++i)
         {
             while (gameInfo.SlimeRecipes.Value.Data[i].Cost <= fusionInfo)
@@ -68,6 +69,25 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
 
                 var newEntity = InstantiateEntity(ref state, ecb, gameInfo.SlimeRecipes.Value.Data[i].PrefabId);
                 ecb.SetComponent(newEntity, new LocalTransform
+                {
+                    Position = sumPositions / totalEntities,
+                    Rotation = quaternion.identity,
+                    Scale = 1f
+                });
+
+                // TODO: Refactor this and instantiate multiple generator for better effect
+                var particleGenerator = ecb.Instantiate(particleManager.ParticleGeneratorPrefab);
+                ecb.SetComponent(particleGenerator, new ParticleGeneratorData
+                {
+                    Rate = 5f,
+                    LifetimeOfGenerator = 1f,
+                    LifetimeOfParticle = 1f,
+                    Size = 1f,
+                    Speed = 2f,
+                    Direction = new float3(0, 1, 0),
+                    Color = new float4(0, 0, 1, 1)
+                });
+                ecb.SetComponent(particleGenerator, new LocalTransform
                 {
                     Position = sumPositions / totalEntities,
                     Rotation = quaternion.identity,
