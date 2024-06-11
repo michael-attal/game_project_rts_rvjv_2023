@@ -1,24 +1,28 @@
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-// NOTE: Consider implementing a generic merging system that utilizes a MergeUnit component to specify the unit to be instantiated and the number of units to be merged, in order to create a merged unit.
 [BurstCompile]
 [UpdateBefore(typeof(TransformSystemGroup))]
 public partial struct SlimeBasicUnitMergeSystem : ISystem
 {
-    [BurstCompile]
+    private EntityQuery query;
+
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<ParticleManager>();
         state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<Config>();
         state.RequireForUpdate<Game>();
         state.RequireForUpdate<SpawnManager>();
         state.RequireForUpdate<UnitSelectable>();
         state.RequireForUpdate<SlimeBasicUnitMerge>();
+
+        query = state.GetEntityQuery(typeof(SlimeBasicUnitMerge), typeof(UnitSelected), typeof(LocalToWorld));
     }
 
     [BurstCompile]
@@ -35,80 +39,139 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
         if (configManager.IsGamePaused)
             return;
 
-        // NOTE: We have to press multiple time F to merge unit if we have like 50 unit selected.
         if (!Input.GetKeyDown(KeyCode.F))
             return;
 
-        // TODO: Implement a component, IsSelected, which is dynamically added or removed when a unit is selected (similar to the IsMovingTag component). This will eliminate the need for a nested loop to determine the number of selected entities, as the where option cannot be used in a Unity ECS query.
+        var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
 
-        var ecb = new EntityCommandBuffer(Allocator.Temp);
+        var spawnManager = SystemAPI.GetSingleton<SpawnManager>();
+        var slimeStrongerUnitPrefab = spawnManager.SlimeStrongerUnitPrefab;
 
-        var sumPositions = float3.zero;
-        var totalEntities = 0;
+        var entities = query.ToEntityArray(Allocator.TempJob);
+        var positions = query.ToComponentDataArray<LocalToWorld>(Allocator.TempJob);
 
-        var fusionInfo = new FusionInfo();
-        foreach (var (transform, merge, entity)
-                 in SystemAPI.Query<RefRO<LocalToWorld>, RefRO<SlimeBasicUnitMerge>>()
-                     .WithAll<UnitSelected>()
-                     .WithEntityAccess())
+        if (entities.Length < 10)
         {
-            ecb.DestroyEntity(entity);
-
-            fusionInfo += merge.ValueRO.FusionInfo;
-            sumPositions += transform.ValueRO.Position;
-            ++totalEntities;
+            entities.Dispose();
+            positions.Dispose();
+            return;
         }
+
+        var groupCount = entities.Length / 10;
+        var defaultScale = state.EntityManager.GetComponentData<LocalTransform>(slimeStrongerUnitPrefab).Scale;
 
         var gameInfo = SystemAPI.GetSingleton<Game>();
         var particleManager = SystemAPI.GetSingleton<ParticleManager>();
-        for (var i = 0; i < gameInfo.SlimeRecipes.Value.Data.Length; ++i)
+
+        ref var slimeRecipes = ref gameInfo.SlimeRecipes.Value.Data;
+
+        var fusionInfo = new FusionInfo();
+        foreach (var entity in entities)
         {
-            while (gameInfo.SlimeRecipes.Value.Data[i].Cost <= fusionInfo)
+            var slimeBasicUnitMerge = state.EntityManager.GetComponentData<SlimeBasicUnitMerge>(entity);
+            fusionInfo += slimeBasicUnitMerge.FusionInfo;
+        }
+
+        var mergeUnitsJob = new MergeUnitsJob
+        {
+            ECB = ecb,
+            MergedUnitPrefab = slimeStrongerUnitPrefab,
+            DefaultScale = defaultScale,
+            Entities = entities,
+            Positions = positions,
+            GroupCount = groupCount,
+            FusionInfo = fusionInfo, // NOTE: Calculated according to the units selected
+            SlimeRecipes = new NativeArray<FusionRecipeData>(slimeRecipes.Length, Allocator.TempJob),
+            ParticleGeneratorPrefab = particleManager.ParticleGeneratorPrefab
+        };
+
+        // NOTE: Copy recipe data to NativeArray
+        for (var i = 0; i < slimeRecipes.Length; i++)
+        {
+            mergeUnitsJob.SlimeRecipes[i] = slimeRecipes[i];
+        }
+
+        var handle = mergeUnitsJob.Schedule(groupCount, 1, state.Dependency);
+        state.Dependency = handle;
+
+        // NOTE: Command Buffer final for playback
+        var finalEcb = new EntityCommandBuffer(Allocator.TempJob);
+
+        state.Dependency = JobHandle.CombineDependencies(handle, state.Dependency);
+        state.Dependency.Complete();
+
+        finalEcb.Playback(state.EntityManager);
+        finalEcb.Dispose();
+
+        mergeUnitsJob.SlimeRecipes.Dispose();
+    }
+}
+
+[BurstCompile]
+public struct MergeUnitsJob : IJobParallelFor
+{
+    public EntityCommandBuffer.ParallelWriter ECB;
+    public Entity MergedUnitPrefab;
+    public float DefaultScale;
+    [DeallocateOnJobCompletion] [ReadOnly] public NativeArray<Entity> Entities;
+    [DeallocateOnJobCompletion] [ReadOnly] public NativeArray<LocalToWorld> Positions;
+    public int GroupCount;
+    public FusionInfo FusionInfo;
+    [ReadOnly] public NativeArray<FusionRecipeData> SlimeRecipes;
+    public Entity ParticleGeneratorPrefab;
+
+    public void Execute(int index)
+    {
+        var averagePosition = float3.zero;
+        for (var i = 0; i < 10; i++)
+        {
+            averagePosition += Positions[index * 10 + i].Position;
+        }
+
+        averagePosition /= 10;
+
+        var newEntity = ECB.Instantiate(index, MergedUnitPrefab);
+
+        ECB.SetComponent(index, newEntity, new LocalTransform
+        {
+            Position = averagePosition,
+            Rotation = quaternion.identity,
+            Scale = DefaultScale
+        });
+        ECB.SetComponentEnabled<UnitSelected>(index, newEntity, true);
+
+        for (var i = 0; i < 10; i++)
+        {
+            ECB.DestroyEntity(index, Entities[index * 10 + i]);
+        }
+
+        for (var i = 0; i < SlimeRecipes.Length; i++)
+        {
+            if (SlimeRecipes[i].Cost <= FusionInfo)
             {
-                fusionInfo -= gameInfo.SlimeRecipes.Value.Data[i].Cost;
+                FusionInfo -= SlimeRecipes[i].Cost;
 
-                var newEntity = InstantiateEntity(ref state, ecb, gameInfo.SlimeRecipes.Value.Data[i].PrefabId);
-                ecb.SetComponent(newEntity, new LocalTransform
+                var particleGenerator = ECB.Instantiate(index, ParticleGeneratorPrefab);
+                ECB.SetComponent(index, particleGenerator, new ParticleGeneratorData
                 {
-                    Position = sumPositions / totalEntities,
-                    Rotation = quaternion.identity,
-                    Scale = 1f
-                });
-
-                // TODO: Refactor this and instantiate multiple generator for better effect
-                var particleGenerator = ecb.Instantiate(particleManager.ParticleGeneratorPrefab);
-                ecb.SetComponent(particleGenerator, new ParticleGeneratorData
-                {
-                    Rate = 5f,
-                    LifetimeOfGenerator = 1f,
-                    LifetimeOfParticle = 1f,
-                    Size = 1f,
+                    Rate = 50f,
+                    LifetimeOfGenerator = 0.5f,
+                    LifetimeOfParticle = 0.5f,
+                    Size = DefaultScale,
                     Speed = 2f,
                     Direction = new float3(0, 1, 0),
-                    Color = new float4(0, 0, 1, 1)
+                    Color = new float4(0, 0, 1, 0.5f),
+                    IsRandomPositionParticleSpawningActive = true,
+                    PositionRangeForRandomParticleSpawning = new float3(DefaultScale * 3, DefaultScale * 3, DefaultScale * 3)
                 });
-                ecb.SetComponent(particleGenerator, new LocalTransform
+                ECB.SetComponent(index, particleGenerator, new LocalTransform
                 {
-                    Position = sumPositions / totalEntities,
+                    Position = averagePosition,
                     Rotation = quaternion.identity,
                     Scale = 1f
                 });
             }
         }
-
-        ecb.Playback(state.EntityManager);
-        ecb.Dispose();
-    }
-
-    private Entity InstantiateEntity(ref SystemState state, EntityCommandBuffer ecb, int id)
-    {
-        var buffer = SystemAPI.GetBuffer<InstantiatableEntityData>(SystemAPI.GetSingletonEntity<Game>());
-        for (var i = 0; i < buffer.Length; ++i)
-        {
-            if (buffer[i].EntityID == id)
-                return ecb.Instantiate(buffer[i].Entity);
-        }
-
-        return Entity.Null;
     }
 }

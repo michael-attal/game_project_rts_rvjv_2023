@@ -318,7 +318,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4679862231561908952, guid: 888243f85db11483baf93363ac285d84, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 18.1
+      value: 5.8
       objectReference: {fileID: 0}
     - target: {fileID: 4679862231561908952, guid: 888243f85db11483baf93363ac285d84, type: 3}
       propertyPath: m_LocalPosition.y
@@ -326,7 +326,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4679862231561908952, guid: 888243f85db11483baf93363ac285d84, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -20
+      value: -12.8
       objectReference: {fileID: 0}
     - target: {fileID: 4679862231561908952, guid: 888243f85db11483baf93363ac285d84, type: 3}
       propertyPath: m_LocalRotation.w
@@ -379,7 +379,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4679862231561908952, guid: 888243f85db11483baf93363ac285d84, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 9.9
+      value: 7.6
       objectReference: {fileID: 0}
     - target: {fileID: 4679862231561908952, guid: 888243f85db11483baf93363ac285d84, type: 3}
       propertyPath: m_LocalPosition.y
@@ -440,7 +440,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4679862231561908952, guid: 888243f85db11483baf93363ac285d84, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -10.4
+      value: -5.44
       objectReference: {fileID: 0}
     - target: {fileID: 4679862231561908952, guid: 888243f85db11483baf93363ac285d84, type: 3}
       propertyPath: m_LocalPosition.y
@@ -448,7 +448,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4679862231561908952, guid: 888243f85db11483baf93363ac285d84, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -20
+      value: -11.94
       objectReference: {fileID: 0}
     - target: {fileID: 4679862231561908952, guid: 888243f85db11483baf93363ac285d84, type: 3}
       propertyPath: m_LocalRotation.w
@@ -972,17 +972,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ParticleGeneratorPrefab: {fileID: 4834932303984659504, guid: beb3eb646753f44608fad23f7caa0fbe, type: 3}
-  rate: 0
-  lifetime: 0
-  size: 0
-  Color:
-    x: 0
-    y: 0
-    z: 0
-    w: 0
-  Speed: 0
-  Material: {fileID: 0}
-  Mesh: {fileID: 0}
 --- !u!1001 &1817350540
 PrefabInstance:
   m_ObjectHideFlags: 0
