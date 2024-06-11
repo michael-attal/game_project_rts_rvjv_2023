@@ -1,3 +1,4 @@
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Entities.Graphics;
@@ -6,6 +7,7 @@ using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.Rendering;
+using Random = UnityEngine.Random;
 
 public partial class ParticleSpawningSystem : SystemBase
 {
@@ -96,6 +98,16 @@ public partial class ParticleSpawningSystem : SystemBase
         });
     }
 
+    [BurstCompile]
+    public float3 GetRandomPositionInRange(float3 center, float3 range)
+    {
+        var random = new Unity.Mathematics.Random((uint)Random.Range(1, int.MaxValue));
+        return new float3(
+            center.x + random.NextFloat(-range.x / 2, range.x / 2),
+            center.y + random.NextFloat(-range.y / 2, range.y / 2),
+            center.z + random.NextFloat(-range.z / 2, range.z / 2)
+        );
+    }
 
     protected override void OnUpdate()
     {
@@ -131,9 +143,13 @@ public partial class ParticleSpawningSystem : SystemBase
 
                 ecb.AddSharedComponent(particle, new ParticleParent { Value = e });
 
+                var particlePosition = particleGeneratorAspect.IsRandomPositionParticleSpawningActive
+                    ? GetRandomPositionInRange(particleGeneratorAspect.Position, particleGeneratorAspect.PositionRangeForRandomParticleSpawning)
+                    : particleGeneratorAspect.Position;
+
                 ecb.AddComponent(particle, new LocalTransform
                 {
-                    Position = particleGeneratorAspect.Position,
+                    Position = particlePosition,
                     Rotation = quaternion.identity,
                     Scale = particleGeneratorAspect.Size
                 });
