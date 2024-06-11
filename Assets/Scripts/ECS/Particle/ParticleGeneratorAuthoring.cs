@@ -13,6 +13,10 @@ public class ParticleGeneratorAuthoring : MonoBehaviour
     [SerializeField] private float4 color;
     [SerializeField] private float speed;
     [SerializeField] private float3 direction;
+    public ParticleSpawnPosition ParticleSpawnPosition;
+
+    [ConditionalHide("ParticleSpawnPosition", (int)ParticleSpawnPosition.RandomPositionFromRange)] [SerializeField]
+    private float3 PositionRangeForRandomParticleSpawning;
 
     [Header("Renderer")] [SerializeField] private Material Material;
     [SerializeField] private Mesh Mesh;
@@ -31,7 +35,9 @@ public class ParticleGeneratorAuthoring : MonoBehaviour
                 Size = authoring.size,
                 Color = authoring.color,
                 Speed = authoring.speed,
-                Direction = authoring.direction
+                Direction = authoring.direction,
+                IsRandomPositionParticleSpawningActive = authoring.ParticleSpawnPosition == ParticleSpawnPosition.RandomPositionFromRange,
+                PositionRangeForRandomParticleSpawning = authoring.PositionRangeForRandomParticleSpawning
             });
 
             var renderData = new ParticleGeneratorRenderData(authoring.Material, authoring.Mesh);
@@ -40,6 +46,11 @@ public class ParticleGeneratorAuthoring : MonoBehaviour
     }
 }
 
+public enum ParticleSpawnPosition
+{
+    GeneratorPosition,
+    RandomPositionFromRange
+}
 
 public struct ParticleGeneratorInfo : IComponentData
 {
@@ -59,6 +70,8 @@ public struct ParticleGeneratorData : IComponentData
     public float4 Color;
     public float Speed;
     public float3 Direction;
+    public bool IsRandomPositionParticleSpawningActive;
+    public float3 PositionRangeForRandomParticleSpawning;
 }
 
 public struct ParticleGeneratorRenderData : ISharedComponentData, IEquatable<ParticleGeneratorRenderData>
@@ -192,6 +205,18 @@ public readonly partial struct ParticleGeneratorAspect : IAspect
     {
         get => Data.ValueRO.Direction;
         set => Data.ValueRW.Direction = value;
+    }
+
+    public bool IsRandomPositionParticleSpawningActive
+    {
+        get => Data.ValueRO.IsRandomPositionParticleSpawningActive;
+        set => Data.ValueRW.IsRandomPositionParticleSpawningActive = value;
+    }
+
+    public float3 PositionRangeForRandomParticleSpawning
+    {
+        get => Data.ValueRO.PositionRangeForRandomParticleSpawning;
+        set => Data.ValueRW.PositionRangeForRandomParticleSpawning = value;
     }
 
     public float3 Position
