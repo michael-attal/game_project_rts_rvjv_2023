@@ -28,6 +28,7 @@ public class ConfigAuthoring : MonoBehaviour
     [SerializeField] private bool activateSlimeBasicUnitMergeSystem;
     [SerializeField] private bool activateMecaBasicUnitUpgradeSystem;
     [SerializeField] private bool activateParticleSystems;
+    [SerializeField] private FormationType movementFormationType;
 
     [SerializeField] private bool activateSwitchFocusCameraToPlayersOnSpacePress;
 
@@ -74,6 +75,7 @@ public class ConfigAuthoring : MonoBehaviour
                 ActivateMovementManualSystem = authoring.activateMovementManualSystem,
                 ActivateMovementVelocitySystem = authoring.activateMovementVelocitySystem,
                 ActivateParticleSystems = authoring.activateParticleSystems,
+                MovementFormationType = authoring.movementFormationType,
 
                 ActivateSwitchFocusCameraToPlayersOnSpacePress =
                     authoring.activateSwitchFocusCameraToPlayersOnSpacePress
@@ -109,6 +111,7 @@ public struct Config : IComponentData
     public bool ActivateSlimeBasicUnitMergeSystem;
     public bool ActivateMecaBasicUnitUpgradeSystem;
     public bool ActivateParticleSystems;
+    public FormationType MovementFormationType;
 
     public bool ActivateSwitchFocusCameraToPlayersOnSpacePress;
 }
