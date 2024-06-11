@@ -1,7 +1,6 @@
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
-using UnityEngine;
 
 [UpdateAfter(typeof(SeekDepotSystem))]
 internal partial struct DepositRessourceSystem : ISystem
@@ -37,9 +36,6 @@ internal partial struct DepositRessourceSystem : ISystem
             var game = SystemAPI.GetSingleton<Game>();
             game.RessourceCount += ressource.ValueRO.CarriedRessources;
             SystemAPI.SetSingleton(game);
-
-            var move = SystemAPI.GetComponent<WantsToMove>(entity);
-            Debug.Log($"Depot when destination is {move.Destination.x} {move.Destination.y} {move.Destination.z}");
 
             ecb.RemoveComponent<HasRessource>(entity);
             ecb.SetComponentEnabled<WantsToMove>(entity, false);

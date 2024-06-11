@@ -6,7 +6,7 @@ using UnityEngine.Scripting;
 
 public class MouseManagerAuthoring : MonoBehaviour
 {
-    public bool ActivateRightClickEventSystem;
+    [SerializeField] private bool activateRightClickEventSystem;
 
     private class Baker : Baker<MouseManagerAuthoring>
     {
@@ -16,7 +16,7 @@ public class MouseManagerAuthoring : MonoBehaviour
 
             AddComponent(entity, new MouseManager
             {
-                ActivateRightClickEventSystem = authoring.ActivateRightClickEventSystem
+                ActivateRightClickEventSystem = authoring.activateRightClickEventSystem
             });
 
             AddComponent(entity, new MouseRightClickEvent

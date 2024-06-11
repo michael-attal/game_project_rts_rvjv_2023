@@ -72,7 +72,6 @@ public partial struct ProjectileRendererSystem : ISystem
             //     ECB = new EntityCommandBuffer(Allocator.TempJob).AsParallelWriter()
             // };
             // projectileDestroyJob.ScheduleParallel();
-            Debug.Log("Reached!!!!");
             ecbProjectileSpawnJob.DestroyEntity(entity);
         }
 

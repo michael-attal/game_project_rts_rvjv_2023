@@ -3,6 +3,7 @@ using Unity.Entities;
 using Unity.Transforms;
 
 [UpdateBefore(typeof(TransformSystemGroup))]
+[BurstCompile]
 public partial struct UnitDamageSystem : ISystem
 {
     [BurstCompile]

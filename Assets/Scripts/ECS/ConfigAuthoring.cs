@@ -5,60 +5,36 @@ using UnityEngine;
 
 public class ConfigAuthoring : MonoBehaviour
 {
-    public bool ActivatePlayerSpawnerSystem;
-    public bool ActivateBaseSpawnerBuildingSystem;
-    public bool ActivateUnitSpawnerSystem;
-    public bool ActivateUnitSelectableSystem;
-    public bool ActivateSelectionRectResizeSystem;
-    public bool ActivateMoveOrderSystem;
-    public bool ActivateUnitMovementSystem;
-    public bool ActivateMovementManualSystem;
-    public bool ActivateMovementVelocitySystem;
-    public bool ActivateMovementPositionMotorSystem;
-    public bool ActivateDestinationReachedCleanupSystem;
-    public bool ActivateUnitSelectedRendererSystem;
-    public bool ActivateProjectileRendererSystem;
-    public bool ActivateUnitAttackSystem;
-    public bool ActivateUnitDamageSystem;
-    public bool ActivatePauseScreenSystem;
-    public bool IsGamePaused;
-    public bool ActivateWinConditions;
-    public bool ActivateBuildingScreenSystem;
-    public bool ActivateGatheringSystem;
-    public bool ActivateSlimeBasicUnitMergeSystem;
-    public bool ActivateMecaBasicUnitUpgradeSystem;
+    [SerializeField] private bool activatePlayerSpawnerSystem;
+    [SerializeField] private bool activateBaseSpawnerBuildingSystem;
+    [SerializeField] private bool activateUnitSpawnerSystem;
+    [SerializeField] private bool activateUnitSelectableSystem;
+    [SerializeField] private bool activateSelectionRectResizeSystem;
+    [SerializeField] private bool activateMoveOrderSystem;
+    [SerializeField] private bool activateUnitMovementSystem;
+    [SerializeField] private bool activateMovementManualSystem;
+    [SerializeField] private bool activateMovementVelocitySystem;
+    [SerializeField] private bool activateMovementPositionMotorSystem;
+    [SerializeField] private bool activateDestinationReachedCleanupSystem;
+    [SerializeField] private bool activateUnitSelectedRendererSystem;
+    [SerializeField] private bool activateProjectileRendererSystem;
+    [SerializeField] private bool activateUnitAttackSystem;
+    [SerializeField] private bool activateUnitDamageSystem;
+    [SerializeField] private bool activatePauseScreenSystem;
+    [SerializeField] private bool isGamePaused;
+    [SerializeField] private bool activateWinConditions;
+    [SerializeField] private bool activateBuildingScreenSystem;
+    [SerializeField] private bool activateGatheringSystem;
+    [SerializeField] private bool activateSlimeBasicUnitMergeSystem;
+    [SerializeField] private bool activateMecaBasicUnitUpgradeSystem;
+    [SerializeField] private bool activateParticleSystems;
 
-    public bool ActivateSwitchFocusCameraToPlayersOnSpacePress;
+    [SerializeField] private bool activateSwitchFocusCameraToPlayersOnSpacePress;
 
     public static Config UpdateConfigWithPause(Config currentConfig, bool isPaused)
     {
-        return new Config
-        {
-            ActivatePlayerSpawnerSystem = currentConfig.ActivatePlayerSpawnerSystem,
-            ActivateBaseSpawnerBuildingSystem = currentConfig.ActivateBaseSpawnerBuildingSystem,
-            ActivateUnitSpawnerSystem = currentConfig.ActivateUnitSpawnerSystem,
-            ActivateUnitSelectableSystem = currentConfig.ActivateUnitSelectableSystem,
-            ActivateSelectionRectResizeSystem = currentConfig.ActivateSelectionRectResizeSystem,
-            ActivateMoveOrderSystem = currentConfig.ActivateMoveOrderSystem,
-            ActivateUnitMovementSystem = currentConfig.ActivateUnitMovementSystem,
-            ActivateMovementPositionMotorSystem = currentConfig.ActivateMovementPositionMotorSystem,
-            ActivateUnitSelectedRendererSystem = currentConfig.ActivateUnitSelectedRendererSystem,
-            ActivateProjectileRendererSystem = currentConfig.ActivateProjectileRendererSystem,
-            ActivateUnitAttackSystem = currentConfig.ActivateUnitAttackSystem,
-            ActivateUnitDamageSystem = currentConfig.ActivateUnitDamageSystem,
-            ActivatePauseScreenSystem = currentConfig.ActivatePauseScreenSystem,
-            IsGamePaused = isPaused, // Here
-            ActivateWinConditions = currentConfig.ActivateWinConditions,
-            ActivateBuildingScreenSystem = currentConfig.ActivateBuildingScreenSystem,
-            ActivateGatheringSystem = currentConfig.ActivateGatheringSystem,
-            ActivateSlimeBasicUnitMergeSystem = currentConfig.ActivateSlimeBasicUnitMergeSystem,
-            ActivateMecaBasicUnitUpgradeSystem = currentConfig.ActivateMecaBasicUnitUpgradeSystem,
-            ActivateDestinationReachedCleanupSystem = currentConfig.ActivateDestinationReachedCleanupSystem,
-            ActivateMovementManualSystem = currentConfig.ActivateMovementManualSystem,
-            ActivateMovementVelocitySystem = currentConfig.ActivateMovementVelocitySystem,
-            ActivateSwitchFocusCameraToPlayersOnSpacePress =
-                currentConfig.ActivateSwitchFocusCameraToPlayersOnSpacePress
-        };
+        currentConfig.IsGamePaused = isPaused;
+        return currentConfig;
     }
 
     public static Config UpdateConfigWithToggledPause(Config currentConfig)
@@ -75,34 +51,35 @@ public class ConfigAuthoring : MonoBehaviour
 
             AddComponent(entity, new Config
             {
-                ActivatePlayerSpawnerSystem = authoring.ActivatePlayerSpawnerSystem,
-                ActivateBaseSpawnerBuildingSystem = authoring.ActivateBaseSpawnerBuildingSystem,
-                ActivateUnitSpawnerSystem = authoring.ActivateUnitSpawnerSystem,
-                ActivateUnitSelectableSystem = authoring.ActivateUnitSelectableSystem,
-                ActivateSelectionRectResizeSystem = authoring.ActivateSelectionRectResizeSystem,
-                ActivateMoveOrderSystem = authoring.ActivateMoveOrderSystem,
-                ActivateUnitMovementSystem = authoring.ActivateUnitMovementSystem,
-                ActivateMovementPositionMotorSystem = authoring.ActivateMovementPositionMotorSystem,
-                ActivateUnitSelectedRendererSystem = authoring.ActivateUnitSelectedRendererSystem,
-                ActivateProjectileRendererSystem = authoring.ActivateProjectileRendererSystem,
-                ActivateUnitAttackSystem = authoring.ActivateUnitAttackSystem,
-                ActivateUnitDamageSystem = authoring.ActivateUnitDamageSystem,
-                ActivatePauseScreenSystem = authoring.ActivatePauseScreenSystem,
-                IsGamePaused = authoring.IsGamePaused,
-                ActivateWinConditions = authoring.ActivateWinConditions,
-                ActivateBuildingScreenSystem = authoring.ActivateBuildingScreenSystem,
-                ActivateGatheringSystem = authoring.ActivateGatheringSystem,
-                ActivateSlimeBasicUnitMergeSystem = authoring.ActivateSlimeBasicUnitMergeSystem,
-                ActivateMecaBasicUnitUpgradeSystem = authoring.ActivateMecaBasicUnitUpgradeSystem,
-                ActivateDestinationReachedCleanupSystem = authoring.ActivateDestinationReachedCleanupSystem,
-                ActivateMovementManualSystem = authoring.ActivateMovementManualSystem,
-                ActivateMovementVelocitySystem = authoring.ActivateMovementVelocitySystem,
+                ActivatePlayerSpawnerSystem = authoring.activatePlayerSpawnerSystem,
+                ActivateBaseSpawnerBuildingSystem = authoring.activateBaseSpawnerBuildingSystem,
+                ActivateUnitSpawnerSystem = authoring.activateUnitSpawnerSystem,
+                ActivateUnitSelectableSystem = authoring.activateUnitSelectableSystem,
+                ActivateSelectionRectResizeSystem = authoring.activateSelectionRectResizeSystem,
+                ActivateMoveOrderSystem = authoring.activateMoveOrderSystem,
+                ActivateUnitMovementSystem = authoring.activateUnitMovementSystem,
+                ActivateMovementPositionMotorSystem = authoring.activateMovementPositionMotorSystem,
+                ActivateUnitSelectedRendererSystem = authoring.activateUnitSelectedRendererSystem,
+                ActivateProjectileRendererSystem = authoring.activateProjectileRendererSystem,
+                ActivateUnitAttackSystem = authoring.activateUnitAttackSystem,
+                ActivateUnitDamageSystem = authoring.activateUnitDamageSystem,
+                ActivatePauseScreenSystem = authoring.activatePauseScreenSystem,
+                IsGamePaused = authoring.isGamePaused,
+                ActivateWinConditions = authoring.activateWinConditions,
+                ActivateBuildingScreenSystem = authoring.activateBuildingScreenSystem,
+                ActivateGatheringSystem = authoring.activateGatheringSystem,
+                ActivateSlimeBasicUnitMergeSystem = authoring.activateSlimeBasicUnitMergeSystem,
+                ActivateMecaBasicUnitUpgradeSystem = authoring.activateMecaBasicUnitUpgradeSystem,
+                ActivateDestinationReachedCleanupSystem = authoring.activateDestinationReachedCleanupSystem,
+                ActivateMovementManualSystem = authoring.activateMovementManualSystem,
+                ActivateMovementVelocitySystem = authoring.activateMovementVelocitySystem,
+                ActivateParticleSystems = authoring.activateParticleSystems,
 
                 ActivateSwitchFocusCameraToPlayersOnSpacePress =
-                    authoring.ActivateSwitchFocusCameraToPlayersOnSpacePress
+                    authoring.activateSwitchFocusCameraToPlayersOnSpacePress
             });
 
-            if (authoring.ActivateSwitchFocusCameraToPlayersOnSpacePress) AddComponent<ICCamera>(entity);
+            if (authoring.activateSwitchFocusCameraToPlayersOnSpacePress) AddComponent<ICCamera>(entity);
         }
     }
 }
@@ -131,6 +108,7 @@ public struct Config : IComponentData
     public bool ActivateGatheringSystem;
     public bool ActivateSlimeBasicUnitMergeSystem;
     public bool ActivateMecaBasicUnitUpgradeSystem;
+    public bool ActivateParticleSystems;
 
     public bool ActivateSwitchFocusCameraToPlayersOnSpacePress;
 }
