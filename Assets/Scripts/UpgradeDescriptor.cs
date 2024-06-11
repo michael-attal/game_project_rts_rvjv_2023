@@ -3,7 +3,10 @@ using UnityEngine;
 
 public enum MecaUpgrade
 {
-    GLASS_CANNON
+    GLASS_CANNON,
+    ARTILLERY,
+    GATLING,
+    SCOUT
 }
 
 [CreateAssetMenu(menuName = "Rust Vs Goo/Mecas/Upgrade", fileName = "UpgradeDescriptor")]

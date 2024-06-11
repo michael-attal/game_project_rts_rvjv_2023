@@ -22,4 +22,7 @@ public class SpawnerUpgradesRegisterAuthoring : MonoBehaviour
 public struct SpawnerUpgradesRegister : IComponentData
 {
     public bool HasGlassCannon;
+    public bool HasArtillery;
+    public bool HasGatling;
+    public bool HasScout;
 }
