@@ -49,7 +49,7 @@ public partial struct UnitSpawnerSystem : ISystem
 
         foreach (var (transform, spawner) 
                  in SystemAPI.Query<RefRO<LocalTransform>, RefRW<BaseSpawnerBuilding>>()
-                     .WithNone<SpawnerUpgradesRegisterAuthoring>())
+                     .WithNone<SpawnerUpgradesRegister>())
         {
             if (spawner.ValueRO.TimeToNextGeneration > 0f)
             {
