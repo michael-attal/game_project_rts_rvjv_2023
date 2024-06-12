@@ -5,13 +5,13 @@ using Unity.Transforms;
 using UnityEngine;
 
 [UpdateBefore(typeof(TransformSystemGroup))]
+[UpdateAfter(typeof(MouseSystemGroup))]
+[UpdateAfter(typeof(CameraManagerSystem))]
 [BurstCompile]
 public partial struct UnitSelectableSystem : ISystem
 {
-    private const float minimumSelectionArea = 12f;
+    private const float minimumSelectionArea = 14f;
     private const float minimumSelectionAreaCenter = minimumSelectionArea / 2f;
-    private bool isClicked;
-    private Vector3 initialClickPosition;
 
     [BurstCompile]
     public void OnCreate(ref SystemState state)
@@ -19,14 +19,12 @@ public partial struct UnitSelectableSystem : ISystem
         state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<Config>();
         state.RequireForUpdate<UnitSelectable>();
+        state.RequireForUpdate<MouseManager>();
+        state.RequireForUpdate<CameraManager>();
     }
 
-    // TODO: Refactor with MouseManager singleton (see UnitMovementSystem).
     public void OnUpdate(ref SystemState state)
     {
-        // Implement the shared unit selectable system here.
-        // If the selectable system differs significantly between units, we should implement a specialized system, such as MySlimeUnitSelectableSystem, in addition of a generic one like this one.
-
         var configManager = SystemAPI.GetSingleton<Config>();
 
         if (!configManager.ActivateUnitSelectableSystem)
@@ -38,22 +36,15 @@ public partial struct UnitSelectableSystem : ISystem
         if (configManager.IsGamePaused)
             return;
 
-        // Check if the left mouse button is clicked down
-        if (Input.GetMouseButtonDown(0) && !isClicked)
-        {
-            isClicked = true;
-            initialClickPosition = Input.mousePosition;
-            Debug.Log(initialClickPosition);
-        }
+        var mouseManager = SystemAPI.GetSingleton<MouseManager>();
 
-        if (Input.GetMouseButtonUp(0))
+        if (mouseManager.IsLeftClickUp)
         {
-            isClicked = false;
-            Debug.Log("Left click released, set unit selected now!");
-            var mainCamera = Camera.main; // We get the main camera here. As a result, we are unable to burst compile this OnUpdate function. However, we  utilize a burst compile job below to iterate through the affected components, so everything is still performant.
-            if (mainCamera == null) return;
+            var cameraManager = SystemAPI.GetSingleton<CameraManager>();
 
-            var finalClickPosition = Input.mousePosition;
+            var initialClickPosition = mouseManager.InitialClickPosition;
+            var finalClickPosition = mouseManager.FinalClickPosition;
+
             var left = Mathf.Min(initialClickPosition.x, finalClickPosition.x);
             var top = Mathf.Min(initialClickPosition.y, finalClickPosition.y);
             var width = Mathf.Abs(initialClickPosition.x - finalClickPosition.x);
@@ -63,18 +54,17 @@ public partial struct UnitSelectableSystem : ISystem
             var selectionArea = new Rect(left - minimumSelectionAreaCenter, top - minimumSelectionAreaCenter,
                 width + minimumSelectionArea, height + minimumSelectionArea);
 
-            var transformCamera = mainCamera.transform;
             var unitSelectionJob = new UnitSelectionJob
             {
                 ECB = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter(),
-                CameraPos = transformCamera.position,
-                CamForward = transformCamera.forward,
-                CamProjMatrix = mainCamera.projectionMatrix,
-                CamRight = transformCamera.right,
-                CamUp = transformCamera.up,
-                PixelHeight = mainCamera.pixelHeight,
-                PixelWidth = mainCamera.pixelWidth,
-                ScaleFactor = 1f,
+                CameraPos = cameraManager.Position,
+                CamProjMatrix = cameraManager.ProjectionMatrix,
+                CamUp = cameraManager.Up,
+                CamRight = cameraManager.Right,
+                CamForward = cameraManager.Forward,
+                PixelWidth = cameraManager.PixelWidth,
+                PixelHeight = cameraManager.PixelHeight,
+                ScaleFactor = cameraManager.ScaleFactor,
                 SelectionArea = selectionArea
             };
             unitSelectionJob.ScheduleParallel();
@@ -97,12 +87,12 @@ public partial struct UnitSelectionJob : IJobEntity
     public float ScaleFactor;
     public Rect SelectionArea;
 
-    // Because we want the global position of a child entity, we read LocalToWorld instead of LocalTransform.
+    // NOTE: Because we want the global position of a child entity, we read LocalToWorld instead of LocalTransform.
     private void Execute(Entity entity, LocalToWorld unitLT, [ChunkIndexInQuery] int chunkIndex)
     {
         var unitRadius = unitLT.Value.Scale().x;
 
-        var transformScreenPosition = CameraSingleton.ConvertWorldToScreenCoordinates(
+        var transformScreenPosition = CameraManagerTools.ConvertWorldToScreenCoordinates(
             unitLT.Position,
             CameraPos,
             CamProjMatrix,
@@ -114,11 +104,11 @@ public partial struct UnitSelectionJob : IJobEntity
             ScaleFactor // or unitRadius ?
         );
 
-        // Add the unit radius to the selection
+        // NOTE: Add the unit radius to the selection
         var unitRect = new Rect(transformScreenPosition.x - unitRadius, transformScreenPosition.y - unitRadius,
             unitRadius * 2, unitRadius * 2);
 
-        // Check if selection intersect with unit
+        // NOTE: Check if selection intersect with unit
         if (unitRect.Overlaps(SelectionArea, true))
         {
             ECB.SetComponentEnabled<UnitSelected>(chunkIndex, entity, true);

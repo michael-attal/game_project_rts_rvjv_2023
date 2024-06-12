@@ -1018,6 +1018,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activateRightClickEventSystem: 1
+  activateLeftClickEventSystem: 1
+  activateMiddleClickEventSystem: 1
+  activateMouseMovementEventSystem: 1
 --- !u!4 &1405089680
 Transform:
   m_ObjectHideFlags: 0
@@ -1106,7 +1109,9 @@ MonoBehaviour:
   activateSlimeBasicUnitMergeSystem: 1
   activateMecaBasicUnitUpgradeSystem: 1
   activateParticleSystems: 1
-  activateSwitchFocusCameraToPlayersOnSpacePress: 0
+  movementFormationType: 0
+  activateCameraManagerSystem: 1
+  activateMouseManagerSystem: 1
 --- !u!4 &1732016748
 Transform:
   m_ObjectHideFlags: 0
@@ -1505,6 +1510,51 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UnitSelectedCircleMaterial: {fileID: 2100000, guid: 9df2609dea1a94a7ea5bfdfe2da45399, type: 2}
+--- !u!1 &1939005311
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1939005312}
+  - component: {fileID: 1939005313}
+  m_Layer: 0
+  m_Name: CameraManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1939005312
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1939005311}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1939005313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1939005311}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28d6ba2719c1641718fe4850dfaeb2d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cameraScaleFactor: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1518,6 +1568,7 @@ SceneRoots:
   - {fileID: 1405089680}
   - {fileID: 1383968348}
   - {fileID: 1206889701}
+  - {fileID: 1939005312}
   - {fileID: 908765153}
   - {fileID: 622708283}
   - {fileID: 248255555}

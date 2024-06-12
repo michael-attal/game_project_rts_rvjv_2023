@@ -13,15 +13,15 @@ MonoBehaviour:
   m_Name: PhysicsCategoryNames
   m_EditorClassIdentifier: 
   m_CategoryNames:
-  - Projectile
-  - ProjectileThrowerSlime
-  - ProjectileThrowerMeca
+  - Environment
+  - 
   - SlimeUnit
   - MecaUnit
   - SlimeBuildingUnit
   - MecaBuildingUnit
-  - Environment
   - 
+  - 
+  - Projectile
   - 
   - 
   - 
