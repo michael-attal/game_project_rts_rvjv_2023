@@ -1,3 +1,4 @@
+using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -21,7 +22,8 @@ public class CameraManagerAuthoring : MonoBehaviour
     }
 }
 
-public class CameraManagerTools : MonoBehaviour
+[BurstCompile]
+public struct CameraManagerTools
 {
     // NOTE: Thanks to : https://forum.unity.com/threads/getting-camera-worldtoscreenpoint-player-translation-here-data-into-a-job.686539/#post-4594918
     /// <summary>
