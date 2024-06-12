@@ -261,8 +261,8 @@ MonoBehaviour:
       m_Value:
         Category00: 0
         Category01: 0
-        Category02: 0
-        Category03: 1
+        Category02: 1
+        Category03: 0
         Category04: 0
         Category05: 0
         Category06: 0
@@ -296,8 +296,8 @@ MonoBehaviour:
       m_Value:
         Category00: 1
         Category01: 1
-        Category02: 1
-        Category03: 0
+        Category02: 0
+        Category03: 1
         Category04: 1
         Category05: 1
         Category06: 1

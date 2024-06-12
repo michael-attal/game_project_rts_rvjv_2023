@@ -2,16 +2,27 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public class CameraSingleton : MonoBehaviour
+[DisallowMultipleComponent]
+public class CameraManagerAuthoring : MonoBehaviour
 {
-    public static Camera Instance;
+    [SerializeField] private float cameraScaleFactor = 1.0f;
 
-    private void Awake()
+    private class Baker : Baker<CameraManagerAuthoring>
     {
-        Instance = GetComponent<Camera>();
-        Debug.Log("CameSingleton created!");
-    }
+        public override void Bake(CameraManagerAuthoring authoring)
+        {
+            var entity = GetEntity(TransformUsageFlags.Dynamic);
 
+            AddComponent(entity, new CameraManager // NOTE: CameraManagerSystem will set other camera manager data at the first frame
+            {
+                ScaleFactor = authoring.cameraScaleFactor
+            });
+        }
+    }
+}
+
+public class CameraManagerTools : MonoBehaviour
+{
     // NOTE: Thanks to : https://forum.unity.com/threads/getting-camera-worldtoscreenpoint-player-translation-here-data-into-a-job.686539/#post-4594918
     /// <summary>
     ///     Convert point from world space to screen space
@@ -78,6 +89,15 @@ public class CameraSingleton : MonoBehaviour
     }
 }
 
-public struct ICCamera : IComponentData
+
+public struct CameraManager : IComponentData
 {
+    public float3 Position;
+    public float4x4 ProjectionMatrix;
+    public float3 Up;
+    public float3 Right;
+    public float3 Forward;
+    public float PixelWidth;
+    public float PixelHeight;
+    public float ScaleFactor;
 }

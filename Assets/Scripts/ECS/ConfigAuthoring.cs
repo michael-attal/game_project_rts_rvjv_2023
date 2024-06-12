@@ -29,8 +29,8 @@ public class ConfigAuthoring : MonoBehaviour
     [SerializeField] private bool activateMecaBasicUnitUpgradeSystem;
     [SerializeField] private bool activateParticleSystems;
     [SerializeField] private FormationType movementFormationType;
-
-    [SerializeField] private bool activateSwitchFocusCameraToPlayersOnSpacePress;
+    [SerializeField] private bool activateCameraManagerSystem;
+    [SerializeField] private bool activateMouseManagerSystem;
 
     public static Config UpdateConfigWithPause(Config currentConfig, bool isPaused)
     {
@@ -76,12 +76,9 @@ public class ConfigAuthoring : MonoBehaviour
                 ActivateMovementVelocitySystem = authoring.activateMovementVelocitySystem,
                 ActivateParticleSystems = authoring.activateParticleSystems,
                 MovementFormationType = authoring.movementFormationType,
-
-                ActivateSwitchFocusCameraToPlayersOnSpacePress =
-                    authoring.activateSwitchFocusCameraToPlayersOnSpacePress
+                ActivateCameraManagerSystem = authoring.activateCameraManagerSystem,
+                ActivateMouseManagerSystem = authoring.activateMouseManagerSystem
             });
-
-            if (authoring.activateSwitchFocusCameraToPlayersOnSpacePress) AddComponent<ICCamera>(entity);
         }
     }
 }
@@ -112,6 +109,6 @@ public struct Config : IComponentData
     public bool ActivateMecaBasicUnitUpgradeSystem;
     public bool ActivateParticleSystems;
     public FormationType MovementFormationType;
-
-    public bool ActivateSwitchFocusCameraToPlayersOnSpacePress;
+    public bool ActivateCameraManagerSystem;
+    public bool ActivateMouseManagerSystem;
 }
