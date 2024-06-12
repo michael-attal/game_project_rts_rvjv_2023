@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public class PauseScreenPresenter : MonoBehaviour
 {
+    [SerializeField] private GameObject bottomMenu;
     [SerializeField] private Button continueButton;
 
     private void Start()
@@ -19,6 +20,7 @@ public class PauseScreenPresenter : MonoBehaviour
 
     public void ToggleDisplayPauseScreen()
     {
+        bottomMenu.SetActive(false);
         gameObject.SetActive(!gameObject.activeSelf);
     }
 
@@ -57,6 +59,7 @@ public class PauseScreenPresenter : MonoBehaviour
             }
         }
 
+        bottomMenu.SetActive(true);
         gameObject.SetActive(false);
     }
 }
