@@ -11,8 +11,6 @@ using Unity.Transforms;
 [UpdateBefore(typeof(MovementManualSystem))]
 internal partial struct MoveOrderSystem : ISystem
 {
-    private int lastClickID;
-
     private EntityQuery manualMovementQuery;
     private EntityQuery velocityMovementQuery;
     private EntityQuery positionMotorMovementQuery;
@@ -23,8 +21,6 @@ internal partial struct MoveOrderSystem : ISystem
         state.RequireForUpdate<Config>();
         state.RequireForUpdate<MouseManager>();
         state.RequireForUpdate<MouseRightClickEvent>();
-
-        lastClickID = -1;
 
         manualMovementQuery = state.GetEntityQuery(new EntityQueryDesc
         {
@@ -62,31 +58,29 @@ internal partial struct MoveOrderSystem : ISystem
         var ecb = new EntityCommandBuffer(Allocator.Temp);
 
         var mouseManagerEntity = SystemAPI.GetSingletonEntity<MouseManager>();
+        var mouseManager = state.EntityManager.GetComponentData<MouseManager>(mouseManagerEntity);
 
-        var mouseRightClickEventData = state.EntityManager.GetComponentData<MouseRightClickEvent>(mouseManagerEntity);
+        if (mouseManager.IsRightClickUp)
+        {
+            var mouseRightClickEventData = state.EntityManager.GetComponentData<MouseRightClickEvent>(mouseManagerEntity);
 
-        var isNewClickEventDetected = lastClickID != mouseRightClickEventData.RightClickID;
+            // NOTE: Update ComponentLookups
+            var manualMovementLookup = state.GetComponentLookup<MovementManual>(true);
+            var velocityMovementLookup = state.GetComponentLookup<MovementVelocity>(true);
+            var positionMotorMovementLookup = state.GetComponentLookup<MovementPositionMotor>(true);
 
-        if (!isNewClickEventDetected)
-            return;
+            // NOTE: Process entities with manual movement
+            ProcessManualMovementOrder(ref state, ref ecb, mouseRightClickEventData.PositionWorld, configManager.MovementFormationType, manualMovementQuery, manualMovementLookup);
 
-        // NOTE: Update ComponentLookups
-        var manualMovementLookup = state.GetComponentLookup<MovementManual>(true);
-        var velocityMovementLookup = state.GetComponentLookup<MovementVelocity>(true);
-        var positionMotorMovementLookup = state.GetComponentLookup<MovementPositionMotor>(true);
+            // NOTE: Process entities with standard MovementVelocity
+            ProcessVelocityMovementOrder(ref state, ref ecb, mouseRightClickEventData.PositionWorld, configManager.MovementFormationType, velocityMovementQuery, velocityMovementLookup);
 
-        // NOTE: Process entities with manual movement
-        ProcessManualMovementOrder(ref state, ref ecb, mouseRightClickEventData.Position, configManager.MovementFormationType, manualMovementQuery, manualMovementLookup);
+            // NOTE: Process entities with MovementPositionMotor
+            ProcessPositionMotorMovementOrder(ref state, ref ecb, mouseRightClickEventData.PositionWorld, configManager.MovementFormationType, positionMotorMovementQuery, positionMotorMovementLookup);
 
-        // NOTE: Process entities with standard MovementVelocity
-        ProcessVelocityMovementOrder(ref state, ref ecb, mouseRightClickEventData.Position, configManager.MovementFormationType, velocityMovementQuery, velocityMovementLookup);
-
-        // NOTE: Process entities with MovementPositionMotor
-        ProcessPositionMotorMovementOrder(ref state, ref ecb, mouseRightClickEventData.Position, configManager.MovementFormationType, positionMotorMovementQuery, positionMotorMovementLookup);
-
-        lastClickID = mouseRightClickEventData.RightClickID;
-        ecb.Playback(state.EntityManager);
-        ecb.Dispose();
+            ecb.Playback(state.EntityManager);
+            ecb.Dispose();
+        }
     }
 
     [BurstCompile]
