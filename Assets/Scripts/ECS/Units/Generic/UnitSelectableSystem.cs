@@ -23,6 +23,7 @@ public partial struct UnitSelectableSystem : ISystem
         state.RequireForUpdate<CameraManager>();
     }
 
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         var configManager = SystemAPI.GetSingleton<Config>();

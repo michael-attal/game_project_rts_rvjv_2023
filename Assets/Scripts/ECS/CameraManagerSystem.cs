@@ -13,6 +13,7 @@ public partial struct CameraManagerSystem : ISystem
         state.RequireForUpdate<CameraManager>();
     }
 
+    // [BurstCompile] Cannot burst compile: Access to camera
     public void OnUpdate(ref SystemState state)
     {
         var configManager = SystemAPI.GetSingleton<Config>();

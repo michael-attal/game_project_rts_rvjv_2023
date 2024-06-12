@@ -69,6 +69,7 @@ public partial struct MouseEventSystem : ISystem
         state.RequireForUpdate<MouseMovementEvent>();
     }
 
+    // [BurstCompile] Cannot burst compile: Access to camera
     public void OnUpdate(ref SystemState state)
     {
         var configManager = SystemAPI.GetSingleton<Config>();
