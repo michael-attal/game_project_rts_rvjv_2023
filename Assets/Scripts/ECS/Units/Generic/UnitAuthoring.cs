@@ -6,7 +6,6 @@ using UnityEngine;
 public class UnitAuthoring : MonoBehaviour
 {
     public SpeciesType SpeciesType;
-    public UnitType UnitType;
     public bool IsMovementAnimated;
     public float UnitSpeed;
     public MovementType MovementType;
@@ -33,8 +32,6 @@ public class UnitAuthoring : MonoBehaviour
 
             AddComponent(entity, new Unit
             {
-                SpeciesType = authoring.SpeciesType,
-                UnitType = authoring.UnitType,
                 UnitSpeed = authoring.UnitSpeed
             });
 
@@ -97,15 +94,10 @@ public class UnitAuthoring : MonoBehaviour
             });
 
             AddComponent<Velocity>(entity);
-
-            if (authoring.SpeciesType == SpeciesType.Slime)
+            AddComponent(entity, new SpeciesTag()
             {
-                AddComponent<SlimeUnitTag>(entity);
-            }
-            else
-            {
-                AddComponent<MecaUnitTag>(entity);
-            }
+                Type = authoring.SpeciesType
+            });
         }
     }
 }
@@ -128,18 +120,13 @@ public enum UnitType
     // ...
 }
 
-public struct SlimeUnitTag : IComponentData
+public struct SpeciesTag : IComponentData
 {
-}
-
-public struct MecaUnitTag : IComponentData
-{
+    public SpeciesType Type;
 }
 
 public struct Unit : IComponentData
 {
-    public SpeciesType SpeciesType;
-    public UnitType UnitType;
     public float UnitSpeed;
 }
 

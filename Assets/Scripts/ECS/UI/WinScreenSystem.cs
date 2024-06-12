@@ -1,3 +1,4 @@
+using UnityEngine;
 using Unity.Burst;
 using Unity.Entities;
 
@@ -10,7 +11,7 @@ public partial struct WinScreenSystem : ISystem
         state.RequireForUpdate<Config>();
     }
 
-    // Accessing WinScreenPresenter class, can't use BurstCompile.
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         var configManager = SystemAPI.GetSingleton<Config>();
@@ -23,21 +24,31 @@ public partial struct WinScreenSystem : ISystem
         if (configManager.IsGamePaused)
             return;
 
-        if (SystemAPI.GetSingleton<Game>().State != GameState.Running)
+        var currentGame = SystemAPI.GetSingleton<Game>();
+        if (currentGame.State != GameState.Running)
             return;
 
-        // NOTE: Count remaining units on both sides (faster with CalculateEntityCount)
-        var slimeCount = SystemAPI.QueryBuilder().WithAll<Unit, SlimeUnitTag>().Build().CalculateEntityCount();
-        var mecaCount = SystemAPI.QueryBuilder().WithAll<Unit, MecaUnitTag>().Build().CalculateEntityCount();
-
-        // Meca victory
-        if (slimeCount == 0)
+        int mecaCount = 0;
+        int slimeCount = 0;
+        foreach (var species in SystemAPI.Query<RefRO<SpeciesTag>>()
+                     .WithAll<BaseSpawnerBuilding>())
         {
-            WinScreenSingleton.Instance.DeclareWinner(SpeciesType.Meca);
+            if (species.ValueRO.Type == SpeciesType.Slime)
+                ++slimeCount;
+            else
+                ++mecaCount;
         }
-        else if (mecaCount == 0)
+
+        if (mecaCount == 0)
         {
-            WinScreenSingleton.Instance.DeclareWinner(SpeciesType.Slime);
+            currentGame.WinningSpecies = SpeciesType.Slime;
+            currentGame.State = GameState.Over;
+            SystemAPI.SetSingleton(currentGame);
+        } else if (slimeCount == 0)
+        {
+            currentGame.WinningSpecies = SpeciesType.Meca;
+            currentGame.State = GameState.Over;
+            SystemAPI.SetSingleton(currentGame);
         }
     }
 }
