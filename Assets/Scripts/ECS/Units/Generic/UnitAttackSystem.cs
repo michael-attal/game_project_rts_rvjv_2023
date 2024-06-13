@@ -41,7 +41,7 @@ public partial struct UnitAttackSystem : ISystem
 
         var ecb = new EntityCommandBuffer(Allocator.Temp);
 
-        foreach (var (attackerTransform, attackerInfo, attackerAttack, entity) in SystemAPI.Query<RefRW<LocalTransform>, RefRO<Unit>, RefRW<UnitAttack>>().WithAll<UnitAttack>().WithEntityAccess())
+        foreach (var (attackerTransform, attackerSpecies, attackerAttack, entity) in SystemAPI.Query<RefRW<LocalTransform>, RefRO<SpeciesTag>, RefRW<UnitAttack>>().WithAll<UnitAttack>().WithEntityAccess())
         {
             if (attackerAttack.ValueRO.CurrentReloadTime > 0f)
             {
@@ -54,12 +54,12 @@ public partial struct UnitAttackSystem : ISystem
             var attackablePos = float3.zero;
             var minimumRange = attackerAttack.ValueRO.Range;
 
-            foreach (var (attackableTransform, attackableInfo, attackableDamage) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<Unit>, RefRW<UnitDamage>>().WithAll<UnitDamage>())
+            foreach (var (attackableTransform, attackableSpecies, attackableDamage) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<SpeciesTag>, RefRW<UnitDamage>>().WithAll<UnitDamage>())
             {
                 attackablePos = attackableTransform.ValueRO.Position;
 
                 var currentDistance = attackerPos.DistanceTo(attackablePos);
-                if (currentDistance <= minimumRange && attackerInfo.ValueRO.SpeciesType != attackableInfo.ValueRO.SpeciesType)
+                if (currentDistance <= minimumRange && attackerSpecies.ValueRO.Type != attackableSpecies.ValueRO.Type)
                 {
                     target = attackableDamage;
                     minimumRange = currentDistance;
