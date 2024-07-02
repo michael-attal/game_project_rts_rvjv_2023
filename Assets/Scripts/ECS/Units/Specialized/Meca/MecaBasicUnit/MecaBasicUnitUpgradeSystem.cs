@@ -10,6 +10,7 @@ public partial struct MecaBasicUnitUpgradeSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<Config>();
+        state.RequireForUpdate<Game>();
         state.RequireForUpdate<UnitSelectable>();
         state.RequireForUpdate<MecaBasicUnitUpgrade>();
     }
@@ -18,6 +19,7 @@ public partial struct MecaBasicUnitUpgradeSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         var configManager = SystemAPI.GetSingleton<Config>();
+        var gameManager = SystemAPI.GetSingleton<Game>();
 
         if (!configManager.ActivateMecaBasicUnitUpgradeSystem)
         {
@@ -25,7 +27,7 @@ public partial struct MecaBasicUnitUpgradeSystem : ISystem
             return;
         }
 
-        if (configManager.IsGamePaused)
+        if (gameManager.State == GameState.Paused)
             return;
 
         Debug.Log("Upgrade now!");

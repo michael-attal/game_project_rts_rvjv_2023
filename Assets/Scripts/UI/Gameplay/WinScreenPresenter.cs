@@ -10,7 +10,8 @@ public class WinScreenPresenter : MonoBehaviour
     [SerializeField] private GameObject bottomMenu;
     [SerializeField] private Image background;
     [SerializeField] private TMP_Text winText;
-    [SerializeField] private Button retryButton;
+    [SerializeField] private Button playAgainButton;
+    [SerializeField] private Button backToMenuButton;
     [SerializeField] private Button quitButton;
 
     [SerializeField] private Color slimeColor;
@@ -22,8 +23,9 @@ public class WinScreenPresenter : MonoBehaviour
     {
         entityQuery =
             World.DefaultGameObjectInjectionWorld.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<Game>());
-        
-        retryButton.onClick.AddListener(BackToMenu);
+
+        playAgainButton.onClick.AddListener(PlayAgain);
+        backToMenuButton.onClick.AddListener(BackToMenu);
         quitButton.onClick.AddListener(Quit);
 
         StartCoroutine(WaitForEnd());
@@ -40,7 +42,7 @@ public class WinScreenPresenter : MonoBehaviour
         Debug.Log("Allez on commence...");
         while (entityQuery.GetSingleton<Game>().State != GameState.Over)
             yield return null;
-        
+
         DeclareWinner(entityQuery.GetSingleton<Game>().WinningSpecies);
     }
 
@@ -51,6 +53,22 @@ public class WinScreenPresenter : MonoBehaviour
 
         bottomMenu.SetActive(false);
         content.SetActive(true);
+    }
+
+    private void PlayAgain()
+    {
+        var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+
+        var queryConfigManager = entityManager.CreateEntityQuery(ComponentType.ReadWrite<Game>());
+
+        var gameManagerECS = queryConfigManager.GetSingleton<Game>();
+        gameManagerECS.State = GameState.Starting;
+        queryConfigManager.SetSingleton(gameManagerECS);
+
+        bottomMenu.SetActive(true);
+        content.SetActive(false);
+
+        StartCoroutine(WaitForEnd());
     }
 
     private void BackToMenu()

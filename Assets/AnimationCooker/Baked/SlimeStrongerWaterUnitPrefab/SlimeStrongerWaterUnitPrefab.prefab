@@ -161,7 +161,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SpeciesType: 0
-  UnitType: 2
   IsMovementAnimated: 1
   UnitSpeed: 5
   MovementType: 0
@@ -299,7 +298,7 @@ MonoBehaviour:
       m_Value:
         Category00: 1
         Category01: 1
-        Category02: 0
+        Category02: 1
         Category03: 1
         Category04: 1
         Category05: 1

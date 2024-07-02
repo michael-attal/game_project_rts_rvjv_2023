@@ -1,12 +1,14 @@
 using Unity.Burst;
 using Unity.Entities;
 
-partial struct GatlingUpgradeSystem : ISystem
+internal partial struct GatlingUpgradeSystem : ISystem
 {
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<Config>();
+        state.RequireForUpdate<Game>();
         state.RequireForUpdate<UnitAttack>();
         state.RequireForUpdate<UnitDamage>();
         state.RequireForUpdate<GatlingUpgrade>();
@@ -16,6 +18,7 @@ partial struct GatlingUpgradeSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         var configManager = SystemAPI.GetSingleton<Config>();
+        var gameManager = SystemAPI.GetSingleton<Game>();
 
         if (!configManager.ActivateMecaBasicUnitUpgradeSystem)
         {
@@ -23,9 +26,9 @@ partial struct GatlingUpgradeSystem : ISystem
             return;
         }
 
-        if (configManager.IsGamePaused)
+        if (gameManager.State == GameState.Paused)
             return;
-        
+
         var job = new GatlingUpgradeJob
         {
             ECB = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>()
@@ -50,4 +53,6 @@ public partial struct GatlingUpgradeJob : IJobEntity
     }
 }
 
-public struct GatlingUpgrade : IComponentData {}
+public struct GatlingUpgrade : IComponentData
+{
+}

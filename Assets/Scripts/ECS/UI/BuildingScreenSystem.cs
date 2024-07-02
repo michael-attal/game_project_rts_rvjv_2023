@@ -11,21 +11,23 @@ internal partial struct BuildingScreenSystem : ISystem
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<Game>();
         state.RequireForUpdate<Config>();
+        state.RequireForUpdate<Game>();
     }
 
     // Accessing BuildingScreen, can't use BurstCompile
     public void OnUpdate(ref SystemState state)
     {
         var configManager = SystemAPI.GetSingleton<Config>();
+        var gameManager = SystemAPI.GetSingleton<Game>();
+
         if (!configManager.ActivateBuildingScreenSystem)
         {
             state.Enabled = false;
             return;
         }
 
-        if (configManager.IsGamePaused)
+        if (gameManager.State == GameState.Paused)
             return;
 
         if (!Input.GetMouseButtonDown(0))
@@ -46,12 +48,11 @@ internal partial struct BuildingScreenSystem : ISystem
             if (buffer[i].EntityID == selectedID)
             {
                 // Hard-coded cost because I'm tired
-                var game = SystemAPI.GetSingleton<Game>();
-                if (game.RessourceCount < 50)
+                if (gameManager.RessourceCount < 50)
                     return;
 
-                game.RessourceCount -= 50;
-                SystemAPI.SetSingleton(game);
+                gameManager.RessourceCount -= 50;
+                SystemAPI.SetSingleton(gameManager);
 
                 var newEntity = ecb.Instantiate(buffer[i].Entity);
                 ecb.SetComponent(newEntity, new LocalTransform

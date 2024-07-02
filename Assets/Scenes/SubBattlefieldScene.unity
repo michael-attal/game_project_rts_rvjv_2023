@@ -626,7 +626,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2486984425940099279, guid: d1bd89a5e15164369bb60817bf92bb1f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1
+      value: -100
       objectReference: {fileID: 0}
     - target: {fileID: 2486984425940099279, guid: d1bd89a5e15164369bb60817bf92bb1f, type: 3}
       propertyPath: m_LocalPosition.z
@@ -867,74 +867,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1383968346
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1383968348}
-  - component: {fileID: 1383968347}
-  m_Layer: 0
-  m_Name: SpawnManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1383968347
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1383968346}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ff3e3e8297294047b532fc7eaf4ad22, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  PlayerOneSpecies: 0
-  PlayerTwoSpecies: 1
-  StartPositionBaseSpawnerPlayerOne:
-    x: 0
-    y: 0
-    z: -14
-  StartPositionBaseSpawnerPlayerTwo:
-    x: 0
-    y: 0
-    z: 14
-  SpawnUnitWhenPressEnter: 0
-  GroupUnitsBy: 2
-  NumberOfBaseSpawnerForPlayerOne: 1
-  NumberOfBaseSpawnerForPlayerTwo: 1
-  NumberOfSlimeUnitPerSlimeBaseSpawner: 1000
-  NumberOfMecaUnitPerMecaBaseSpawner: 500
-  SelectionCirclePrefab: {fileID: 7370947266852994130, guid: d15410bcecb664ca69f6b97c5d3bf07d, type: 3}
-  SlimePlayerHandPrefab: {fileID: 6320164834673837995, guid: f571fa7df0f264f0a866e82fe099d7b5, type: 3}
-  SlimeBaseSpawnerBuildingPrefab: {fileID: 2216618471874645061, guid: 888243f85db11483baf93363ac285d84, type: 3}
-  SlimeBasicUnitPrefab: {fileID: 392048310712016098, guid: fce1ec0bc862144ba9b48c79a2f70711, type: 3}
-  SlimeStrongerUnitPrefab: {fileID: 5786252611782199926, guid: f90f636104df74ba581f1be346a37db7, type: 3}
-  MecaPlayerHandPrefab: {fileID: 1259044049793980661, guid: 2b27e280aca8e4416bf77212c6bd837d, type: 3}
-  MecaBaseSpawnerBuildingPrefab: {fileID: 6851779870681047773, guid: c11a9cb22bf814101a676687080166dd, type: 3}
-  MecaBasicUnitPrefab: {fileID: 2217984132830471510, guid: f303e5a99dc1542fcaf946349fd94c0f, type: 3}
---- !u!4 &1383968348
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1383968346}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1403932411
 GameObject:
   m_ObjectHideFlags: 0
@@ -1046,6 +978,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1732016748}
   - component: {fileID: 1732016747}
+  - component: {fileID: 1732016749}
   - component: {fileID: 1732016746}
   m_Layer: 0
   m_Name: GameInfo
@@ -1086,8 +1019,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 183a8500e7c3a43acafd3cccbdc7bcde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  activatePlayerSpawnerSystem: 1
-  activateBaseSpawnerBuildingSystem: 1
+  activateSetupGameSystem: 1
+  activateCleanupGameSystem: 1
   activateUnitSpawnerSystem: 1
   activateUnitSelectableSystem: 1
   activateSelectionRectResizeSystem: 1
@@ -1102,7 +1035,6 @@ MonoBehaviour:
   activateUnitAttackSystem: 1
   activateUnitDamageSystem: 1
   activatePauseScreenSystem: 1
-  isGamePaused: 0
   activateWinConditions: 1
   activateBuildingScreenSystem: 1
   activateGatheringSystem: 1
@@ -1127,6 +1059,35 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1732016749
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1732016745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ff3e3e8297294047b532fc7eaf4ad22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerOneSpecies: 0
+  PlayerTwoSpecies: 1
+  StartPositionBaseSpawnerPlayerOne:
+    x: 0
+    y: 0
+    z: -14
+  StartPositionBaseSpawnerPlayerTwo:
+    x: 0
+    y: 0
+    z: 14
+  NumberOfBaseSpawnerForPlayerOne: 1
+  NumberOfBaseSpawnerForPlayerTwo: 1
+  SelectionCirclePrefab: {fileID: 7370947266852994130, guid: d15410bcecb664ca69f6b97c5d3bf07d, type: 3}
+  SlimePlayerHandPrefab: {fileID: 6320164834673837995, guid: f571fa7df0f264f0a866e82fe099d7b5, type: 3}
+  MecaPlayerHandPrefab: {fileID: 6320164834673837995, guid: f571fa7df0f264f0a866e82fe099d7b5, type: 3}
+  SlimeBaseSpawnerBuildingPrefab: {fileID: 2216618471874645061, guid: 888243f85db11483baf93363ac285d84, type: 3}
+  MecaBaseSpawnerBuildingPrefab: {fileID: 6851779870681047773, guid: c11a9cb22bf814101a676687080166dd, type: 3}
 --- !u!1 &1765103133
 GameObject:
   m_ObjectHideFlags: 0
@@ -1265,8 +1226,8 @@ Transform:
   m_GameObject: {fileID: 1802175981}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.5, z: 0}
-  m_LocalScale: {x: 200, y: 1, z: 200}
+  m_LocalPosition: {x: 0, y: -1, z: 0}
+  m_LocalScale: {x: 200, y: 2, z: 200}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -1566,7 +1527,6 @@ SceneRoots:
   - {fileID: 1732016748}
   - {fileID: 1802175985}
   - {fileID: 1405089680}
-  - {fileID: 1383968348}
   - {fileID: 1206889701}
   - {fileID: 1939005312}
   - {fileID: 908765153}

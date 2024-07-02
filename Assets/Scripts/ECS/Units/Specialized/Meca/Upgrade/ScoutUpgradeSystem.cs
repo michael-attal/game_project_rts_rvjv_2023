@@ -1,13 +1,14 @@
 using Unity.Burst;
 using Unity.Entities;
-using UnityEngine;
 
-partial struct ScoutUpgradeSystem : ISystem
+internal partial struct ScoutUpgradeSystem : ISystem
 {
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<Config>();
+        state.RequireForUpdate<Game>();
         state.RequireForUpdate<UnitAttack>();
         state.RequireForUpdate<UnitDamage>();
         state.RequireForUpdate<ScoutUpgrade>();
@@ -17,6 +18,7 @@ partial struct ScoutUpgradeSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         var configManager = SystemAPI.GetSingleton<Config>();
+        var gameManager = SystemAPI.GetSingleton<Game>();
 
         if (!configManager.ActivateMecaBasicUnitUpgradeSystem)
         {
@@ -24,9 +26,9 @@ partial struct ScoutUpgradeSystem : ISystem
             return;
         }
 
-        if (configManager.IsGamePaused)
+        if (gameManager.State == GameState.Paused)
             return;
-        
+
         var job = new ScoutUpgradeJob
         {
             ECB = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>()
@@ -50,4 +52,6 @@ public partial struct ScoutUpgradeJob : IJobEntity
     }
 }
 
-public struct ScoutUpgrade : IComponentData {}
+public struct ScoutUpgrade : IComponentData
+{
+}

@@ -11,6 +11,7 @@ public partial struct UnitDamageSystem : ISystem
     {
         state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<Config>();
+        state.RequireForUpdate<Game>();
         state.RequireForUpdate<UnitDamage>();
     }
 
@@ -21,6 +22,7 @@ public partial struct UnitDamageSystem : ISystem
         // If the damage system differs significantly between units, we should implement a specialized system, such as MySlimeUnitDamageSystem, in addition of a generic one like this one.
 
         var configManager = SystemAPI.GetSingleton<Config>();
+        var gameManager = SystemAPI.GetSingleton<Game>();
 
         if (!configManager.ActivateUnitDamageSystem)
         {
@@ -28,7 +30,7 @@ public partial struct UnitDamageSystem : ISystem
             return;
         }
 
-        if (configManager.IsGamePaused)
+        if (gameManager.State == GameState.Paused)
             return;
 
         var job = new UnitDamageJob

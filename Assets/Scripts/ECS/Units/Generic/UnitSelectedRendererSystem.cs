@@ -19,12 +19,14 @@ public partial struct UnitSelectedRendererSystem : ISystem
         state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<SpawnManager>();
         state.RequireForUpdate<Config>();
+        state.RequireForUpdate<Game>();
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         var configManager = SystemAPI.GetSingleton<Config>();
+        var gameManager = SystemAPI.GetSingleton<Game>();
 
         if (!configManager.ActivateUnitSelectedRendererSystem)
         {
@@ -32,7 +34,7 @@ public partial struct UnitSelectedRendererSystem : ISystem
             return;
         }
 
-        if (configManager.IsGamePaused)
+        if (gameManager.State == GameState.Paused)
             return;
 
         var spawnManager = SystemAPI.GetSingleton<SpawnManager>();
