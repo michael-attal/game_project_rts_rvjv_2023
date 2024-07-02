@@ -16,8 +16,8 @@ public partial struct UpgradedUnitSpawnerSystem : ISystem
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<Game>();
         state.RequireForUpdate<Config>();
+        state.RequireForUpdate<Game>();
         state.RequireForUpdate<SpawnManager>();
         state.RequireForUpdate<BaseSpawnerBuilding>();
     }
@@ -26,6 +26,7 @@ public partial struct UpgradedUnitSpawnerSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         var configManager = SystemAPI.GetSingleton<Config>();
+        var gameManager = SystemAPI.GetSingleton<Game>();
 
         if (!configManager.ActivateMecaBasicUnitUpgradeSystem)
         {
@@ -33,21 +34,12 @@ public partial struct UpgradedUnitSpawnerSystem : ISystem
             return;
         }
 
-        if (configManager.IsGamePaused)
+        if (gameManager.State == GameState.Paused)
             return;
-        
-        var spawnManager = SystemAPI.GetSingleton<SpawnManager>();
-
-        if (spawnManager.SpawnUnitWhenPressEnter)
-        {
-            if (!Input.GetKeyDown(KeyCode.Return))
-                return;
-            Debug.Log("Enter detected! Spawning unit now!");
-        }
 
         var ecbJob = new EntityCommandBuffer(Allocator.TempJob);
 
-        foreach (var (transform, spawner, upgrades) 
+        foreach (var (transform, spawner, upgrades)
                  in SystemAPI.Query<RefRO<LocalTransform>, RefRW<BaseSpawnerBuilding>, RefRO<SpawnerUpgradesRegister>>())
         {
             if (spawner.ValueRO.TimeToNextGeneration > 0f)
@@ -55,6 +47,7 @@ public partial struct UpgradedUnitSpawnerSystem : ISystem
                 spawner.ValueRW.TimeToNextGeneration -= SystemAPI.Time.DeltaTime;
                 continue;
             }
+
             spawner.ValueRW.TimeToNextGeneration = spawner.ValueRO.GenerationInterval;
 
             var unitSpawnJob = new UpgradedUnitSpawnJob
@@ -78,14 +71,6 @@ public partial struct UpgradedUnitSpawnerSystem : ISystem
 
         ecbJob.Playback(state.EntityManager);
         ecbJob.Dispose();
-
-        // If this was the initial spawn wave, start the game
-        var singleton = SystemAPI.GetSingleton<Game>();
-        if (singleton.State == GameState.Starting)
-        {
-            singleton.State = GameState.Running;
-            SystemAPI.SetSingleton(singleton);
-        }
     }
 }
 
@@ -183,13 +168,13 @@ public struct UpgradedUnitSpawnJob : IJobParallelFor
     {
         if (UpgradesRegister.HasGlassCannon)
             CommandBuffer.AddComponent<GlassCannonUpgrade>(index, entity);
-        
+
         if (UpgradesRegister.HasArtillery)
             CommandBuffer.AddComponent<ArtilleryUpgrade>(index, entity);
 
         if (UpgradesRegister.HasGatling)
             CommandBuffer.AddComponent<GatlingUpgrade>(index, entity);
-        
+
         if (UpgradesRegister.HasScout)
             CommandBuffer.AddComponent<ScoutUpgrade>(index, entity);
     }

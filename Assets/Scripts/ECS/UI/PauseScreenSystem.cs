@@ -18,13 +18,15 @@ public partial struct PauseScreenSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         var configManager = SystemAPI.GetSingleton<Config>();
+        var gameManager = SystemAPI.GetSingleton<Game>();
+
         if (!configManager.ActivatePauseScreenSystem)
         {
             state.Enabled = false;
             return;
         }
 
-        if (SystemAPI.GetSingleton<Game>().State != GameState.Running)
+        if (gameManager.State != GameState.Running)
             return;
 
         if (!Input.GetKeyDown(KeyCode.Escape))
@@ -49,7 +51,8 @@ public partial struct PauseScreenSystem : ISystem
             animatedComponent.ValueRW.PlaySpeed = animatedComponent.ValueRW.PlaySpeed <= 0.0001 ? 1f : 0f;
         }
 
-        SystemAPI.SetSingleton(ConfigAuthoring.UpdateConfigWithToggledPause(configManager));
+        gameManager.State = GameState.Paused;
+        SystemAPI.SetSingleton(gameManager);
         PauseScreenSingleton.Instance.ToggleDisplayPauseScreen();
     }
 }

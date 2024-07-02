@@ -18,6 +18,7 @@ public partial struct UnitSelectableSystem : ISystem
     {
         state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<Config>();
+        state.RequireForUpdate<Game>();
         state.RequireForUpdate<UnitSelectable>();
         state.RequireForUpdate<MouseManager>();
         state.RequireForUpdate<CameraManager>();
@@ -27,6 +28,7 @@ public partial struct UnitSelectableSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         var configManager = SystemAPI.GetSingleton<Config>();
+        var gameManager = SystemAPI.GetSingleton<Game>();
 
         if (!configManager.ActivateUnitSelectableSystem)
         {
@@ -34,7 +36,7 @@ public partial struct UnitSelectableSystem : ISystem
             return;
         }
 
-        if (configManager.IsGamePaused)
+        if (gameManager.State == GameState.Paused)
             return;
 
         var mouseManager = SystemAPI.GetSingleton<MouseManager>();

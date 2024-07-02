@@ -17,6 +17,7 @@ public partial struct UnitAttackSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<Config>();
+        state.RequireForUpdate<Game>();
         state.RequireForUpdate<UnitAttack>();
         isIdleAnimationPlayed = true;
         isAttackAnimationPlayed = false;
@@ -29,6 +30,7 @@ public partial struct UnitAttackSystem : ISystem
         // If the Attack system differs significantly between units, we should implement a specialized system, such as MySlimeUnitAttackSystem, in addition of a generic one like this one.
 
         var configManager = SystemAPI.GetSingleton<Config>();
+        var gameManager = SystemAPI.GetSingleton<Game>();
 
         if (!configManager.ActivateUnitAttackSystem)
         {
@@ -36,7 +38,7 @@ public partial struct UnitAttackSystem : ISystem
             return;
         }
 
-        if (configManager.IsGamePaused)
+        if (gameManager.State == GameState.Paused)
             return;
 
         var ecb = new EntityCommandBuffer(Allocator.Temp);

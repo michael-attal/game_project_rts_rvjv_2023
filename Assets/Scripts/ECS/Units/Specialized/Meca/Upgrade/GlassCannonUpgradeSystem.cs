@@ -1,12 +1,14 @@
 using Unity.Burst;
 using Unity.Entities;
 
-partial struct GlassCannonUpgradeSystem : ISystem
+internal partial struct GlassCannonUpgradeSystem : ISystem
 {
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<Config>();
+        state.RequireForUpdate<Game>();
         state.RequireForUpdate<UnitAttack>();
         state.RequireForUpdate<UnitDamage>();
         state.RequireForUpdate<GlassCannonUpgrade>();
@@ -16,6 +18,7 @@ partial struct GlassCannonUpgradeSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         var configManager = SystemAPI.GetSingleton<Config>();
+        var gameManager = SystemAPI.GetSingleton<Game>();
 
         if (!configManager.ActivateMecaBasicUnitUpgradeSystem)
         {
@@ -23,9 +26,9 @@ partial struct GlassCannonUpgradeSystem : ISystem
             return;
         }
 
-        if (configManager.IsGamePaused)
+        if (gameManager.State == GameState.Paused)
             return;
-        
+
         var job = new GlassCannonUpgradeJob
         {
             ECB = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>()
@@ -49,4 +52,6 @@ public partial struct GlassCannonUpgradeJob : IJobEntity
     }
 }
 
-public struct GlassCannonUpgrade : IComponentData {}
+public struct GlassCannonUpgrade : IComponentData
+{
+}

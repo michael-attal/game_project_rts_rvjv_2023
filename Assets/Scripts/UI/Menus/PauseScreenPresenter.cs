@@ -28,14 +28,21 @@ public class PauseScreenPresenter : MonoBehaviour
     {
         var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
-        var queryConfigManager = entityManager.CreateEntityQuery(ComponentType.ReadWrite<Config>());
+        var queryConfigManager = entityManager.CreateEntityQuery(ComponentType.ReadWrite<Game>());
 
         var queryUnityPhysicsStep = entityManager.CreateEntityQuery(ComponentType.ReadWrite<PhysicsStep>());
 
         var queryAnimationSpeedData = entityManager.CreateEntityQuery(ComponentType.ReadWrite<AnimationSpeedData>());
 
-        var configManager = queryConfigManager.GetSingleton<Config>();
-        queryConfigManager.SetSingleton(ConfigAuthoring.UpdateConfigWithPause(configManager, false));
+        var gameManager = queryConfigManager.GetSingleton<Game>();
+
+        if (gameManager.State != GameState.Paused)
+        {
+            Debug.LogWarning("ERROR: ContinueGame called but Game is not Paused");
+        }
+
+        gameManager.State = GameState.Running;
+        queryConfigManager.SetSingleton(gameManager);
 
         var configUnityPhysicsStep = queryUnityPhysicsStep.GetSingleton<PhysicsStep>();
         queryUnityPhysicsStep.SetSingleton(new PhysicsStep
@@ -61,5 +68,10 @@ public class PauseScreenPresenter : MonoBehaviour
 
         bottomMenu.SetActive(true);
         gameObject.SetActive(false);
+    }
+
+    private void PauseGame()
+    {
+        // NOTE: Todo in case we allow pause from UI and not only by pressing ESCAPE key
     }
 }
