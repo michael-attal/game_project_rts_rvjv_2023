@@ -1,12 +1,14 @@
 using Unity.Burst;
 using Unity.Entities;
 
-partial struct ArtilleryUpgradeSystem : ISystem
+internal partial struct ArtilleryUpgradeSystem : ISystem
 {
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<Config>();
+        state.RequireForUpdate<Game>();
         state.RequireForUpdate<UnitAttack>();
         state.RequireForUpdate<UnitDamage>();
         state.RequireForUpdate<ArtilleryUpgrade>();
@@ -16,6 +18,7 @@ partial struct ArtilleryUpgradeSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         var configManager = SystemAPI.GetSingleton<Config>();
+        var gameManager = SystemAPI.GetSingleton<Game>();
 
         if (!configManager.ActivateMecaBasicUnitUpgradeSystem)
         {
@@ -23,9 +26,9 @@ partial struct ArtilleryUpgradeSystem : ISystem
             return;
         }
 
-        if (configManager.IsGamePaused)
+        if (gameManager.State == GameState.Paused)
             return;
-        
+
         var job = new ArtilleryUpgradeJob
         {
             ECB = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>()
@@ -40,13 +43,16 @@ partial struct ArtilleryUpgradeSystem : ISystem
 public partial struct ArtilleryUpgradeJob : IJobEntity
 {
     public EntityCommandBuffer.ParallelWriter ECB;
+
     private void Execute(Entity entity, RefRW<Unit> unitMovement, RefRW<UnitAttack> unitAttack, [ChunkIndexInQuery] int chunkIndex)
     {
         unitAttack.ValueRW.Range = 20;
         unitMovement.ValueRW.UnitSpeed /= 2;
-        
+
         ECB.RemoveComponent<ArtilleryUpgrade>(chunkIndex, entity);
     }
 }
 
-public struct ArtilleryUpgrade : IComponentData {}
+public struct ArtilleryUpgrade : IComponentData
+{
+}

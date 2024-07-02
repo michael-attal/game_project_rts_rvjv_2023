@@ -18,6 +18,7 @@ public partial class ParticleSpawningSystem : SystemBase
     protected override void OnCreate()
     {
         RequireForUpdate<Config>();
+        RequireForUpdate<Game>();
 
         // NOTE: Init basic mesh and material if no one found from Particle Generator
         m_QuadMesh = new Mesh();
@@ -112,13 +113,14 @@ public partial class ParticleSpawningSystem : SystemBase
     protected override void OnUpdate()
     {
         var configManager = SystemAPI.GetSingleton<Config>();
+        var gameManager = SystemAPI.GetSingleton<Game>();
 
         if (!configManager.ActivateParticleSystems)
         {
             return;
         }
 
-        if (configManager.IsGamePaused)
+        if (gameManager.State == GameState.Paused)
             return;
 
         var ecb = new EntityCommandBuffer(Allocator.Temp);

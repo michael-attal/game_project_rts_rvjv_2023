@@ -16,8 +16,8 @@ public partial struct UnitSpawnerSystem : ISystem
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<Game>();
         state.RequireForUpdate<Config>();
+        state.RequireForUpdate<Game>();
         state.RequireForUpdate<SpawnManager>();
         state.RequireForUpdate<BaseSpawnerBuilding>();
     }
@@ -26,6 +26,7 @@ public partial struct UnitSpawnerSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         var configManager = SystemAPI.GetSingleton<Config>();
+        var gameManager = SystemAPI.GetSingleton<Game>();
 
         if (!configManager.ActivateUnitSpawnerSystem)
         {
@@ -33,21 +34,12 @@ public partial struct UnitSpawnerSystem : ISystem
             return;
         }
 
-        if (configManager.IsGamePaused)
+        if (gameManager.State == GameState.Paused)
             return;
-
-        var spawnManager = SystemAPI.GetSingleton<SpawnManager>();
-
-        if (spawnManager.SpawnUnitWhenPressEnter)
-        {
-            if (!Input.GetKeyDown(KeyCode.Return))
-                return;
-            Debug.Log("Enter detected! Spawning unit now!");
-        }
 
         var ecbJob = new EntityCommandBuffer(Allocator.TempJob);
 
-        foreach (var (transform, spawner) 
+        foreach (var (transform, spawner)
                  in SystemAPI.Query<RefRO<LocalTransform>, RefRW<BaseSpawnerBuilding>>()
                      .WithNone<SpawnerUpgradesRegister>())
         {
@@ -79,14 +71,6 @@ public partial struct UnitSpawnerSystem : ISystem
 
         ecbJob.Playback(state.EntityManager);
         ecbJob.Dispose();
-
-        // If this was the initial spawn wave, start the game
-        var singleton = SystemAPI.GetSingleton<Game>();
-        if (singleton.State == GameState.Starting)
-        {
-            singleton.State = GameState.Running;
-            SystemAPI.SetSingleton(singleton);
-        }
     }
 }
 

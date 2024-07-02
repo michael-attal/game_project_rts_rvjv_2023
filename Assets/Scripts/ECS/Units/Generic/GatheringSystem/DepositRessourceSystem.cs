@@ -8,21 +8,23 @@ internal partial struct DepositRessourceSystem : ISystem
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<Game>();
         state.RequireForUpdate<Config>();
+        state.RequireForUpdate<Game>();
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         var configManager = SystemAPI.GetSingleton<Config>();
+        var gameManager = SystemAPI.GetSingleton<Game>();
+
         if (!configManager.ActivateGatheringSystem)
         {
             state.Enabled = false;
             return;
         }
 
-        if (configManager.IsGamePaused)
+        if (gameManager.State == GameState.Paused)
             return;
 
         var ecb = new EntityCommandBuffer(Allocator.Temp);
@@ -33,9 +35,8 @@ internal partial struct DepositRessourceSystem : ISystem
                      .WithNone<WantsToMove>()
                      .WithEntityAccess())
         {
-            var game = SystemAPI.GetSingleton<Game>();
-            game.RessourceCount += ressource.ValueRO.CarriedRessources;
-            SystemAPI.SetSingleton(game);
+            gameManager.RessourceCount += ressource.ValueRO.CarriedRessources;
+            SystemAPI.SetSingleton(gameManager);
 
             ecb.RemoveComponent<HasRessource>(entity);
             ecb.SetComponentEnabled<WantsToMove>(entity, false);

@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class ConfigAuthoring : MonoBehaviour
 {
-    [SerializeField] private bool activatePlayerSpawnerSystem;
-    [SerializeField] private bool activateBaseSpawnerBuildingSystem;
+    [SerializeField] private bool activateSetupGameSystem;
+    [SerializeField] private bool activateCleanupGameSystem;
     [SerializeField] private bool activateUnitSpawnerSystem;
     [SerializeField] private bool activateUnitSelectableSystem;
     [SerializeField] private bool activateSelectionRectResizeSystem;
@@ -21,7 +21,6 @@ public class ConfigAuthoring : MonoBehaviour
     [SerializeField] private bool activateUnitAttackSystem;
     [SerializeField] private bool activateUnitDamageSystem;
     [SerializeField] private bool activatePauseScreenSystem;
-    [SerializeField] private bool isGamePaused;
     [SerializeField] private bool activateWinConditions;
     [SerializeField] private bool activateBuildingScreenSystem;
     [SerializeField] private bool activateGatheringSystem;
@@ -32,18 +31,6 @@ public class ConfigAuthoring : MonoBehaviour
     [SerializeField] private bool activateCameraManagerSystem;
     [SerializeField] private bool activateMouseManagerSystem;
 
-    public static Config UpdateConfigWithPause(Config currentConfig, bool isPaused)
-    {
-        currentConfig.IsGamePaused = isPaused;
-        return currentConfig;
-    }
-
-    public static Config UpdateConfigWithToggledPause(Config currentConfig)
-    {
-        return UpdateConfigWithPause(currentConfig, !currentConfig.IsGamePaused);
-    }
-
-
     private class Baker : Baker<ConfigAuthoring>
     {
         public override void Bake(ConfigAuthoring authoring)
@@ -52,8 +39,8 @@ public class ConfigAuthoring : MonoBehaviour
 
             AddComponent(entity, new Config
             {
-                ActivatePlayerSpawnerSystem = authoring.activatePlayerSpawnerSystem,
-                ActivateBaseSpawnerBuildingSystem = authoring.activateBaseSpawnerBuildingSystem,
+                ActivateSetupGameSystem = authoring.activateSetupGameSystem,
+                ActivateCleanupGameSystem = authoring.activateCleanupGameSystem,
                 ActivateUnitSpawnerSystem = authoring.activateUnitSpawnerSystem,
                 ActivateUnitSelectableSystem = authoring.activateUnitSelectableSystem,
                 ActivateSelectionRectResizeSystem = authoring.activateSelectionRectResizeSystem,
@@ -65,7 +52,6 @@ public class ConfigAuthoring : MonoBehaviour
                 ActivateUnitAttackSystem = authoring.activateUnitAttackSystem,
                 ActivateUnitDamageSystem = authoring.activateUnitDamageSystem,
                 ActivatePauseScreenSystem = authoring.activatePauseScreenSystem,
-                IsGamePaused = authoring.isGamePaused,
                 ActivateWinConditions = authoring.activateWinConditions,
                 ActivateBuildingScreenSystem = authoring.activateBuildingScreenSystem,
                 ActivateGatheringSystem = authoring.activateGatheringSystem,
@@ -85,8 +71,8 @@ public class ConfigAuthoring : MonoBehaviour
 
 public struct Config : IComponentData
 {
-    public bool ActivatePlayerSpawnerSystem;
-    public bool ActivateBaseSpawnerBuildingSystem;
+    public bool ActivateSetupGameSystem;
+    public bool ActivateCleanupGameSystem;
     public bool ActivateUnitSpawnerSystem;
     public bool ActivateUnitSelectableSystem;
     public bool ActivateSelectionRectResizeSystem;
@@ -101,7 +87,6 @@ public struct Config : IComponentData
     public bool ActivateUnitAttackSystem;
     public bool ActivateUnitDamageSystem;
     public bool ActivatePauseScreenSystem;
-    public bool IsGamePaused;
     public bool ActivateWinConditions;
     public bool ActivateBuildingScreenSystem;
     public bool ActivateGatheringSystem;

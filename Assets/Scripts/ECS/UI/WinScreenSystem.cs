@@ -1,4 +1,3 @@
-using UnityEngine;
 using Unity.Burst;
 using Unity.Entities;
 
@@ -7,29 +6,30 @@ public partial struct WinScreenSystem : ISystem
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<Game>();
         state.RequireForUpdate<Config>();
+        state.RequireForUpdate<Game>();
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         var configManager = SystemAPI.GetSingleton<Config>();
+        var gameManager = SystemAPI.GetSingleton<Game>();
+
         if (!configManager.ActivateWinConditions)
         {
             state.Enabled = false;
             return;
         }
 
-        if (configManager.IsGamePaused)
+        if (gameManager.State == GameState.Paused)
             return;
 
-        var currentGame = SystemAPI.GetSingleton<Game>();
-        if (currentGame.State != GameState.Running)
+        if (gameManager.State != GameState.Running)
             return;
 
-        int mecaCount = 0;
-        int slimeCount = 0;
+        var mecaCount = 0;
+        var slimeCount = 0;
         foreach (var species in SystemAPI.Query<RefRO<SpeciesTag>>()
                      .WithAll<BaseSpawnerBuilding>())
         {
@@ -41,14 +41,15 @@ public partial struct WinScreenSystem : ISystem
 
         if (mecaCount == 0)
         {
-            currentGame.WinningSpecies = SpeciesType.Slime;
-            currentGame.State = GameState.Over;
-            SystemAPI.SetSingleton(currentGame);
-        } else if (slimeCount == 0)
+            gameManager.WinningSpecies = SpeciesType.Slime;
+            gameManager.State = GameState.Over;
+            SystemAPI.SetSingleton(gameManager);
+        }
+        else if (slimeCount == 0)
         {
-            currentGame.WinningSpecies = SpeciesType.Meca;
-            currentGame.State = GameState.Over;
-            SystemAPI.SetSingleton(currentGame);
+            gameManager.WinningSpecies = SpeciesType.Meca;
+            gameManager.State = GameState.Over;
+            SystemAPI.SetSingleton(gameManager);
         }
     }
 }
