@@ -34,8 +34,8 @@ public class BaseSpawnerBuildingAuthoring : MonoBehaviour
             AddComponent<UnitSelected>(entity);
             SetComponentEnabled<UnitSelected>(entity, false);
             AddComponent<UnitSelectable>(entity);
-            
-            AddComponent(entity, new SpeciesTag()
+
+            AddComponent(entity, new SpeciesTag
             {
                 Type = authoring.Species
             });

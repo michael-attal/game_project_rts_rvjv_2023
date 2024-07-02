@@ -62,6 +62,7 @@ public partial struct MouseEventSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<Config>();
+        state.RequireForUpdate<Game>();
         state.RequireForUpdate<MouseManager>();
         state.RequireForUpdate<MouseRightClickEvent>();
         state.RequireForUpdate<MouseLeftClickEvent>();
@@ -73,13 +74,15 @@ public partial struct MouseEventSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         var configManager = SystemAPI.GetSingleton<Config>();
+        var gameManager = SystemAPI.GetSingleton<Game>();
+
         if (configManager.ActivateMouseManagerSystem == false)
         {
             state.Enabled = false;
             return;
         }
 
-        if (configManager.IsGamePaused)
+        if (gameManager.State == GameState.Paused)
             return;
 
         var mouseManagerEntity = SystemAPI.GetSingletonEntity<MouseManager>();

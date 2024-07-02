@@ -13,14 +13,15 @@ public partial struct ProjectileRendererSystem : ISystem
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<Game>();
         state.RequireForUpdate<Config>();
+        state.RequireForUpdate<Game>();
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         var configManager = SystemAPI.GetSingleton<Config>();
+        var gameManager = SystemAPI.GetSingleton<Game>();
 
         if (!configManager.ActivateProjectileRendererSystem)
         {
@@ -28,7 +29,7 @@ public partial struct ProjectileRendererSystem : ISystem
             return;
         }
 
-        if (configManager.IsGamePaused)
+        if (gameManager.State == GameState.Paused)
             return;
 
         var ecbProjectileSpawnJob = new EntityCommandBuffer(Allocator.TempJob);

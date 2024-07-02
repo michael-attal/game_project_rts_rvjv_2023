@@ -6,12 +6,10 @@ public class PlayerAuthoring : MonoBehaviour
 {
     public uint PlayerNumber;
     public SpeciesType PlayerSpecies;
-    public uint NbOfBaseSpawnerBuilding = 1;
-    public uint NbOfUnitPerBaseSpawnerBuilding = 1000;
     public float3 StartPosition;
 
     public GameObject BaseSpawnerBuildingPrefab;
-    public GameObject BasicUnitPrefab;
+    public uint NbOfBaseSpawnerBuilding = 1;
 
     private class Baker : Baker<PlayerAuthoring>
     {
@@ -23,13 +21,10 @@ public class PlayerAuthoring : MonoBehaviour
             {
                 PlayerNumber = authoring.PlayerNumber,
                 PlayerSpecies = authoring.PlayerSpecies,
-                NbOfBaseSpawnerBuilding = authoring.NbOfBaseSpawnerBuilding,
-                NbOfUnitPerBaseSpawnerBuilding = authoring.NbOfUnitPerBaseSpawnerBuilding,
                 StartPosition = authoring.StartPosition,
-                Winner = false,
 
                 BaseSpawnerBuildingPrefab = GetEntity(authoring.BaseSpawnerBuildingPrefab, TransformUsageFlags.Dynamic),
-                BasicUnitPrefab = GetEntity(authoring.BasicUnitPrefab, TransformUsageFlags.Dynamic)
+                NbOfBaseSpawnerBuilding = authoring.NbOfBaseSpawnerBuilding
             });
         }
     }
@@ -39,12 +34,9 @@ public struct Player : IComponentData
 {
     public uint PlayerNumber;
     public SpeciesType PlayerSpecies;
-    public uint NbOfBaseSpawnerBuilding;
-    public uint NbOfUnitPerBaseSpawnerBuilding;
     public float3 StartPosition;
-    public bool Winner; // NOTE: Create a component or use a data ?
 
     // public Entity PlayerHandPrefab;
     public Entity BaseSpawnerBuildingPrefab;
-    public Entity BasicUnitPrefab;
+    public uint NbOfBaseSpawnerBuilding;
 }

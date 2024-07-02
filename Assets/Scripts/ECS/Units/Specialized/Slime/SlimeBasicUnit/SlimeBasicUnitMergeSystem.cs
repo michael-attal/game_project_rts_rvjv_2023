@@ -18,7 +18,6 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
         state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<Config>();
         state.RequireForUpdate<Game>();
-        state.RequireForUpdate<SpawnManager>();
         state.RequireForUpdate<UnitSelectable>();
         state.RequireForUpdate<SlimeBasicUnitMerge>();
 
@@ -29,6 +28,7 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         var configManager = SystemAPI.GetSingleton<Config>();
+        var gameManager = SystemAPI.GetSingleton<Game>();
 
         if (!configManager.ActivateSlimeBasicUnitMergeSystem)
         {
@@ -36,7 +36,7 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
             return;
         }
 
-        if (configManager.IsGamePaused)
+        if (gameManager.State == GameState.Paused)
             return;
 
         if (!Input.GetKeyDown(KeyCode.F))
@@ -44,9 +44,6 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
 
         var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
-
-        var spawnManager = SystemAPI.GetSingleton<SpawnManager>();
-        var slimeStrongerUnitPrefab = spawnManager.SlimeStrongerUnitPrefab;
 
         var entities = query.ToEntityArray(Allocator.TempJob);
         var positions = query.ToComponentDataArray<LocalToWorld>(Allocator.TempJob);
@@ -59,12 +56,11 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
         }
 
         var groupCount = entities.Length / 10;
-        var defaultScale = state.EntityManager.GetComponentData<LocalTransform>(slimeStrongerUnitPrefab).Scale;
+        var buffer = SystemAPI.GetBuffer<InstantiatableEntityData>(SystemAPI.GetSingletonEntity<Game>());
 
-        var gameInfo = SystemAPI.GetSingleton<Game>();
         var particleManager = SystemAPI.GetSingleton<ParticleManager>();
 
-        ref var slimeRecipes = ref gameInfo.SlimeRecipes.Value.Data;
+        ref var slimeRecipes = ref gameManager.SlimeRecipes.Value.Data;
 
         var fusionInfo = new FusionInfo();
         foreach (var entity in entities)
@@ -76,17 +72,16 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
         var mergeUnitsJob = new MergeUnitsJob
         {
             ECB = ecb,
-            MergedUnitPrefab = slimeStrongerUnitPrefab,
-            DefaultScale = defaultScale,
             Entities = entities,
             Positions = positions,
             GroupCount = groupCount,
-            FusionInfo = fusionInfo, // NOTE: Calculated according to the units selected
+            FusionInfo = fusionInfo,
             SlimeRecipes = new NativeArray<FusionRecipeData>(slimeRecipes.Length, Allocator.TempJob),
-            ParticleGeneratorPrefab = particleManager.ParticleGeneratorPrefab
+            ParticleGeneratorPrefab = particleManager.ParticleGeneratorPrefab,
+            InstantiatableEntities = buffer.ToNativeArray(Allocator.TempJob)
         };
 
-        // NOTE: Copy recipe data to NativeArray
+        // Copy recipe data to NativeArray
         for (var i = 0; i < slimeRecipes.Length; i++)
         {
             mergeUnitsJob.SlimeRecipes[i] = slimeRecipes[i];
@@ -95,7 +90,7 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
         var handle = mergeUnitsJob.Schedule(groupCount, 1, state.Dependency);
         state.Dependency = handle;
 
-        // NOTE: Command Buffer final for playback
+        // Command Buffer final for playback
         var finalEcb = new EntityCommandBuffer(Allocator.TempJob);
 
         state.Dependency = JobHandle.CombineDependencies(handle, state.Dependency);
@@ -105,6 +100,7 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
         finalEcb.Dispose();
 
         mergeUnitsJob.SlimeRecipes.Dispose();
+        mergeUnitsJob.InstantiatableEntities.Dispose();
     }
 }
 
@@ -112,14 +108,13 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
 public struct MergeUnitsJob : IJobParallelFor
 {
     public EntityCommandBuffer.ParallelWriter ECB;
-    public Entity MergedUnitPrefab;
-    public float DefaultScale;
     [DeallocateOnJobCompletion] [ReadOnly] public NativeArray<Entity> Entities;
     [DeallocateOnJobCompletion] [ReadOnly] public NativeArray<LocalToWorld> Positions;
     public int GroupCount;
     public FusionInfo FusionInfo;
     [ReadOnly] public NativeArray<FusionRecipeData> SlimeRecipes;
     public Entity ParticleGeneratorPrefab;
+    [ReadOnly] public NativeArray<InstantiatableEntityData> InstantiatableEntities;
 
     public void Execute(int index)
     {
@@ -130,16 +125,6 @@ public struct MergeUnitsJob : IJobParallelFor
         }
 
         averagePosition /= 10;
-
-        var newEntity = ECB.Instantiate(index, MergedUnitPrefab);
-
-        ECB.SetComponent(index, newEntity, new LocalTransform
-        {
-            Position = averagePosition,
-            Rotation = quaternion.identity,
-            Scale = DefaultScale
-        });
-        ECB.SetComponentEnabled<UnitSelected>(index, newEntity, true);
 
         for (var i = 0; i < 10; i++)
         {
@@ -152,18 +137,26 @@ public struct MergeUnitsJob : IJobParallelFor
             {
                 FusionInfo -= SlimeRecipes[i].Cost;
 
+                var newEntity = InstantiateEntity(index, ECB, SlimeRecipes[i].PrefabId);
+                ECB.SetComponent(index, newEntity, new LocalTransform
+                {
+                    Position = averagePosition,
+                    Rotation = quaternion.identity,
+                    Scale = 1f
+                });
+
                 var particleGenerator = ECB.Instantiate(index, ParticleGeneratorPrefab);
                 ECB.SetComponent(index, particleGenerator, new ParticleGeneratorData
                 {
                     Rate = 50f,
                     LifetimeOfGenerator = 0.5f,
                     LifetimeOfParticle = 0.5f,
-                    Size = DefaultScale,
+                    Size = 1f,
                     Speed = 2f,
                     Direction = new float3(0, 1, 0),
                     Color = new float4(0, 0, 1, 0.5f),
                     IsRandomPositionParticleSpawningActive = true,
-                    PositionRangeForRandomParticleSpawning = new float3(DefaultScale * 3, DefaultScale * 3, DefaultScale * 3)
+                    PositionRangeForRandomParticleSpawning = new float3(1f * 3, 1f * 3, 1f * 3)
                 });
                 ECB.SetComponent(index, particleGenerator, new LocalTransform
                 {
@@ -173,5 +166,16 @@ public struct MergeUnitsJob : IJobParallelFor
                 });
             }
         }
+    }
+
+    private Entity InstantiateEntity(int index, EntityCommandBuffer.ParallelWriter ecb, int id)
+    {
+        for (var i = 0; i < InstantiatableEntities.Length; ++i)
+        {
+            if (InstantiatableEntities[i].EntityID == id)
+                return ecb.Instantiate(index, InstantiatableEntities[i].Entity);
+        }
+
+        return Entity.Null;
     }
 }
