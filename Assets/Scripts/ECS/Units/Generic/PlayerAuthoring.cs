@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class PlayerAuthoring : MonoBehaviour
 {
-    public uint PlayerNumber;
-    public SpeciesType PlayerSpecies;
-    public float3 StartPosition;
+    [SerializeField] private uint playerNumber;
+    [SerializeField] private SpeciesType playerSpecies;
+    [SerializeField] private float3 startPosition;
 
-    public GameObject BaseSpawnerBuildingPrefab;
-    public uint NbOfBaseSpawnerBuilding = 1;
+    [SerializeField] private GameObject baseSpawnerBuildingPrefab;
+    [SerializeField] private uint nbOfBaseSpawnerBuilding = 1;
 
     private class Baker : Baker<PlayerAuthoring>
     {
@@ -19,12 +19,12 @@ public class PlayerAuthoring : MonoBehaviour
 
             AddComponent(entity, new Player
             {
-                PlayerNumber = authoring.PlayerNumber,
-                PlayerSpecies = authoring.PlayerSpecies,
-                StartPosition = authoring.StartPosition,
+                PlayerNumber = authoring.playerNumber,
+                PlayerSpecies = authoring.playerSpecies,
+                StartPosition = authoring.startPosition,
 
-                BaseSpawnerBuildingPrefab = GetEntity(authoring.BaseSpawnerBuildingPrefab, TransformUsageFlags.Dynamic),
-                NbOfBaseSpawnerBuilding = authoring.NbOfBaseSpawnerBuilding
+                BaseSpawnerBuildingPrefab = GetEntity(authoring.baseSpawnerBuildingPrefab, TransformUsageFlags.Dynamic),
+                NbOfBaseSpawnerBuilding = authoring.nbOfBaseSpawnerBuilding
             });
         }
     }

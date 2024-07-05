@@ -29,13 +29,23 @@ internal partial struct DepositRessourceSystem : ISystem
 
         var ecb = new EntityCommandBuffer(Allocator.Temp);
 
-        foreach (var (ressource, entity) in
-                 SystemAPI.Query<RefRO<HasRessource>>()
+        foreach (var (ressource, speciesTag, entity) in
+                 SystemAPI.Query<RefRO<HasRessource>, RefRO<SpeciesTag>>()
                      .WithAll<DestinationReached, GatheringIntent>()
                      .WithNone<WantsToMove>()
                      .WithEntityAccess())
         {
-            gameManager.RessourceCount += ressource.ValueRO.CarriedRessources;
+            // NOTE: It might be more efficient to refactor this and put RessourceCount into the Player component, but for simplicity, I have implemented it this way.
+            if (GameManager.IsControlledByCurrentPlayer(gameManager.SpeciesToPlay, speciesTag.ValueRO.Type))
+            {
+                gameManager.RessourceCount += ressource.ValueRO.CarriedRessources;
+            }
+            else
+            {
+                gameManager.RessourceCountAI += ressource.ValueRO.CarriedRessources;
+            }
+
+
             SystemAPI.SetSingleton(gameManager);
 
             ecb.RemoveComponent<HasRessource>(entity);
