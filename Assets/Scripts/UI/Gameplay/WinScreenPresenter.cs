@@ -53,6 +53,8 @@ public class WinScreenPresenter : MonoBehaviour
 
         bottomMenu.SetActive(false);
         content.SetActive(true);
+
+        // TODO: Send score to the api here with gameManager.playerName & score from the MonoBehaviour gameobject
     }
 
     private void PlayAgain()

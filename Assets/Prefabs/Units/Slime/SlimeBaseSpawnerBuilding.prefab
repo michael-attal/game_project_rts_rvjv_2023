@@ -350,6 +350,7 @@ GameObject:
   - component: {fileID: 3863379862255967654}
   - component: {fileID: 3272332243133509186}
   - component: {fileID: 3862041180624471493}
+  - component: {fileID: 6276371366659352673}
   m_Layer: 0
   m_Name: DepositPoint2
   m_TagString: Untagged
@@ -434,6 +435,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66c6b4bf25ba7454ba722a35de505a10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &6276371366659352673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5063765253029062769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 215a509e331e45abb9f153c008d68a6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Species: 0
 --- !u!1 &6365588136196111551
 GameObject:
   m_ObjectHideFlags: 0
@@ -446,6 +460,7 @@ GameObject:
   - component: {fileID: 6174920319204534877}
   - component: {fileID: 6539303504295798148}
   - component: {fileID: 2235188407639820281}
+  - component: {fileID: 7621136058533001644}
   m_Layer: 0
   m_Name: DepositPoint1
   m_TagString: Untagged
@@ -530,6 +545,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66c6b4bf25ba7454ba722a35de505a10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7621136058533001644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6365588136196111551}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 215a509e331e45abb9f153c008d68a6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Species: 0
 --- !u!1 &8873174782866423207
 GameObject:
   m_ObjectHideFlags: 0
@@ -542,6 +570,7 @@ GameObject:
   - component: {fileID: 8786409933292898839}
   - component: {fileID: 846632579935221978}
   - component: {fileID: 247509424936600906}
+  - component: {fileID: 2314869578845335368}
   m_Layer: 0
   m_Name: DepositPoint4
   m_TagString: Untagged
@@ -626,6 +655,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66c6b4bf25ba7454ba722a35de505a10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2314869578845335368
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8873174782866423207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 215a509e331e45abb9f153c008d68a6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Species: 0
 --- !u!1 &8892257582782341516
 GameObject:
   m_ObjectHideFlags: 0
@@ -638,6 +680,7 @@ GameObject:
   - component: {fileID: 4507127713895874842}
   - component: {fileID: 4633928464782728581}
   - component: {fileID: 4855562942755612770}
+  - component: {fileID: 6438379584748750907}
   m_Layer: 0
   m_Name: DepositPoint3
   m_TagString: Untagged
@@ -722,3 +765,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66c6b4bf25ba7454ba722a35de505a10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &6438379584748750907
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8892257582782341516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 215a509e331e45abb9f153c008d68a6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Species: 0
