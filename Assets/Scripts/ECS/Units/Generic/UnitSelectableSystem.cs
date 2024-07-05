@@ -68,7 +68,8 @@ public partial struct UnitSelectableSystem : ISystem
                 PixelWidth = cameraManager.PixelWidth,
                 PixelHeight = cameraManager.PixelHeight,
                 ScaleFactor = cameraManager.ScaleFactor,
-                SelectionArea = selectionArea
+                SelectionArea = selectionArea,
+                CurrentPlayerSpecies = gameManager.SpeciesToPlay
             };
             unitSelectionJob.ScheduleParallel();
         }
@@ -89,36 +90,40 @@ public partial struct UnitSelectionJob : IJobEntity
     public float PixelHeight;
     public float ScaleFactor;
     public Rect SelectionArea;
+    public SpeciesToPlay CurrentPlayerSpecies;
 
     // NOTE: Because we want the global position of a child entity, we read LocalToWorld instead of LocalTransform.
-    private void Execute(Entity entity, LocalToWorld unitLT, [ChunkIndexInQuery] int chunkIndex)
+    private void Execute(Entity entity, LocalToWorld unitLT, SpeciesTag species, [ChunkIndexInQuery] int chunkIndex)
     {
-        var unitRadius = unitLT.Value.Scale().x;
-
-        var transformScreenPosition = CameraManagerTools.ConvertWorldToScreenCoordinates(
-            unitLT.Position,
-            CameraPos,
-            CamProjMatrix,
-            CamUp,
-            CamRight,
-            CamForward,
-            PixelWidth,
-            PixelHeight,
-            ScaleFactor // or unitRadius ?
-        );
-
-        // NOTE: Add the unit radius to the selection
-        var unitRect = new Rect(transformScreenPosition.x - unitRadius, transformScreenPosition.y - unitRadius,
-            unitRadius * 2, unitRadius * 2);
-
-        // NOTE: Check if selection intersect with unit
-        if (unitRect.Overlaps(SelectionArea, true))
+        if (GameManager.IsControlledByCurrentPlayer(CurrentPlayerSpecies, species.Type))
         {
-            ECB.SetComponentEnabled<UnitSelected>(chunkIndex, entity, true);
-        }
-        else
-        {
-            ECB.SetComponentEnabled<UnitSelected>(chunkIndex, entity, false);
+            var unitRadius = unitLT.Value.Scale().x;
+
+            var transformScreenPosition = CameraManagerTools.ConvertWorldToScreenCoordinates(
+                unitLT.Position,
+                CameraPos,
+                CamProjMatrix,
+                CamUp,
+                CamRight,
+                CamForward,
+                PixelWidth,
+                PixelHeight,
+                ScaleFactor // or unitRadius ?
+            );
+
+            // NOTE: Add the unit radius to the selection
+            var unitRect = new Rect(transformScreenPosition.x - unitRadius, transformScreenPosition.y - unitRadius,
+                unitRadius * 2, unitRadius * 2);
+
+            // NOTE: Check if selection intersect with unit
+            if (unitRect.Overlaps(SelectionArea, true))
+            {
+                ECB.SetComponentEnabled<UnitSelected>(chunkIndex, entity, true);
+            }
+            else
+            {
+                ECB.SetComponentEnabled<UnitSelected>(chunkIndex, entity, false);
+            }
         }
     }
 }

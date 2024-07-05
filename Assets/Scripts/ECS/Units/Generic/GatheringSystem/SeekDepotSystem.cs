@@ -32,24 +32,28 @@ internal partial struct SeekDepotSystem : ISystem
 
         var ecb = new EntityCommandBuffer(Allocator.Temp);
 
-        foreach (var (transform, entity) in
-                 SystemAPI.Query<RefRO<LocalTransform>>()
+        foreach (var (transform, unitSpeciesTag, entity) in
+                 SystemAPI.Query<RefRO<LocalTransform>, RefRO<SpeciesTag>>()
                      .WithAll<HasRessource, GatheringIntent>()
                      .WithNone<WantsToMove, DestinationReached>()
                      .WithEntityAccess())
         {
             var minDistance = float.MaxValue;
             float3? minLocation = null;
-            foreach (var (depositTransform, localToWorld) in
-                     SystemAPI.Query<RefRO<LocalTransform>, RefRO<LocalToWorld>>()
+            foreach (var (depositTransform, localToWorld, depositSpeciesTag) in
+                     SystemAPI.Query<RefRO<LocalTransform>, RefRO<LocalToWorld>, RefRO<SpeciesTag>>()
                          .WithAll<DepositPoint>())
             {
-                var depositPosition = localToWorld.ValueRO.Value.TransformPoint(depositTransform.ValueRO.Position);
-                var distance = depositPosition.DistanceTo(transform.ValueRO.Position);
-                if (distance < minDistance)
+                // NOTE: Only seek ally deposit
+                if (depositSpeciesTag.ValueRO.Type == unitSpeciesTag.ValueRO.Type)
                 {
-                    minDistance = distance;
-                    minLocation = depositPosition;
+                    var depositPosition = localToWorld.ValueRO.Value.TransformPoint(depositTransform.ValueRO.Position);
+                    var distance = depositPosition.DistanceTo(transform.ValueRO.Position);
+                    if (distance < minDistance)
+                    {
+                        minDistance = distance;
+                        minLocation = depositPosition;
+                    }
                 }
             }
 

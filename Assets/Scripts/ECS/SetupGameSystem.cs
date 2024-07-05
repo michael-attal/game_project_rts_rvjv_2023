@@ -1,4 +1,5 @@
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -8,6 +9,7 @@ using Random = Unity.Mathematics.Random;
 [UpdateBefore(typeof(TransformSystemGroup))]
 [UpdateBefore(typeof(UnitSpawnerSystem))]
 [UpdateBefore(typeof(UpgradedUnitSpawnerSystem))]
+[UpdateBefore(typeof(UnitSelectableSystem))]
 [UpdateBefore(typeof(PauseScreenSystem))]
 public partial struct SetupGameSystem : ISystem
 {
@@ -19,7 +21,7 @@ public partial struct SetupGameSystem : ISystem
         state.RequireForUpdate<Config>();
     }
 
-    [BurstCompile]
+    // [BurstCompile] using GameObject.Find
     public void OnUpdate(ref SystemState state)
     {
         var configManager = SystemAPI.GetSingleton<Config>();
@@ -33,13 +35,32 @@ public partial struct SetupGameSystem : ISystem
 
         if (gameManager.State == GameState.Starting)
         {
+            var difficulty = Difficulty.Medium;
+            var speciesToPlay = SpeciesToPlay.Both; // NOTE: Both by default for easy testing
+            var playerName = new FixedString32Bytes("Mika");
+
+            var gameManagerGameObject = GameObject.Find("GameManager");
+
+            if (gameManagerGameObject != null)
+            {
+                var gameManagerFromMonobehaviour = gameManagerGameObject.GetComponent<GameManager>();
+                difficulty = gameManagerFromMonobehaviour.GetDifficulty();
+                speciesToPlay = gameManagerFromMonobehaviour.GetSpeciesToPlay();
+                playerName = gameManagerFromMonobehaviour.GetPlayerNameAsFixedString();
+            }
+
+            Debug.Log($"Player Name: {playerName}");
+            Debug.Log($"Difficulty: {difficulty}");
+            Debug.Log($"Species To Play: {speciesToPlay}");
+
             Debug.Log("Starting now");
+
             var spawnManager = SystemAPI.GetSingleton<SpawnManager>();
 
             // NOTE: If we allow more than 2 players, adjust the loop here
             for (uint i = 1; i <= 2; i++)
             {
-                //  ODO: Instantiate the hand entity for each player (the hand will replace the cursor of the mouse for more immersion).
+                // TODO: Instantiate the hand entity for each player (the hand will replace the cursor of the mouse for more immersion).
                 var playerSpecies = i == 1
                     ? spawnManager.PlayerOneSpecies
                     : spawnManager.PlayerTwoSpecies;
@@ -60,6 +81,10 @@ public partial struct SetupGameSystem : ISystem
                 var startPosition = i == 1
                     ? spawnManager.StartPositionBaseSpawnerPlayerOne
                     : spawnManager.StartPositionBaseSpawnerPlayerTwo;
+
+                // NOTE: Initial placement based on the selected player species
+                var zPlacement = speciesToPlay == SpeciesToPlay.Meca ? i == 1 ? 14 : -14 : i == 1 ? -14 : 14;
+                startPosition.z = zPlacement;
 
                 var playerHand = state.EntityManager.Instantiate(playerHandPrefab);
 
@@ -114,6 +139,9 @@ public partial struct SetupGameSystem : ISystem
             // NOTE: Start the game
             gameManager.State = GameState.Running;
             gameManager.RessourceCount = 0;
+            gameManager.PlayerName = playerName;
+            gameManager.Difficulty = difficulty;
+            gameManager.SpeciesToPlay = speciesToPlay;
             SystemAPI.SetSingleton(gameManager);
         }
     }
