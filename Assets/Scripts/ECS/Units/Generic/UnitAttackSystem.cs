@@ -4,6 +4,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEngine;
 
 [UpdateBefore(typeof(MovementSystemGroup))]
 [BurstCompile]
@@ -71,11 +72,23 @@ public partial struct UnitAttackSystem : ISystem
 
             if (target.HasValue)
             {
+                var epsilon = 0.0001f;
+                var minRateOfFireSpeedAnimation = 0.1f; // NOTE: Minimum expected value for RateOfFire speed animation
+                var maxRateOfFireSpeedAnimation = 5.0f; // NOTE: Same but for maximum
+
+                // NOTE: Calculating the inverse with epsilon to avoid division by zero
+                var inverseRateOfFire = 1 / (attackerAttack.ValueRO.RateOfFire + epsilon);
+
+                // NOTE: Normalisation of the result between 1 and 10
+                var normalizedSpeed = Mathf.Lerp(1, 10, Mathf.InverseLerp(1 / (maxRateOfFireSpeedAnimation + epsilon), 1 / (minRateOfFireSpeedAnimation + epsilon), inverseRateOfFire));
+
                 if (isAttackAnimationPlayed == false && attackerAttack.ValueRO.IsAttackAnimated)
                 {
                     ecb.SetComponent(entity, new AnimationCmdData
                     {
-                        Cmd = AnimationCmd.PlayOnce, ClipIndex = (short)AnimationsType.Attack, Speed = attackerAttack.ValueRO.RateOfFire
+                        Cmd = AnimationCmd.PlayOnce,
+                        ClipIndex = (short)AnimationsType.Attack,
+                        Speed = normalizedSpeed // NOTE: Apply the normalised value to Speed
                     });
                     isAttackAnimationPlayed = true;
                     isIdleAnimationPlayed = false;
