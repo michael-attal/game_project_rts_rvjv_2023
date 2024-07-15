@@ -1,3 +1,4 @@
+using AnimCooker;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -74,9 +75,24 @@ public partial struct MovementPositionMotorJob : IJobEntity
         {
             ECB.SetComponentEnabled<WantsToMove>(chunkIndex, entity, false);
             ECB.AddComponent<DestinationReached>(chunkIndex, entity);
+            motor.ValueRW.IsMovementAnimationPlayed = false;
         }
         else
         {
+            if (motor.ValueRO.IsMovementAnimated && motor.ValueRO.IsMovementAnimationPlayed == false) // NOTE: Set only the first time the animation
+            {
+                // NOTE: Start move animation
+                ECB.SetComponent(chunkIndex, entity, new AnimationCmdData
+                {
+                    Cmd = AnimationCmd.SetPlayForever, ClipIndex = (short)AnimationsType.Move
+                });
+                ECB.SetComponent(chunkIndex, entity, new AnimationSpeedData
+                {
+                    PlaySpeed = motor.ValueRO.Speed
+                });
+                motor.ValueRW.IsMovementAnimationPlayed = true;
+            }
+
             var newPosition = currentPosition + direction * motor.ValueRO.Speed * DeltaTime;
 
             // NOTE: Ensure the new position doesn't change the Y coordinate
@@ -111,6 +127,7 @@ public struct MovementPositionMotor : IComponentData
 {
     public float Speed;
     public bool IsMovementAnimated;
+    public bool IsMovementAnimationPlayed;
     public float3 AxisBlocked;
     public float3 PerpendicularAxis;
 }
