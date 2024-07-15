@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7562866465387072347}
   - component: {fileID: 8103024321942119369}
   - component: {fileID: 2746042583737050661}
+  - component: {fileID: 5193666818599641803}
   - component: {fileID: -8617636178741980495}
   - component: {fileID: -4845259642583762107}
   m_Layer: 0
@@ -98,9 +99,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e78a1caba6414ba19e94e33beb5ecef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SpeciesType: 0
-  UnitType: 0
-  BakedPrefabName: 
   IsMovementAnimated: 0
   UnitSpeed: 5
   MovementType: 0
@@ -118,6 +116,19 @@ MonoBehaviour:
   UnitRange: 3
   UnitRateOfFire: 10
   IsAttackAnimated: 0
+--- !u!114 &5193666818599641803
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7603524137904975307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 215a509e331e45abb9f153c008d68a6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Species: 0
 --- !u!114 &-8617636178741980495
 MonoBehaviour:
   m_ObjectHideFlags: 0

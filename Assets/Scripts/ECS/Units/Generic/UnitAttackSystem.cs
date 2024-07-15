@@ -5,7 +5,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 
-[UpdateBefore(typeof(TransformSystemGroup))]
+[UpdateBefore(typeof(MovementSystemGroup))]
 [BurstCompile]
 public partial struct UnitAttackSystem : ISystem
 {

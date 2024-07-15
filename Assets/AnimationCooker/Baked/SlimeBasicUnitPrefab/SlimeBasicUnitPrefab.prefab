@@ -15,7 +15,9 @@ GameObject:
   - component: {fileID: 4914552269686400537}
   - component: {fileID: 962698826226479150}
   - component: {fileID: -8431207454336443410}
+  - component: {fileID: -1774485552644891999}
   - component: {fileID: -5628424398251226775}
+  - component: {fileID: 8133745978180932833}
   - component: {fileID: 1283900843643561603}
   - component: {fileID: 6417554506276214341}
   m_Layer: 0
@@ -160,7 +162,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e78a1caba6414ba19e94e33beb5ecef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SpeciesType: 0
   IsMovementAnimated: 1
   UnitSpeed: 10
   MovementType: 0
@@ -178,6 +179,19 @@ MonoBehaviour:
   UnitRange: 4
   UnitRateOfFire: 3
   IsAttackAnimated: 1
+--- !u!114 &-1774485552644891999
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 392048310712016098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 215a509e331e45abb9f153c008d68a6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Species: 0
 --- !u!114 &-5628424398251226775
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -195,6 +209,19 @@ MonoBehaviour:
     FireAmount: 0
     WaterAmount: 1
     AirAmount: 0
+--- !u!114 &8133745978180932833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 392048310712016098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e211a1d24cf5a4d3b90fe0065a4cd6af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Species: 0
 --- !u!114 &1283900843643561603
 MonoBehaviour:
   m_ObjectHideFlags: 0

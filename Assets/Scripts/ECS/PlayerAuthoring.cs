@@ -5,7 +5,6 @@ using UnityEngine;
 public class PlayerAuthoring : MonoBehaviour
 {
     [SerializeField] private uint playerNumber;
-    [SerializeField] private SpeciesType playerSpecies;
     [SerializeField] private float3 startPosition;
 
     [SerializeField] private GameObject baseSpawnerBuildingPrefab;
@@ -20,9 +19,7 @@ public class PlayerAuthoring : MonoBehaviour
             AddComponent(entity, new Player
             {
                 PlayerNumber = authoring.playerNumber,
-                PlayerSpecies = authoring.playerSpecies,
                 StartPosition = authoring.startPosition,
-
                 BaseSpawnerBuildingPrefab = GetEntity(authoring.baseSpawnerBuildingPrefab, TransformUsageFlags.Dynamic),
                 NbOfBaseSpawnerBuilding = authoring.nbOfBaseSpawnerBuilding
             });
@@ -33,7 +30,6 @@ public class PlayerAuthoring : MonoBehaviour
 public struct Player : IComponentData
 {
     public uint PlayerNumber;
-    public SpeciesType PlayerSpecies;
     public float3 StartPosition;
 
     // public Entity PlayerHandPrefab;

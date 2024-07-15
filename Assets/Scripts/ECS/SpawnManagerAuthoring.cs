@@ -6,22 +6,22 @@ public class SpawnManagerAuthoring : MonoBehaviour
 {
     // The SpawnManager component will be used as a singleton.
     // It stores a grab bag of game parameters plus the entity prefabs that we'll instantiate at runtime.
-    public SpeciesType PlayerOneSpecies;
-    public SpeciesType PlayerTwoSpecies;
+    [SerializeField] private SpeciesType playerOneSpecies;
+    [SerializeField] private SpeciesType playerTwoSpecies;
 
-    public float3 StartPositionBaseSpawnerPlayerOne;
-    public float3 StartPositionBaseSpawnerPlayerTwo;
+    [SerializeField] private float3 startPositionBaseSpawnerSlime;
+    [SerializeField] private float3 startPositionBaseSpawnerMeca;
 
-    public uint NumberOfBaseSpawnerForPlayerOne;
-    public uint NumberOfBaseSpawnerForPlayerTwo;
+    [SerializeField] private uint numberOfStartingBaseSpawnerForSlime;
+    [SerializeField] private uint numberOfStartingBaseSpawnerForMeca;
 
-    public GameObject SelectionCirclePrefab;
+    [SerializeField] private GameObject selectionCirclePrefab;
 
-    public GameObject SlimePlayerHandPrefab;
-    public GameObject MecaPlayerHandPrefab;
+    [SerializeField] private GameObject slimePlayerHandPrefab;
+    [SerializeField] private GameObject mecaPlayerHandPrefab;
 
-    public GameObject SlimeBaseSpawnerBuildingPrefab;
-    public GameObject MecaBaseSpawnerBuildingPrefab;
+    [SerializeField] private GameObject slimeBaseSpawnerBuildingPrefab;
+    [SerializeField] private GameObject mecaBaseSpawnerBuildingPrefab;
 
     private class Baker : Baker<SpawnManagerAuthoring>
     {
@@ -32,23 +32,22 @@ public class SpawnManagerAuthoring : MonoBehaviour
             // Each authoring field corresponds to a component field of the same name.
             AddComponent(entity, new SpawnManager
             {
-                PlayerOneSpecies = authoring.PlayerOneSpecies,
-                PlayerTwoSpecies = authoring.PlayerTwoSpecies,
+                PlayerOneSpecies = authoring.playerOneSpecies,
+                PlayerTwoSpecies = authoring.playerTwoSpecies,
 
-                StartPositionBaseSpawnerPlayerOne = authoring.StartPositionBaseSpawnerPlayerOne,
-                StartPositionBaseSpawnerPlayerTwo = authoring.StartPositionBaseSpawnerPlayerTwo,
+                StartPositionBaseSpawnerSlime = authoring.startPositionBaseSpawnerSlime,
+                StartPositionBaseSpawnerMeca = authoring.startPositionBaseSpawnerMeca,
 
+                NumberOfStartingBaseSpawnerForSlime = authoring.numberOfStartingBaseSpawnerForSlime,
+                NumberOfStartingBaseSpawnerForMeca = authoring.numberOfStartingBaseSpawnerForMeca,
 
-                NumberOfBaseSpawnerForPlayerOne = authoring.NumberOfBaseSpawnerForPlayerOne,
-                NumberOfBaseSpawnerForPlayerTwo = authoring.NumberOfBaseSpawnerForPlayerTwo,
+                SelectionCirclePrefab = GetEntity(authoring.selectionCirclePrefab, TransformUsageFlags.Dynamic),
 
-                SelectionCirclePrefab = GetEntity(authoring.SelectionCirclePrefab, TransformUsageFlags.Dynamic),
+                SlimePlayerHandPrefab = GetEntity(authoring.slimePlayerHandPrefab, TransformUsageFlags.Dynamic),
+                MecaPlayerHandPrefab = GetEntity(authoring.mecaPlayerHandPrefab, TransformUsageFlags.Dynamic),
 
-                SlimePlayerHandPrefab = GetEntity(authoring.SlimePlayerHandPrefab, TransformUsageFlags.Dynamic),
-                MecaPlayerHandPrefab = GetEntity(authoring.MecaPlayerHandPrefab, TransformUsageFlags.Dynamic),
-
-                SlimeBaseSpawnerBuildingPrefab = GetEntity(authoring.SlimeBaseSpawnerBuildingPrefab, TransformUsageFlags.Dynamic),
-                MecaBaseSpawnerBuildingPrefab = GetEntity(authoring.MecaBaseSpawnerBuildingPrefab, TransformUsageFlags.Dynamic)
+                SlimeBaseSpawnerBuildingPrefab = GetEntity(authoring.slimeBaseSpawnerBuildingPrefab, TransformUsageFlags.Dynamic),
+                MecaBaseSpawnerBuildingPrefab = GetEntity(authoring.mecaBaseSpawnerBuildingPrefab, TransformUsageFlags.Dynamic)
             });
         }
     }
@@ -67,9 +66,9 @@ public struct SpawnManager : IComponentData
     public Entity SlimeBaseSpawnerBuildingPrefab;
     public Entity MecaBaseSpawnerBuildingPrefab;
 
-    public uint NumberOfBaseSpawnerForPlayerOne;
-    public uint NumberOfBaseSpawnerForPlayerTwo;
+    public uint NumberOfStartingBaseSpawnerForSlime;
+    public uint NumberOfStartingBaseSpawnerForMeca;
 
-    public float3 StartPositionBaseSpawnerPlayerOne;
-    public float3 StartPositionBaseSpawnerPlayerTwo;
+    public float3 StartPositionBaseSpawnerSlime;
+    public float3 StartPositionBaseSpawnerMeca;
 }

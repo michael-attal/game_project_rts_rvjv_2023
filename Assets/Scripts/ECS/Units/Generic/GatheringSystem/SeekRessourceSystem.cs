@@ -4,9 +4,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
 
-[UpdateAfter(typeof(MovementVelocitySystem))]
-[UpdateAfter(typeof(MovementPositionMotor))]
-[UpdateAfter(typeof(MovementManualSystem))]
+[UpdateAfter(typeof(MovementSystemGroup))]
 internal partial struct SeekRessourceSystem : ISystem
 {
     [BurstCompile]

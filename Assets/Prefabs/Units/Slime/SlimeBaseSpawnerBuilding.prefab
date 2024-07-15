@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 6278993026369946659}
   - component: {fileID: 8471700147836298366}
   - component: {fileID: 5681471921130365092}
+  - component: {fileID: -3307412463913833223}
+  - component: {fileID: 2263337686801860737}
   - component: {fileID: 1104375481110696576}
   - component: {fileID: 9144102082182574487}
   m_Layer: 0
@@ -33,7 +35,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -10, y: 3, z: -10}
-  m_LocalScale: {x: 6, y: 3, z: 6}
+  m_LocalScale: {x: 6, y: 6, z: 6}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6322044521763004718}
@@ -118,7 +120,6 @@ MonoBehaviour:
       z: 0
       w: 1
   SpawnedUnitInitialScale: 1
-  Species: 0
 --- !u!114 &8471700147836298366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -144,6 +145,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e80b40fab36549f5b9b6624f387c081, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-3307412463913833223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2216618471874645061}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 215a509e331e45abb9f153c008d68a6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Species: 0
+--- !u!114 &2263337686801860737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2216618471874645061}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6844a6349eea43bc9af15ff18e3756b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Species: 0
 --- !u!114 &1104375481110696576
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -351,6 +378,7 @@ GameObject:
   - component: {fileID: 3272332243133509186}
   - component: {fileID: 3862041180624471493}
   - component: {fileID: 6276371366659352673}
+  - component: {fileID: 6182314624151130668}
   m_Layer: 0
   m_Name: DepositPoint2
   m_TagString: Untagged
@@ -448,6 +476,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Species: 0
+--- !u!114 &6182314624151130668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5063765253029062769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47938b97f192b4f3ea5ddeb8363e7199, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6365588136196111551
 GameObject:
   m_ObjectHideFlags: 0
@@ -461,6 +501,7 @@ GameObject:
   - component: {fileID: 6539303504295798148}
   - component: {fileID: 2235188407639820281}
   - component: {fileID: 7621136058533001644}
+  - component: {fileID: 4821291401211080682}
   m_Layer: 0
   m_Name: DepositPoint1
   m_TagString: Untagged
@@ -558,6 +599,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Species: 0
+--- !u!114 &4821291401211080682
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6365588136196111551}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47938b97f192b4f3ea5ddeb8363e7199, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8873174782866423207
 GameObject:
   m_ObjectHideFlags: 0
@@ -571,6 +624,7 @@ GameObject:
   - component: {fileID: 846632579935221978}
   - component: {fileID: 247509424936600906}
   - component: {fileID: 2314869578845335368}
+  - component: {fileID: 3716044459563467923}
   m_Layer: 0
   m_Name: DepositPoint4
   m_TagString: Untagged
@@ -668,6 +722,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Species: 0
+--- !u!114 &3716044459563467923
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8873174782866423207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47938b97f192b4f3ea5ddeb8363e7199, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8892257582782341516
 GameObject:
   m_ObjectHideFlags: 0
@@ -681,6 +747,7 @@ GameObject:
   - component: {fileID: 4633928464782728581}
   - component: {fileID: 4855562942755612770}
   - component: {fileID: 6438379584748750907}
+  - component: {fileID: 3531914323295265576}
   m_Layer: 0
   m_Name: DepositPoint3
   m_TagString: Untagged
@@ -778,3 +845,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Species: 0
+--- !u!114 &3531914323295265576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8892257582782341516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47938b97f192b4f3ea5ddeb8363e7199, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

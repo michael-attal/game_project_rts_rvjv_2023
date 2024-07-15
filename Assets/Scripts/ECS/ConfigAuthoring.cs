@@ -8,7 +8,7 @@ public class ConfigAuthoring : MonoBehaviour
     [SerializeField] private bool activateSetupGameSystem;
     [SerializeField] private bool activateCleanupGameSystem;
     [SerializeField] private bool activateUnitSpawnerSystem;
-    [SerializeField] private bool activateUnitSelectableSystem;
+    [SerializeField] private bool activateSelectableSystem;
     [SerializeField] private bool activateSelectionRectResizeSystem;
     [SerializeField] private bool activateMoveOrderSystem;
     [SerializeField] private bool activateUnitMovementSystem;
@@ -16,7 +16,7 @@ public class ConfigAuthoring : MonoBehaviour
     [SerializeField] private bool activateMovementVelocitySystem;
     [SerializeField] private bool activateMovementPositionMotorSystem;
     [SerializeField] private bool activateDestinationReachedCleanupSystem;
-    [SerializeField] private bool activateUnitSelectedRendererSystem;
+    [SerializeField] private bool activateSelectedRendererSystem;
     [SerializeField] private bool activateProjectileRendererSystem;
     [SerializeField] private bool activateUnitAttackSystem;
     [SerializeField] private bool activateUnitDamageSystem;
@@ -30,6 +30,8 @@ public class ConfigAuthoring : MonoBehaviour
     [SerializeField] private FormationType movementFormationType;
     [SerializeField] private bool activateCameraManagerSystem;
     [SerializeField] private bool activateMouseManagerSystem;
+    [SerializeField] private bool activateAiManagerSystem;
+    [SerializeField] private bool activatePlayerManagerSystem;
 
     private class Baker : Baker<ConfigAuthoring>
     {
@@ -42,12 +44,12 @@ public class ConfigAuthoring : MonoBehaviour
                 ActivateSetupGameSystem = authoring.activateSetupGameSystem,
                 ActivateCleanupGameSystem = authoring.activateCleanupGameSystem,
                 ActivateUnitSpawnerSystem = authoring.activateUnitSpawnerSystem,
-                ActivateUnitSelectableSystem = authoring.activateUnitSelectableSystem,
+                ActivateSelectableSystem = authoring.activateSelectableSystem,
                 ActivateSelectionRectResizeSystem = authoring.activateSelectionRectResizeSystem,
                 ActivateMoveOrderSystem = authoring.activateMoveOrderSystem,
                 ActivateUnitMovementSystem = authoring.activateUnitMovementSystem,
                 ActivateMovementPositionMotorSystem = authoring.activateMovementPositionMotorSystem,
-                ActivateUnitSelectedRendererSystem = authoring.activateUnitSelectedRendererSystem,
+                ActivateSelectedRendererSystem = authoring.activateSelectedRendererSystem,
                 ActivateProjectileRendererSystem = authoring.activateProjectileRendererSystem,
                 ActivateUnitAttackSystem = authoring.activateUnitAttackSystem,
                 ActivateUnitDamageSystem = authoring.activateUnitDamageSystem,
@@ -63,7 +65,9 @@ public class ConfigAuthoring : MonoBehaviour
                 ActivateParticleSystems = authoring.activateParticleSystems,
                 MovementFormationType = authoring.movementFormationType,
                 ActivateCameraManagerSystem = authoring.activateCameraManagerSystem,
-                ActivateMouseManagerSystem = authoring.activateMouseManagerSystem
+                ActivateMouseManagerSystem = authoring.activateMouseManagerSystem,
+                ActivateAiManagerSystem = authoring.activateAiManagerSystem,
+                ActivatePlayerManagerSystem = authoring.activatePlayerManagerSystem
             });
         }
     }
@@ -74,7 +78,7 @@ public struct Config : IComponentData
     public bool ActivateSetupGameSystem;
     public bool ActivateCleanupGameSystem;
     public bool ActivateUnitSpawnerSystem;
-    public bool ActivateUnitSelectableSystem;
+    public bool ActivateSelectableSystem;
     public bool ActivateSelectionRectResizeSystem;
     public bool ActivateMoveOrderSystem;
     public bool ActivateUnitMovementSystem;
@@ -82,7 +86,7 @@ public struct Config : IComponentData
     public bool ActivateMovementVelocitySystem;
     public bool ActivateMovementPositionMotorSystem;
     public bool ActivateDestinationReachedCleanupSystem;
-    public bool ActivateUnitSelectedRendererSystem;
+    public bool ActivateSelectedRendererSystem;
     public bool ActivateProjectileRendererSystem;
     public bool ActivateUnitAttackSystem;
     public bool ActivateUnitDamageSystem;
@@ -96,4 +100,6 @@ public struct Config : IComponentData
     public FormationType MovementFormationType;
     public bool ActivateCameraManagerSystem;
     public bool ActivateMouseManagerSystem;
+    public bool ActivateAiManagerSystem;
+    public bool ActivatePlayerManagerSystem;
 }

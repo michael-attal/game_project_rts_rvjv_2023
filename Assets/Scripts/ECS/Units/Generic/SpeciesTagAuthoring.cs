@@ -18,3 +18,14 @@ internal class SpeciesTagAuthoring : MonoBehaviour
         }
     }
 }
+
+public enum SpeciesType
+{
+    Slime,
+    Meca
+}
+
+public struct SpeciesTag : IComponentData
+{
+    public SpeciesType Type;
+}

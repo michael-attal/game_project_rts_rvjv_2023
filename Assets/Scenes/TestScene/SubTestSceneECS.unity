@@ -1735,7 +1735,7 @@ MonoBehaviour:
   activateSetupGameSystem: 1
   activateCleanupGameSystem: 1
   activateUnitSpawnerSystem: 1
-  activateUnitSelectableSystem: 1
+  activateSelectableSystem: 1
   activateSelectionRectResizeSystem: 1
   activateMoveOrderSystem: 1
   activateUnitMovementSystem: 1
@@ -1743,7 +1743,7 @@ MonoBehaviour:
   activateMovementVelocitySystem: 1
   activateMovementPositionMotorSystem: 0
   activateDestinationReachedCleanupSystem: 1
-  activateUnitSelectedRendererSystem: 1
+  activateSelectedRendererSystem: 1
   activateProjectileRendererSystem: 1
   activateUnitAttackSystem: 1
   activateUnitDamageSystem: 1
@@ -1757,6 +1757,8 @@ MonoBehaviour:
   movementFormationType: 0
   activateCameraManagerSystem: 1
   activateMouseManagerSystem: 1
+  activateAiManagerSystem: 1
+  activatePlayerManagerSystem: 1
 --- !u!4 &2095053050
 Transform:
   m_ObjectHideFlags: 0
@@ -1784,23 +1786,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ff3e3e8297294047b532fc7eaf4ad22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerOneSpecies: 0
-  PlayerTwoSpecies: 1
-  StartPositionBaseSpawnerPlayerOne:
+  playerOneSpecies: 0
+  playerTwoSpecies: 1
+  startPositionBaseSpawnerSlime:
     x: 0
     y: 0
     z: -14
-  StartPositionBaseSpawnerPlayerTwo:
+  startPositionBaseSpawnerMeca:
     x: 0
     y: 0
     z: 14
-  NumberOfBaseSpawnerForPlayerOne: 1
-  NumberOfBaseSpawnerForPlayerTwo: 1
-  SelectionCirclePrefab: {fileID: 7370947266852994130, guid: d15410bcecb664ca69f6b97c5d3bf07d, type: 3}
-  SlimePlayerHandPrefab: {fileID: 6320164834673837995, guid: f571fa7df0f264f0a866e82fe099d7b5, type: 3}
-  MecaPlayerHandPrefab: {fileID: 6320164834673837995, guid: f571fa7df0f264f0a866e82fe099d7b5, type: 3}
-  SlimeBaseSpawnerBuildingPrefab: {fileID: 2216618471874645061, guid: 888243f85db11483baf93363ac285d84, type: 3}
-  MecaBaseSpawnerBuildingPrefab: {fileID: 6851779870681047773, guid: c11a9cb22bf814101a676687080166dd, type: 3}
+  numberOfStartingBaseSpawnerForSlime: 1
+  numberOfStartingBaseSpawnerForMeca: 1
+  selectionCirclePrefab: {fileID: 7370947266852994130, guid: d15410bcecb664ca69f6b97c5d3bf07d, type: 3}
+  slimePlayerHandPrefab: {fileID: 6320164834673837995, guid: f571fa7df0f264f0a866e82fe099d7b5, type: 3}
+  mecaPlayerHandPrefab: {fileID: 1259044049793980661, guid: 2b27e280aca8e4416bf77212c6bd837d, type: 3}
+  slimeBaseSpawnerBuildingPrefab: {fileID: 2216618471874645061, guid: 888243f85db11483baf93363ac285d84, type: 3}
+  mecaBaseSpawnerBuildingPrefab: {fileID: 6851779870681047773, guid: c11a9cb22bf814101a676687080166dd, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

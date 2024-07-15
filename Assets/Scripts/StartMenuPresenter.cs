@@ -31,7 +31,7 @@ public class StartMenuPresenter : MonoBehaviour
 
         var gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         gameManager.SelectedRace = selectedRace;
-        gameManager.DifficultyLevel = difficultyLevel;
+        gameManager.DifficultyLevel = (int)difficultyLevel;
         gameManager.PlayerName = playerName; // Stocker le nom du joueur
 
         // Changer de scène

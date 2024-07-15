@@ -59,7 +59,7 @@ internal partial struct BuildingScreenSystem : ISystem
                 {
                     Position = clickWorldPosition,
                     Rotation = quaternion.identity,
-                    Scale = 1f
+                    Scale = state.EntityManager.GetComponentData<LocalTransform>(buffer[i].Entity).Scale
                 });
             }
         }

@@ -11,7 +11,7 @@ public partial struct MecaBasicUnitUpgradeSystem : ISystem
     {
         state.RequireForUpdate<Config>();
         state.RequireForUpdate<Game>();
-        state.RequireForUpdate<UnitSelectable>();
+        state.RequireForUpdate<Selectable>();
         state.RequireForUpdate<MecaBasicUnitUpgrade>();
     }
 

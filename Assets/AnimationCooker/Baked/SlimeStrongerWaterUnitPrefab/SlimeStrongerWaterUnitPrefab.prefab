@@ -15,7 +15,9 @@ GameObject:
   - component: {fileID: 12773808141518513}
   - component: {fileID: 8187429480268970930}
   - component: {fileID: 252807337203646988}
+  - component: {fileID: -3831924134845585706}
   - component: {fileID: 4767943786188371133}
+  - component: {fileID: -1070922142183315918}
   - component: {fileID: -4996484507418959300}
   - component: {fileID: -5751243555308997747}
   m_Layer: 0
@@ -160,7 +162,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e78a1caba6414ba19e94e33beb5ecef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SpeciesType: 0
   IsMovementAnimated: 1
   UnitSpeed: 5
   MovementType: 0
@@ -178,6 +179,19 @@ MonoBehaviour:
   UnitRange: 15
   UnitRateOfFire: 0.5
   IsAttackAnimated: 1
+--- !u!114 &-3831924134845585706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5786252611782199926}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 215a509e331e45abb9f153c008d68a6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Species: 0
 --- !u!114 &4767943786188371133
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -198,6 +212,19 @@ MonoBehaviour:
   ProjectileScale: 1
   ProjectileSpeed: 30
   IsProjectileAnimated: 0
+--- !u!114 &-1070922142183315918
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5786252611782199926}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e211a1d24cf5a4d3b90fe0065a4cd6af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Species: 1
 --- !u!114 &-4996484507418959300
 MonoBehaviour:
   m_ObjectHideFlags: 0
