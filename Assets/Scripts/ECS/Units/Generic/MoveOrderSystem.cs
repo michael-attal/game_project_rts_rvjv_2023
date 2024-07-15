@@ -1,4 +1,3 @@
-using AnimCooker;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -119,7 +118,7 @@ internal partial struct MoveOrderSystem : ISystem
                 for (var i = 0; i < entityArray.Length; i++)
                 {
                     var movementManual = componentLookup[entityArray[i]];
-                    HandleMovement(ecb, entityArray[i], destinations[index], state.EntityManager.HasComponent<Unit>(entityArray[i]), movementManual.Speed, movementManual.IsMovementAnimated);
+                    HandleMovement(ecb, entityArray[i], destinations[index], state.EntityManager.HasComponent<Unit>(entityArray[i]));
                     index++;
                 }
             }
@@ -164,7 +163,7 @@ internal partial struct MoveOrderSystem : ISystem
                 for (var i = 0; i < entityArray.Length; i++)
                 {
                     var movementVelocity = componentLookup[entityArray[i]];
-                    HandleMovement(ecb, entityArray[i], destinations[index], state.EntityManager.HasComponent<Unit>(entityArray[i]), movementVelocity.Speed, movementVelocity.IsMovementAnimated);
+                    HandleMovement(ecb, entityArray[i], destinations[index], state.EntityManager.HasComponent<Unit>(entityArray[i]));
                     index++;
                 }
             }
@@ -209,7 +208,7 @@ internal partial struct MoveOrderSystem : ISystem
                 for (var i = 0; i < entityArray.Length; i++)
                 {
                     var movementPositionMotor = componentLookup[entityArray[i]];
-                    HandleMovement(ecb, entityArray[i], destinations[index], state.EntityManager.HasComponent<Unit>(entityArray[i]), movementPositionMotor.Speed, movementPositionMotor.IsMovementAnimated);
+                    HandleMovement(ecb, entityArray[i], destinations[index], state.EntityManager.HasComponent<Unit>(entityArray[i]));
                     index++;
                 }
             }
@@ -244,7 +243,7 @@ internal partial struct MoveOrderSystem : ISystem
     }
 
     [BurstCompile]
-    private void HandleMovement(EntityCommandBuffer ecb, Entity entity, float3 destination, bool isUnit, float speed, bool isMovementAnimated)
+    private void HandleMovement(EntityCommandBuffer ecb, Entity entity, float3 destination, bool isUnit)
     {
         ecb.SetComponentEnabled<WantsToMove>(entity, true);
         ecb.SetComponent(entity, new WantsToMove
@@ -254,19 +253,6 @@ internal partial struct MoveOrderSystem : ISystem
 
         if (isUnit)
             ecb.SetComponentEnabled<UnitInMovementTag>(entity, true);
-
-        if (isMovementAnimated)
-        {
-            // NOTE: Start move animation
-            ecb.SetComponent(entity, new AnimationCmdData
-            {
-                Cmd = AnimationCmd.SetPlayForever, ClipIndex = (short)AnimationsType.Move
-            });
-            ecb.SetComponent(entity, new AnimationSpeedData
-            {
-                PlaySpeed = speed
-            });
-        }
     }
 }
 
