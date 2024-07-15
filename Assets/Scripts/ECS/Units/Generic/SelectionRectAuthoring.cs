@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class SelectionRectAuthoring : MonoBehaviour
 {
-    public SpeciesType SpeciesType; // If different selection for species
     public bool Active;
 
     private class Baker : Baker<SelectionRectAuthoring>
@@ -14,7 +13,6 @@ public class SelectionRectAuthoring : MonoBehaviour
 
             AddComponent(entity, new SelectionRect
             {
-                SpeciesType = authoring.SpeciesType,
                 Active = authoring.Active
             });
 
@@ -26,7 +24,6 @@ public class SelectionRectAuthoring : MonoBehaviour
 public struct SelectionRect : IComponentData
 {
     public bool Active;
-    public SpeciesType SpeciesType;
 }
 
 public struct SelectionRectResize : IComponentData

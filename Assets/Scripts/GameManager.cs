@@ -4,7 +4,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public string SelectedRace { get; set; }
-    public float DifficultyLevel { get; set; }
+    public int DifficultyLevel { get; set; }
     public string PlayerName { get; set; }
 
     private void Start()
@@ -17,9 +17,9 @@ public class GameManager : MonoBehaviour
 
     public Difficulty GetDifficulty()
     {
-        if (DifficultyLevel < 0.33f)
+        if (DifficultyLevel == 0)
             return Difficulty.Easy;
-        if (DifficultyLevel < 0.66f)
+        if (DifficultyLevel == 1)
             return Difficulty.Medium;
         return Difficulty.Hard;
     }
@@ -45,5 +45,30 @@ public class GameManager : MonoBehaviour
     public static bool IsControlledByCurrentPlayer(SpeciesToPlay currentSpecies, SpeciesType currentEntitySpeciesType)
     {
         return currentSpecies == SpeciesToPlay.Both || (int)currentSpecies == (int)currentEntitySpeciesType;
+    }
+
+    public static bool IsControlledByAI(SpeciesToPlay playerSpecies, SpeciesType currentEntitySpeciesType)
+    {
+        return !IsControlledByCurrentPlayer(playerSpecies, currentEntitySpeciesType);
+    }
+
+    public static bool IsAiPlaying(SpeciesToPlay playerSpecies)
+    {
+        return playerSpecies != SpeciesToPlay.Both;
+    }
+
+    public static SpeciesType? GetAiSpecies(SpeciesToPlay playerSpecies)
+    {
+        switch (playerSpecies)
+        {
+            case SpeciesToPlay.Slime:
+                return SpeciesType.Meca;
+            case SpeciesToPlay.Meca:
+                return SpeciesType.Slime;
+            case SpeciesToPlay.Both:
+                return null;
+        }
+
+        return null;
     }
 }

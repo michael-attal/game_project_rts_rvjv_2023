@@ -17,7 +17,3 @@ public class SelectionCircleAuthoring : MonoBehaviour
 public struct SelectionCircle : IComponentData
 {
 }
-
-public struct Selected : IComponentData, IEnableableComponent
-{
-}

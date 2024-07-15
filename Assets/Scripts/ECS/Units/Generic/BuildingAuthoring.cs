@@ -17,7 +17,3 @@ public class BuildingAuthoring : MonoBehaviour
 public struct Building : IComponentData
 {
 }
-
-public struct BuildingSelected : IComponentData, IEnableableComponent
-{
-}

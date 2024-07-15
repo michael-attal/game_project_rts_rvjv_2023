@@ -10,8 +10,8 @@ using ISystem = Unity.Entities.ISystem;
 using SystemAPI = Unity.Entities.SystemAPI;
 using SystemState = Unity.Entities.SystemState;
 
-[UpdateAfter(typeof(UnitSelectableSystem))]
-public partial struct UnitSelectedRendererSystem : ISystem
+[UpdateAfter(typeof(SelectableSystem))]
+public partial struct SelectedRendererSystem : ISystem
 {
     [BurstCompile]
     public void OnCreate(ref SystemState state)
@@ -28,7 +28,7 @@ public partial struct UnitSelectedRendererSystem : ISystem
         var configManager = SystemAPI.GetSingleton<Config>();
         var gameManager = SystemAPI.GetSingleton<Game>();
 
-        if (!configManager.ActivateUnitSelectedRendererSystem)
+        if (!configManager.ActivateSelectedRendererSystem)
         {
             state.Enabled = false;
             return;
@@ -40,7 +40,7 @@ public partial struct UnitSelectedRendererSystem : ISystem
         var spawnManager = SystemAPI.GetSingleton<SpawnManager>();
 
         var ecb = new EntityCommandBuffer(Allocator.TempJob);
-        foreach (var (unitSelectable, entity) in SystemAPI.Query<RefRO<SelectionCircle>>().WithEntityAccess())
+        foreach (var (selectionCircle, entity) in SystemAPI.Query<RefRO<SelectionCircle>>().WithEntityAccess())
         {
             ecb.DestroyEntity(entity);
         }
@@ -49,14 +49,14 @@ public partial struct UnitSelectedRendererSystem : ISystem
         ecb.Dispose();
 
         var ecb2 = new EntityCommandBuffer(Allocator.TempJob);
-        foreach (var unitSelectedTransform in SystemAPI.Query<RefRO<LocalTransform>>().WithAll<UnitSelected>())
+        foreach (var entitySelectedTransform in SystemAPI.Query<RefRO<LocalTransform>>().WithAll<Selected>())
         {
             var entity = ecb2.Instantiate(spawnManager.SelectionCirclePrefab);
             ecb2.SetComponent(entity, new LocalTransform
             {
                 Rotation = Quaternion.Euler(90, 0, 0),
-                Scale = unitSelectedTransform.ValueRO.Scale * 100, // NOTE: The circle is 1cm square,
-                Position = new float3(unitSelectedTransform.ValueRO.Position.x, 0, unitSelectedTransform.ValueRO.Position.z)
+                Scale = entitySelectedTransform.ValueRO.Scale * 100, // NOTE: The circle is 1cm square,
+                Position = new float3(entitySelectedTransform.ValueRO.Position.x, 0, entitySelectedTransform.ValueRO.Position.z)
             });
             ecb2.SetComponent(entity, new SelectionCircle());
         }

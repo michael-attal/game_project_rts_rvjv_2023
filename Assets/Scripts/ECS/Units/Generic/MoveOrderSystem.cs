@@ -6,9 +6,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 
 [UpdateAfter(typeof(MouseSystemGroup))] // NOTE: We need to know if a mouse event occurred before updating this system
-[UpdateBefore(typeof(MovementVelocity))]
-[UpdateBefore(typeof(MovementPositionMotor))]
-[UpdateBefore(typeof(MovementManualSystem))]
+[UpdateBefore(typeof(MovementSystemGroup))]
 internal partial struct MoveOrderSystem : ISystem
 {
     private EntityQuery manualMovementQuery;
@@ -26,19 +24,19 @@ internal partial struct MoveOrderSystem : ISystem
         manualMovementQuery = state.GetEntityQuery(new EntityQueryDesc
         {
             All = new ComponentType[] { typeof(MovementManual), typeof(LocalTransform) },
-            Any = new ComponentType[] { typeof(Selected), typeof(UnitSelected), typeof(BuildingSelected) }
+            Any = new ComponentType[] { typeof(Selected) }
         });
 
         velocityMovementQuery = state.GetEntityQuery(new EntityQueryDesc
         {
             All = new ComponentType[] { typeof(MovementVelocity), typeof(LocalTransform) },
-            Any = new ComponentType[] { typeof(Selected), typeof(UnitSelected), typeof(BuildingSelected) }
+            Any = new ComponentType[] { typeof(Selected) }
         });
 
         positionMotorMovementQuery = state.GetEntityQuery(new EntityQueryDesc
         {
             All = new ComponentType[] { typeof(MovementPositionMotor), typeof(LocalTransform) },
-            Any = new ComponentType[] { typeof(Selected), typeof(UnitSelected), typeof(BuildingSelected) }
+            Any = new ComponentType[] { typeof(Selected) }
         });
     }
 
