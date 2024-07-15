@@ -48,14 +48,16 @@ public class UnitAuthoring : MonoBehaviour
                     AddComponent(entity, new MovementManual
                     {
                         Speed = authoring.UnitSpeed,
-                        IsMovementAnimated = authoring.IsMovementAnimated
+                        IsMovementAnimated = authoring.IsMovementAnimated,
+                        IsMovementAnimationPlayed = false
                     });
                     break;
                 case MovementType.Velocity:
                     AddComponent(entity, new MovementVelocity
                     {
                         Speed = authoring.UnitSpeed,
-                        IsMovementAnimated = authoring.IsMovementAnimated
+                        IsMovementAnimated = authoring.IsMovementAnimated,
+                        IsMovementAnimationPlayed = false
                     });
                     break;
                 case MovementType.PositionMotor:
@@ -63,6 +65,7 @@ public class UnitAuthoring : MonoBehaviour
                     {
                         Speed = authoring.UnitSpeed,
                         IsMovementAnimated = authoring.IsMovementAnimated,
+                        IsMovementAnimationPlayed = false,
                         AxisBlocked = authoring.AxisBlockedForMovementPositionMotor,
                         PerpendicularAxis = authoring.PerpendicularAxisForMovementPositionMotor
                     });

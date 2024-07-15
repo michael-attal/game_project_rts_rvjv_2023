@@ -1,3 +1,4 @@
+using AnimCooker;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -60,9 +61,24 @@ public partial struct MovementVelocityJob : IJobEntity
         {
             ECB.SetComponentEnabled<WantsToMove>(chunkIndex, entity, false);
             ECB.AddComponent<DestinationReached>(chunkIndex, entity);
+            movementVelocity.ValueRW.IsMovementAnimationPlayed = false;
         }
         else
         {
+            if (movementVelocity.ValueRO.IsMovementAnimated && movementVelocity.ValueRO.IsMovementAnimationPlayed == false) // NOTE: Set only the first time the animation
+            {
+                // NOTE: Start move animation
+                ECB.SetComponent(chunkIndex, entity, new AnimationCmdData
+                {
+                    Cmd = AnimationCmd.SetPlayForever, ClipIndex = (short)AnimationsType.Move
+                });
+                ECB.SetComponent(chunkIndex, entity, new AnimationSpeedData
+                {
+                    PlaySpeed = movementVelocity.ValueRO.Speed
+                });
+                movementVelocity.ValueRW.IsMovementAnimationPlayed = true;
+            }
+
             var currentVelocity2D = velocity.ValueRO.Linear;
             currentVelocity2D.y = 0;
             var direction2D = math.normalize(new float3(direction.x, 0, direction.z));
@@ -78,4 +94,5 @@ public struct MovementVelocity : IComponentData
 {
     public float Speed;
     public bool IsMovementAnimated;
+    public bool IsMovementAnimationPlayed;
 }
