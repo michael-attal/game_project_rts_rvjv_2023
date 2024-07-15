@@ -2,7 +2,18 @@ using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEngine.Scripting;
 
+[WorldSystemFilter(WorldSystemFilterFlags.Default | WorldSystemFilterFlags.Editor)]
+public partial class MovementSystemGroup : ComponentSystemGroup
+{
+    [Preserve]
+    public MovementSystemGroup()
+    {
+    }
+}
+
+[UpdateInGroup(typeof(MovementSystemGroup))]
 [UpdateBefore(typeof(TransformSystemGroup))]
 [BurstCompile]
 public partial struct MovementManualSystem : ISystem

@@ -4,12 +4,11 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
-using Random = Unity.Mathematics.Random;
 
 [UpdateBefore(typeof(TransformSystemGroup))]
 [UpdateBefore(typeof(UnitSpawnerSystem))]
 [UpdateBefore(typeof(UpgradedUnitSpawnerSystem))]
-[UpdateBefore(typeof(UnitSelectableSystem))]
+[UpdateBefore(typeof(SelectableSystem))]
 [UpdateBefore(typeof(PauseScreenSystem))]
 public partial struct SetupGameSystem : ISystem
 {
@@ -74,13 +73,13 @@ public partial struct SetupGameSystem : ISystem
                     : spawnManager.MecaBaseSpawnerBuildingPrefab;
 
                 var numberOfBaseSpawner = i == 1
-                    ? spawnManager.NumberOfBaseSpawnerForPlayerOne
-                    : spawnManager.NumberOfBaseSpawnerForPlayerTwo;
+                    ? spawnManager.NumberOfStartingBaseSpawnerForSlime
+                    : spawnManager.NumberOfStartingBaseSpawnerForMeca;
 
 
                 var startPosition = i == 1
-                    ? spawnManager.StartPositionBaseSpawnerPlayerOne
-                    : spawnManager.StartPositionBaseSpawnerPlayerTwo;
+                    ? spawnManager.StartPositionBaseSpawnerSlime
+                    : spawnManager.StartPositionBaseSpawnerMeca;
 
                 // NOTE: Initial placement based on the selected player species
                 var zPlacement = speciesToPlay == SpeciesToPlay.Meca ? i == 1 ? 14 : -14 : i == 1 ? -14 : 14;
@@ -90,7 +89,7 @@ public partial struct SetupGameSystem : ISystem
 
                 state.EntityManager.SetComponentData(playerHand, new LocalTransform
                 {
-                    Position = startPosition,
+                    Position = startPosition + new float3(0, -500, 0), // NOTE: Hide player hand for the moment
                     Scale = 1,
                     Rotation = quaternion.identity
                 });
@@ -98,7 +97,6 @@ public partial struct SetupGameSystem : ISystem
                 state.EntityManager.SetComponentData(playerHand, new Player
                 {
                     PlayerNumber = i,
-                    PlayerSpecies = playerSpecies,
                     NbOfBaseSpawnerBuilding = numberOfBaseSpawner,
                     StartPosition = startPosition,
                     BaseSpawnerBuildingPrefab = baseSpawnerBuildingPrefab
@@ -107,31 +105,63 @@ public partial struct SetupGameSystem : ISystem
 
             Debug.Log("Players successfully created!");
 
-            foreach (var playerInfos in
-                     SystemAPI.Query<RefRO<Player>>()
+            foreach (var (playerInfos, species) in
+                     SystemAPI.Query<RefRO<Player>, RefRO<SpeciesTag>>()
                          .WithAll<Player>())
             {
-                var rand = new Random(playerInfos.ValueRO.PlayerNumber);
-
-                var offsetBaseSpawnerBuilding = playerInfos.ValueRO.NbOfBaseSpawnerBuilding == 1
-                    ? 0
-                    : rand.NextFloat(playerInfos.ValueRO.NbOfBaseSpawnerBuilding);
-
-                var baseSpawnerPlayer =
-                    state.EntityManager.Instantiate(playerInfos.ValueRO.BaseSpawnerBuildingPrefab);
-
-                // Position the new base building spawner by setting its LocalTransform component.
-                state.EntityManager.SetComponentData(baseSpawnerPlayer, new LocalTransform
+                var nbBaseSpawner = playerInfos.ValueRO.NbOfBaseSpawnerBuilding;
+                var isBuildingControlledByAI = GameManager.IsControlledByAI(gameManager.SpeciesToPlay, species.ValueRO.Type);
+                if (isBuildingControlledByAI)
                 {
-                    Position = new float3
+                    switch (difficulty)
                     {
-                        x = playerInfos.ValueRO.StartPosition.x + offsetBaseSpawnerBuilding,
-                        y = playerInfos.ValueRO.StartPosition.y,
-                        z = playerInfos.ValueRO.StartPosition.z + offsetBaseSpawnerBuilding
-                    },
-                    Scale = 1,
-                    Rotation = quaternion.identity
-                });
+                        case Difficulty.Easy:
+                            break;
+                        case Difficulty.Medium:
+                            nbBaseSpawner += 1;
+                            break;
+                        case Difficulty.Hard:
+                            nbBaseSpawner += 2;
+                            break;
+                    }
+                }
+
+                var scaleBaseSpawner = state.EntityManager.GetComponentData<LocalTransform>(playerInfos.ValueRO.BaseSpawnerBuildingPrefab).Scale;
+                var offsetMultiplier = 1.5f; // Multiplier for the offset based on the scale
+
+                Debug.Log($"nbBaseSpawner: {nbBaseSpawner}");
+                for (var i = 0; i < nbBaseSpawner; i++)
+                {
+                    Debug.Log("Dans boucle");
+                    float positionOffset;
+
+                    if (i == 0)
+                    {
+                        positionOffset = 0f; // First spawner at the start position
+                    }
+                    else
+                    {
+                        // Calculate the offset for subsequent spawners
+                        var offset = (i + 1) / 2 * offsetMultiplier * scaleBaseSpawner;
+                        var direction = i % 2 == 0 ? 1 : -1; // Alternate direction: right for even, left for odd
+                        positionOffset = offset * direction;
+                    }
+
+                    var position = new float3(
+                        playerInfos.ValueRO.StartPosition.x + positionOffset,
+                        playerInfos.ValueRO.StartPosition.y,
+                        playerInfos.ValueRO.StartPosition.z
+                    );
+
+                    var baseSpawnerPlayer = state.EntityManager.Instantiate(playerInfos.ValueRO.BaseSpawnerBuildingPrefab);
+
+                    state.EntityManager.SetComponentData(baseSpawnerPlayer, new LocalTransform
+                    {
+                        Position = position,
+                        Scale = scaleBaseSpawner,
+                        Rotation = quaternion.identity
+                    });
+                }
             }
 
             Debug.Log("Players base unit spawners building successfully created!");

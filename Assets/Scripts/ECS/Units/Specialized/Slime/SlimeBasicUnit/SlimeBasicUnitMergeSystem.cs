@@ -4,7 +4,6 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine;
 
 [BurstCompile]
 [UpdateBefore(typeof(TransformSystemGroup))]
@@ -18,10 +17,10 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
         state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<Config>();
         state.RequireForUpdate<Game>();
-        state.RequireForUpdate<UnitSelectable>();
+        state.RequireForUpdate<Selectable>();
         state.RequireForUpdate<SlimeBasicUnitMerge>();
 
-        query = state.GetEntityQuery(typeof(SlimeBasicUnitMerge), typeof(UnitSelected), typeof(LocalToWorld));
+        query = state.GetEntityQuery(typeof(SlimeBasicUnitMerge), typeof(WantsToMerge), typeof(LocalToWorld));
     }
 
     [BurstCompile]
@@ -37,9 +36,6 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
         }
 
         if (gameManager.State == GameState.Paused)
-            return;
-
-        if (!Input.GetKeyDown(KeyCode.F))
             return;
 
         var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
@@ -65,6 +61,7 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
         var fusionInfo = new FusionInfo();
         foreach (var entity in entities)
         {
+            state.EntityManager.SetComponentEnabled<WantsToMerge>(entity, false); // NOTE: Now that we will loop on entities that want to be merged, we don't need this tag anymore.
             var slimeBasicUnitMerge = state.EntityManager.GetComponentData<SlimeBasicUnitMerge>(entity);
             fusionInfo += slimeBasicUnitMerge.FusionInfo;
         }

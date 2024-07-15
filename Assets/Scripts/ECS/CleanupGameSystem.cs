@@ -2,6 +2,8 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 
+[UpdateAfter(typeof(AISystemGroup))]
+[UpdateAfter(typeof(PlayerManagerSystem))]
 [UpdateAfter(typeof(WinScreenSystem))]
 public partial struct CleanupGameSystem : ISystem
 {
@@ -47,6 +49,12 @@ public partial struct CleanupGameSystem : ISystem
             }
 
             foreach (var (projectile, e) in SystemAPI.Query<RefRO<Projectile>>().WithEntityAccess()
+                    )
+            {
+                ecb.DestroyEntity(e);
+            }
+
+            foreach (var (miscellaneous, e) in SystemAPI.Query<RefRO<MiscellaneousTag>>().WithEntityAccess()
                     )
             {
                 ecb.DestroyEntity(e);

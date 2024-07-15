@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class UnitAuthoring : MonoBehaviour
 {
-    public SpeciesType SpeciesType;
     public bool IsMovementAnimated;
     public float UnitSpeed;
     public MovementType MovementType;
@@ -35,13 +34,13 @@ public class UnitAuthoring : MonoBehaviour
                 UnitSpeed = authoring.UnitSpeed
             });
 
-            AddComponent(entity, new UnitSelectable
+            AddComponent(entity, new Selectable
             {
                 ShouldBeSelected = false
             });
 
-            AddComponent<UnitSelected>(entity);
-            SetComponentEnabled<UnitSelected>(entity, false);
+            AddComponent<Selected>(entity);
+            SetComponentEnabled<Selected>(entity, false);
 
             switch (authoring.MovementType)
             {
@@ -78,6 +77,9 @@ public class UnitAuthoring : MonoBehaviour
             AddComponent<WantsToMove>(entity);
             SetComponentEnabled<WantsToMove>(entity, false);
 
+            AddComponent<WantsToGatherRessource>(entity);
+            SetComponentEnabled<WantsToGatherRessource>(entity, false);
+
             AddComponent(entity, new UnitDamage
             {
                 Health = authoring.UnitStandardHealth
@@ -94,35 +96,8 @@ public class UnitAuthoring : MonoBehaviour
             });
 
             AddComponent<Velocity>(entity);
-            AddComponent(entity, new SpeciesTag()
-            {
-                Type = authoring.SpeciesType
-            });
         }
     }
-}
-
-public enum SpeciesType
-{
-    Slime,
-    Meca
-}
-
-public enum UnitType
-{
-    SlimeBasic,
-    MecaBasic,
-    SlimeStrongerWater,
-    MecaStronger
-
-    // SlimeFire,
-    // SlimeWater,
-    // ...
-}
-
-public struct SpeciesTag : IComponentData
-{
-    public SpeciesType Type;
 }
 
 public struct Unit : IComponentData
@@ -136,12 +111,12 @@ public struct Velocity : IComponentData
     public float2 Value;
 }
 
-public struct UnitSelectable : IComponentData
+public struct Selectable : IComponentData
 {
     public bool ShouldBeSelected; // If later we want to show an indicator on mouse hover unit
 }
 
-public struct UnitSelected : IComponentData, IEnableableComponent
+public struct Selected : IComponentData, IEnableableComponent
 {
 }
 
