@@ -5,9 +5,18 @@ using UnityEngine;
 
 namespace AnimCooker
 {
+    public enum ForceLodHeightLevel
+    {
+        None,
+        ZeroAliasBestQuality,
+        OneAliasMediumQuality,
+        TwoAliasPoorQuality
+    }
+
     public struct SimpleLodOptsData : IComponentData
     {
         public float TimerInterval;
+        public ForceLodHeightLevel ForceLodHeightLevel;
     }
 
     public class SimpleLodOptionsAuthoring : MonoBehaviour
@@ -20,7 +29,7 @@ namespace AnimCooker
     {
         public override void Bake(SimpleLodOptionsAuthoring authoring)
         {
-            Entity entity = GetEntity(authoring, TransformUsageFlags.None);
+            var entity = GetEntity(authoring, TransformUsageFlags.None);
             AddComponent(entity, new SimpleLodOptsData { TimerInterval = authoring.TimerInterval });
         }
     }

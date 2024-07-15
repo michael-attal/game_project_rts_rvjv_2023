@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class StartMenuPresenter : MonoBehaviour
 {
     [SerializeField] private Button startButton;
-    [SerializeField] private TMP_Dropdown selectionRaceDropdown;
+    [SerializeField] private TMP_Dropdown selectionSpeciesDropdown;
     [SerializeField] private Slider difficultySlider;
     [SerializeField] private TMP_InputField playerNameInputField;
 
@@ -18,10 +18,10 @@ public class StartMenuPresenter : MonoBehaviour
     {
         Debug.Log("Loading battlefield scene...");
 
-        var selectedRaceIndex = selectionRaceDropdown.value;
-        var selectedRace = selectionRaceDropdown.options[selectedRaceIndex].text;
-        Debug.Log($"Selected Race Index: {selectedRaceIndex}");
-        Debug.Log($"Selected Race: {selectedRace}");
+        var selectedSpeciesIndex = selectionSpeciesDropdown.value;
+        var selectedSpecies = selectionSpeciesDropdown.options[selectedSpeciesIndex].text;
+        Debug.Log($"Selected Race Index: {selectedSpeciesIndex}");
+        Debug.Log($"Selected Race: {selectedSpecies}");
 
         var difficultyLevel = difficultySlider.value;
         Debug.Log($"Difficulty Level: {difficultyLevel}");
@@ -30,7 +30,7 @@ public class StartMenuPresenter : MonoBehaviour
         Debug.Log($"Player Name: {playerName}");
 
         var gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-        gameManager.SelectedRace = selectedRace;
+        gameManager.SelectedSpecies = selectedSpecies;
         gameManager.DifficultyLevel = (int)difficultyLevel;
         gameManager.PlayerName = playerName; // Stocker le nom du joueur
 

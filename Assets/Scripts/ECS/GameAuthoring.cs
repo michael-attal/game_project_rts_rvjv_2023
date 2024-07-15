@@ -71,6 +71,21 @@ public class GameAuthoring : MonoBehaviour
     }
 }
 
+public enum Language
+{
+    English,
+    French
+}
+
+public enum GraphicQuality
+{
+    Default,
+    Low,
+    Medium,
+    High,
+    Ultra
+}
+
 public enum Difficulty
 {
     Easy,
@@ -98,6 +113,9 @@ public struct Game : IComponentData
     public Difficulty Difficulty;
     public SpeciesToPlay SpeciesToPlay;
     public FixedString32Bytes PlayerName;
+    public GraphicQuality GraphicQualityLevel;
+    public float SoundLevel;
+    public Language Language;
     public int Score;
     public int RessourceCount;
     public int RessourceCountAI;
