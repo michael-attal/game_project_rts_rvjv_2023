@@ -9,9 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45cf6329d0df46e40a80b33c963471be, type: 3}
-  m_Name: SlimeMergeGraph
+  m_Script: {fileID: 11500000, guid: cf37f78fe7592904796caba03b6b7cb7, type: 3}
+  m_Name: StrongerWaterSlimeFusionDescriptor
   m_EditorClassIdentifier: 
-  recipes:
-  - entityPrefab: ECS_SUPER_SLIME_UNIT
-    fusionInfo: {fileID: 11400000, guid: 7754a91edd99ba4498053f58e731e810, type: 2}
+  DisplayName: Super Water
+  DisplayImage: {fileID: 0}
+  FusionInfo:
+    EarthAmount: 0
+    FireAmount: 0
+    WaterAmount: 10
+    AirAmount: 0

@@ -58,7 +58,7 @@ public struct FusionInfo : IComparable<FusionInfo>
 public struct FusionRecipe
 {
     public string entityPrefab;
-    public FusionInfo cost;
+    public FusionDescriptor fusionInfo;
 }
 
 public struct FusionRecipeData
