@@ -1,0 +1,148 @@
+using Unity.Burst;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
+using EntityCommandBuffer = Unity.Entities.EntityCommandBuffer;
+using ISystem = Unity.Entities.ISystem;
+using Random = UnityEngine.Random;
+using SystemAPI = Unity.Entities.SystemAPI;
+using SystemState = Unity.Entities.SystemState;
+
+// NOTE: This system manages AI building and upgrading logic.
+[UpdateInGroup(typeof(AISystemGroup))]
+public partial struct AiBuildingManagerSystem : ISystem
+{
+    [BurstCompile]
+    public void OnCreate(ref SystemState state)
+    {
+        state.RequireForUpdate<Game>();
+        state.RequireForUpdate<Config>();
+        state.RequireForUpdate<SpawnManager>();
+    }
+
+    [BurstCompile]
+    public void OnUpdate(ref SystemState state)
+    {
+        var configManager = SystemAPI.GetSingleton<Config>();
+        var gameManager = SystemAPI.GetSingleton<Game>();
+
+        if (!configManager.ActivateAiManagerSystem)
+        {
+            state.Enabled = false;
+            return;
+        }
+
+        if (gameManager.State == GameState.Paused)
+            return;
+
+        if (!GameManager.IsAiPlaying(gameManager.SpeciesToPlay))
+            return;
+
+        var playerSpecies = gameManager.SpeciesToPlay;
+        var aiSpecies = (SpeciesType)GameManager.GetAiSpecies(playerSpecies)!;
+
+        var ecb = new EntityCommandBuffer(Allocator.Temp);
+
+        HandleBuildingAndUpgrade(ref ecb, ref state, gameManager, aiSpecies);
+
+        ecb.Playback(state.EntityManager);
+        ecb.Dispose();
+    }
+
+    private void HandleBuildingAndUpgrade(ref EntityCommandBuffer ecb, ref SystemState state, Game gameManager, SpeciesType aiSpecies)
+    {
+        var spawnManager = SystemAPI.GetSingleton<SpawnManager>();
+        var mecaBasicBaseSpawnerCount = 0;
+
+        foreach (var (transform, baseSpawner, speciesTag, entity) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<BaseSpawnerBuilding>, RefRO<SpeciesTag>>().WithNone<GlassCannonUpgrade, ArtilleryUpgrade>().WithNone<GatlingUpgrade, ScoutUpgrade>().WithEntityAccess()) // NOTE: Can't put 4 components in the same WithNone ... Idk why
+        {
+            if (GameManager.IsControlledByAI(gameManager.SpeciesToPlay, speciesTag.ValueRO.Type))
+            {
+                HandleBaseSpawnerBuilding(ref ecb, ref state, gameManager, aiSpecies, transform, entity, ref mecaBasicBaseSpawnerCount, spawnManager);
+            }
+        }
+
+        // NOTE: If the game is not over, but there is only an upgraded base spawner, then first add a non-upgraded version in order to enter into the foreach loop.
+        if (aiSpecies == SpeciesType.Meca && mecaBasicBaseSpawnerCount == 0 && gameManager.State == GameState.Running)
+        {
+            var mecaBaseSpawnerBuildingTransform = state.EntityManager.GetComponentData<LocalTransform>(spawnManager.MecaBaseSpawnerBuildingPrefab);
+            CreateBaseSpawner(ref ecb, ref state, gameManager, spawnManager, aiSpecies, GetNewBuildingPosition(mecaBaseSpawnerBuildingTransform.Position, mecaBaseSpawnerBuildingTransform.Scale), mecaBaseSpawnerBuildingTransform.Scale);
+        }
+    }
+
+    private void HandleBaseSpawnerBuilding(ref EntityCommandBuffer ecb, ref SystemState state, Game gameManager, SpeciesType aiSpecies, RefRO<LocalTransform> transform, Entity entity, ref int mecaBasicBaseSpawnerCount, SpawnManager spawnManager)
+    {
+        if (aiSpecies == SpeciesType.Meca)
+            mecaBasicBaseSpawnerCount++;
+
+        // NOTE: Always build base spawner for Slime because there is no other cost
+        if (Random.value > 0.5f || aiSpecies == SpeciesType.Slime)
+        {
+            // NOTE: Generate a building around another baseSpawner transform (randomly)
+            var posNewBuilding = GetNewBuildingPosition(transform.ValueRO.Position, transform.ValueRO.Scale);
+            CreateBaseSpawner(ref ecb, ref state, gameManager, spawnManager, aiSpecies, posNewBuilding, transform.ValueRO.Scale);
+        }
+        else
+        {
+            // NOTE: Always keep at least one basic spawner building
+            // TODO: Update it if it consumes resources for upgrading the meca base spawner.
+            if (mecaBasicBaseSpawnerCount > 1)
+            {
+                AddRandomUpgrade(ref ecb, entity);
+            }
+        }
+    }
+
+    private void CreateBaseSpawner(ref EntityCommandBuffer ecb, ref SystemState state, Game gameManager, SpawnManager spawnManager, SpeciesType aiSpecies, float3 position, float scale)
+    {
+        // Check if AI has enough resources to build a new base spawner
+        if (gameManager.RessourceCountAI >= 50)
+        {
+            // Deduct the resource cost from AI's resources
+            gameManager.RessourceCountAI -= 50;
+            SystemAPI.SetSingleton(gameManager);
+
+            // Instantiate the appropriate prefab based on the AI species
+            var newEntity = ecb.Instantiate(aiSpecies == SpeciesType.Slime ? spawnManager.SlimeBaseSpawnerBuildingPrefab : spawnManager.MecaBaseSpawnerBuildingPrefab);
+
+            // Set the position, rotation, and scale for the new base spawner
+            ecb.SetComponent(newEntity, new LocalTransform
+            {
+                Position = position,
+                Rotation = quaternion.identity,
+                Scale = scale
+            });
+        }
+    }
+
+    private float3 GetNewBuildingPosition(float3 fromPosition, float fromScale)
+    {
+        var posNewBuilding = fromPosition;
+        var direction = Random.value > 0.50f ? -1 : 1;
+        posNewBuilding.x += Random.Range(fromScale * 2, fromScale * 4) * direction;
+        posNewBuilding.z += Random.Range(fromScale * 2, fromScale * 4) * direction;
+
+        return posNewBuilding;
+    }
+
+    private void AddRandomUpgrade(ref EntityCommandBuffer ecb, Entity entity)
+    {
+        if (Random.value <= 0.25f)
+        {
+            ecb.AddComponent<GlassCannonUpgrade>(entity);
+        }
+        else if (Random.value <= 0.50f)
+        {
+            ecb.AddComponent<ArtilleryUpgrade>(entity);
+        }
+        else if (Random.value <= 0.75f)
+        {
+            ecb.AddComponent<GatlingUpgrade>(entity);
+        }
+        else
+        {
+            ecb.AddComponent<ScoutUpgrade>(entity);
+        }
+    }
+}

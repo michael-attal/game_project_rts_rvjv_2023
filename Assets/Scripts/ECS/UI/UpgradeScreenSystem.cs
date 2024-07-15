@@ -3,14 +3,14 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
 
-partial struct UpgradeScreenSystem : ISystem
+internal partial struct UpgradeScreenSystem : ISystem
 {
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<Game>();
         state.RequireForUpdate<SpawnerUpgradesRegister>();
-        state.RequireForUpdate<UnitSelected>();
+        state.RequireForUpdate<Selected>();
     }
 
     [BurstCompile]
@@ -20,7 +20,7 @@ partial struct UpgradeScreenSystem : ISystem
 
         if (gameSingleton == Entity.Null)
             return;
-        
+
         if (!SystemAPI.HasComponent<SpawnerUpgradesRegister>(gameSingleton))
             return;
 
@@ -28,14 +28,14 @@ partial struct UpgradeScreenSystem : ISystem
 
         var ecs = new EntityCommandBuffer(Allocator.Temp);
         foreach (var (transform, entity) in SystemAPI.Query<RefRO<LocalTransform>>()
-                     .WithAll<BaseSpawnerBuilding, UnitSelected>()
+                     .WithAll<BaseSpawnerBuilding, Selected>()
                      .WithEntityAccess())
         {
             ecs.AddComponent(entity, upgrades);
         }
-        
+
         ecs.RemoveComponent<SpawnerUpgradesRegister>(gameSingleton);
-        
+
         ecs.Playback(state.EntityManager);
         ecs.Dispose();
     }

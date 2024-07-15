@@ -12,7 +12,6 @@ public class BaseSpawnerBuildingAuthoring : MonoBehaviour
     public float3 SpawnedUnitInitialPosition;
     public quaternion SpawnedUnitInitialRotation;
     public float SpawnedUnitInitialScale;
-    public SpeciesType Species;
 
     private class Baker : Baker<BaseSpawnerBuildingAuthoring>
     {
@@ -31,14 +30,9 @@ public class BaseSpawnerBuildingAuthoring : MonoBehaviour
                 UnitInitialPosition = authoring.SpawnedUnitInitialPosition,
                 UnitInitialScale = authoring.SpawnedUnitInitialScale
             });
-            AddComponent<UnitSelected>(entity);
-            SetComponentEnabled<UnitSelected>(entity, false);
-            AddComponent<UnitSelectable>(entity);
-
-            AddComponent(entity, new SpeciesTag
-            {
-                Type = authoring.Species
-            });
+            AddComponent<Selected>(entity);
+            SetComponentEnabled<Selected>(entity, false);
+            AddComponent<Selectable>(entity);
         }
     }
 }

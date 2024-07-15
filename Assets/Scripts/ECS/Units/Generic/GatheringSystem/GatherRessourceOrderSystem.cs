@@ -2,7 +2,6 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
-using UnityEngine;
 
 internal partial struct GatherRessourceOrderSystem : ISystem
 {
@@ -11,7 +10,7 @@ internal partial struct GatherRessourceOrderSystem : ISystem
     {
         state.RequireForUpdate<Config>();
         state.RequireForUpdate<Game>();
-        state.RequireForUpdate<UnitSelectable>();
+        state.RequireForUpdate<WantsToGatherRessource>();
     }
 
     [BurstCompile]
@@ -29,17 +28,15 @@ internal partial struct GatherRessourceOrderSystem : ISystem
         if (gameManager.State == GameState.Paused)
             return;
 
-        if (!Input.GetKeyDown(KeyCode.G))
-            return;
-
         var ecb = new EntityCommandBuffer(Allocator.Temp);
 
         foreach (var (transform, entity) in
                  SystemAPI.Query<RefRO<LocalTransform>>()
-                     .WithAll<UnitSelected>()
-                     .WithAny<MovementManual, MovementVelocity, MovementPositionMotor>()
+                     .WithAll<WantsToGatherRessource>()
                      .WithEntityAccess())
         {
+            ecb.SetComponentEnabled<WantsToGatherRessource>(entity, false); // NOTE: Order to gather resources is given below, we can safely disable it now.
+
             if (SystemAPI.HasComponent<GatheringIntent>(entity))
             {
                 ecb.RemoveComponent<GatheringIntent>(entity);

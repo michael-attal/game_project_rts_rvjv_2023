@@ -8,7 +8,7 @@ using UnityEngine;
 [UpdateAfter(typeof(MouseSystemGroup))]
 [UpdateAfter(typeof(CameraManagerSystem))]
 [BurstCompile]
-public partial struct UnitSelectableSystem : ISystem
+public partial struct SelectableSystem : ISystem
 {
     private const float minimumSelectionArea = 14f;
     private const float minimumSelectionAreaCenter = minimumSelectionArea / 2f;
@@ -19,7 +19,7 @@ public partial struct UnitSelectableSystem : ISystem
         state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<Config>();
         state.RequireForUpdate<Game>();
-        state.RequireForUpdate<UnitSelectable>();
+        state.RequireForUpdate<Selectable>();
         state.RequireForUpdate<MouseManager>();
         state.RequireForUpdate<CameraManager>();
     }
@@ -30,7 +30,7 @@ public partial struct UnitSelectableSystem : ISystem
         var configManager = SystemAPI.GetSingleton<Config>();
         var gameManager = SystemAPI.GetSingleton<Game>();
 
-        if (!configManager.ActivateUnitSelectableSystem)
+        if (!configManager.ActivateSelectableSystem)
         {
             state.Enabled = false;
             return;
@@ -53,11 +53,11 @@ public partial struct UnitSelectableSystem : ISystem
             var width = Mathf.Abs(initialClickPosition.x - finalClickPosition.x);
             var height = Mathf.Abs(initialClickPosition.y - finalClickPosition.y);
 
-            // NOTE: Incorporate a slight radius to enable unit selection with a single click.
+            // NOTE: Incorporate a slight radius to enable entity selection with a single click.
             var selectionArea = new Rect(left - minimumSelectionAreaCenter, top - minimumSelectionAreaCenter,
                 width + minimumSelectionArea, height + minimumSelectionArea);
 
-            var unitSelectionJob = new UnitSelectionJob
+            var selectionJob = new SelectionJob
             {
                 ECB = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter(),
                 CameraPos = cameraManager.Position,
@@ -71,14 +71,14 @@ public partial struct UnitSelectableSystem : ISystem
                 SelectionArea = selectionArea,
                 CurrentPlayerSpecies = gameManager.SpeciesToPlay
             };
-            unitSelectionJob.ScheduleParallel();
+            selectionJob.ScheduleParallel();
         }
     }
 }
 
-[WithAll(typeof(UnitSelectable))]
+[WithAll(typeof(Selectable))]
 [BurstCompile]
-public partial struct UnitSelectionJob : IJobEntity
+public partial struct SelectionJob : IJobEntity
 {
     public EntityCommandBuffer.ParallelWriter ECB;
     public float3 CameraPos;
@@ -93,14 +93,14 @@ public partial struct UnitSelectionJob : IJobEntity
     public SpeciesToPlay CurrentPlayerSpecies;
 
     // NOTE: Because we want the global position of a child entity, we read LocalToWorld instead of LocalTransform.
-    private void Execute(Entity entity, LocalToWorld unitLT, SpeciesTag species, [ChunkIndexInQuery] int chunkIndex)
+    private void Execute(Entity entity, LocalToWorld entityLT, SpeciesTag species, [ChunkIndexInQuery] int chunkIndex)
     {
         if (GameManager.IsControlledByCurrentPlayer(CurrentPlayerSpecies, species.Type))
         {
-            var unitRadius = unitLT.Value.Scale().x;
+            var entityRadius = entityLT.Value.Scale().x;
 
             var transformScreenPosition = CameraManagerTools.ConvertWorldToScreenCoordinates(
-                unitLT.Position,
+                entityLT.Position,
                 CameraPos,
                 CamProjMatrix,
                 CamUp,
@@ -108,21 +108,21 @@ public partial struct UnitSelectionJob : IJobEntity
                 CamForward,
                 PixelWidth,
                 PixelHeight,
-                ScaleFactor // or unitRadius ?
+                ScaleFactor // or entityRadius ?
             );
 
-            // NOTE: Add the unit radius to the selection
-            var unitRect = new Rect(transformScreenPosition.x - unitRadius, transformScreenPosition.y - unitRadius,
-                unitRadius * 2, unitRadius * 2);
+            // NOTE: Add the entity radius to the selection
+            var entityRect = new Rect(transformScreenPosition.x - entityRadius, transformScreenPosition.y - entityRadius,
+                entityRadius * 2, entityRadius * 2);
 
-            // NOTE: Check if selection intersect with unit
-            if (unitRect.Overlaps(SelectionArea, true))
+            // NOTE: Check if selection intersect with the entity
+            if (entityRect.Overlaps(SelectionArea, true))
             {
-                ECB.SetComponentEnabled<UnitSelected>(chunkIndex, entity, true);
+                ECB.SetComponentEnabled<Selected>(chunkIndex, entity, true);
             }
             else
             {
-                ECB.SetComponentEnabled<UnitSelected>(chunkIndex, entity, false);
+                ECB.SetComponentEnabled<Selected>(chunkIndex, entity, false);
             }
         }
     }

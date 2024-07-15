@@ -5,6 +5,7 @@ using Unity.Physics;
 using Unity.Transforms;
 
 [BurstCompile]
+[UpdateInGroup(typeof(MovementSystemGroup))]
 [UpdateBefore(typeof(TransformSystemGroup))]
 public partial struct MovementVelocitySystem : ISystem
 {
