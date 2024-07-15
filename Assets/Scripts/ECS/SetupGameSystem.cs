@@ -1,3 +1,4 @@
+using AnimCooker;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -18,6 +19,7 @@ public partial struct SetupGameSystem : ISystem
         state.RequireForUpdate<SpawnManager>();
         state.RequireForUpdate<Game>();
         state.RequireForUpdate<Config>();
+        state.RequireForUpdate<SimpleLodOptsData>();
     }
 
     // [BurstCompile] using GameObject.Find
@@ -37,6 +39,9 @@ public partial struct SetupGameSystem : ISystem
             var difficulty = Difficulty.Medium;
             var speciesToPlay = SpeciesToPlay.Both; // NOTE: Both by default for easy testing
             var playerName = new FixedString32Bytes("Mika");
+            var graphicQualityLevel = GraphicQuality.Default;
+            var language = Language.English;
+            var soundLevel = 1f;
 
             var gameManagerGameObject = GameObject.Find("GameManager");
 
@@ -46,11 +51,17 @@ public partial struct SetupGameSystem : ISystem
                 difficulty = gameManagerFromMonobehaviour.GetDifficulty();
                 speciesToPlay = gameManagerFromMonobehaviour.GetSpeciesToPlay();
                 playerName = gameManagerFromMonobehaviour.GetPlayerNameAsFixedString();
+                graphicQualityLevel = gameManagerFromMonobehaviour.GetGraphicQualityLevel();
+                language = gameManagerFromMonobehaviour.GetLanguage();
+                soundLevel = gameManagerFromMonobehaviour.GetSoundLevel();
             }
 
             Debug.Log($"Player Name: {playerName}");
             Debug.Log($"Difficulty: {difficulty}");
             Debug.Log($"Species To Play: {speciesToPlay}");
+            Debug.Log($"Graphic Quality Level: {graphicQualityLevel}");
+            Debug.Log($"Language: {language}");
+            Debug.Log($"SoundLevel: {soundLevel}");
 
             Debug.Log("Starting now");
 
@@ -132,7 +143,6 @@ public partial struct SetupGameSystem : ISystem
                 Debug.Log($"nbBaseSpawner: {nbBaseSpawner}");
                 for (var i = 0; i < nbBaseSpawner; i++)
                 {
-                    Debug.Log("Dans boucle");
                     float positionOffset;
 
                     if (i == 0)
@@ -166,12 +176,46 @@ public partial struct SetupGameSystem : ISystem
 
             Debug.Log("Players base unit spawners building successfully created!");
 
+            // NOTE: Let the system choose the appropriate graphic quality if graphicQualityLevel is set to default.
+            if (graphicQualityLevel != GraphicQuality.Default)
+            {
+                // Adjust LOD settings based on graphic quality
+                var lodOpts = SystemAPI.GetSingleton<SimpleLodOptsData>();
+
+                switch (graphicQualityLevel)
+                {
+                    case GraphicQuality.Low:
+                        lodOpts.TimerInterval = 1f; // NOTE: LOD updates less frequently for low quality
+                        lodOpts.ForceLodHeightLevel = ForceLodHeightLevel.TwoAliasPoorQuality;
+                        break;
+                    case GraphicQuality.Medium:
+                        lodOpts.TimerInterval = 0.5f;
+                        lodOpts.ForceLodHeightLevel = ForceLodHeightLevel.OneAliasMediumQuality;
+                        break;
+                    case GraphicQuality.High:
+                        lodOpts.TimerInterval = 0.25f; // NOTE: LOD updates more frequently for high quality
+                        lodOpts.ForceLodHeightLevel = ForceLodHeightLevel.None;
+                        break;
+                    case GraphicQuality.Ultra:
+                        lodOpts.TimerInterval = 0.1f;
+                        lodOpts.ForceLodHeightLevel = ForceLodHeightLevel.ZeroAliasBestQuality;
+                        break;
+                }
+
+                SystemAPI.SetSingleton(lodOpts);
+
+                Debug.Log("Setting graphic quality done.");
+            }
+
             // NOTE: Start the game
             gameManager.State = GameState.Running;
             gameManager.RessourceCount = 0;
             gameManager.PlayerName = playerName;
             gameManager.Difficulty = difficulty;
             gameManager.SpeciesToPlay = speciesToPlay;
+            gameManager.GraphicQualityLevel = graphicQualityLevel;
+            gameManager.SoundLevel = soundLevel;
+            gameManager.Language = language;
             SystemAPI.SetSingleton(gameManager);
         }
     }

@@ -3,9 +3,12 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public string SelectedRace { get; set; }
+    public string SelectedSpecies { get; set; }
     public int DifficultyLevel { get; set; }
     public string PlayerName { get; set; }
+    public int GraphicQualityLevel { get; set; }
+    public float SoundLevel { get; set; }
+    public string SelectedLanguage { get; set; }
 
     private void Start()
     {
@@ -13,6 +16,24 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+    }
+
+    public GraphicQuality GetGraphicQualityLevel()
+    {
+        if (GraphicQualityLevel == 0)
+            return GraphicQuality.Low;
+        if (GraphicQualityLevel == 1)
+            return GraphicQuality.Medium;
+        if (GraphicQualityLevel == 2)
+            return GraphicQuality.High;
+        if (GraphicQualityLevel == 3)
+            return GraphicQuality.Ultra;
+        return GraphicQuality.Default;
+    }
+
+    public float GetSoundLevel()
+    {
+        return SoundLevel;
     }
 
     public Difficulty GetDifficulty()
@@ -26,7 +47,7 @@ public class GameManager : MonoBehaviour
 
     public SpeciesToPlay GetSpeciesToPlay()
     {
-        switch (SelectedRace)
+        switch (SelectedSpecies)
         {
             case "Slime":
                 return SpeciesToPlay.Slime;
@@ -34,6 +55,19 @@ public class GameManager : MonoBehaviour
                 return SpeciesToPlay.Meca;
             default:
                 return SpeciesToPlay.Both;
+        }
+    }
+
+    public Language GetLanguage()
+    {
+        switch (SelectedLanguage)
+        {
+            case "English":
+                return Language.English;
+            case "Français":
+                return Language.French;
+            default:
+                return Language.English;
         }
     }
 
