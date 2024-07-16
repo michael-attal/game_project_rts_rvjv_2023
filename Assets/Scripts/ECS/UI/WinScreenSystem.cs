@@ -6,6 +6,7 @@ public partial struct WinScreenSystem : ISystem
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<SoundManager>();
         state.RequireForUpdate<Config>();
         state.RequireForUpdate<Game>();
     }
@@ -15,6 +16,7 @@ public partial struct WinScreenSystem : ISystem
     {
         var configManager = SystemAPI.GetSingleton<Config>();
         var gameManager = SystemAPI.GetSingleton<Game>();
+        var soundManagerEntity = SystemAPI.GetSingletonEntity<SoundManager>();
 
         if (!configManager.ActivateWinConditions)
         {
@@ -50,6 +52,31 @@ public partial struct WinScreenSystem : ISystem
             gameManager.WinningSpecies = SpeciesType.Meca;
             gameManager.State = GameState.Over;
             SystemAPI.SetSingleton(gameManager);
+        }
+
+        if (gameManager.State == GameState.Over)
+        {
+            var sound = SystemAPI.GetComponentRW<Sound>(soundManagerEntity);
+
+            // NOTE: Because we can play both species, we don't want to hear win or lost sound in that case
+            var playWinSound =
+                (gameManager.SpeciesToPlay == SpeciesToPlay.Slime && mecaCount == 0) ||
+                (gameManager.SpeciesToPlay == SpeciesToPlay.Meca && slimeCount == 0);
+
+            var playLostSound =
+                (gameManager.SpeciesToPlay == SpeciesToPlay.Slime && slimeCount == 0) ||
+                (gameManager.SpeciesToPlay == SpeciesToPlay.Meca && mecaCount == 0);
+
+            if (playWinSound)
+            {
+                sound.ValueRW.SoundToPlay = SoundType.Victory;
+            }
+            else if (playLostSound)
+            {
+                sound.ValueRW.SoundToPlay = SoundType.Lost;
+            }
+
+            SystemAPI.SetComponentEnabled<Sound>(soundManagerEntity, true);
         }
     }
 }

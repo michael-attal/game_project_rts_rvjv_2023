@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: -1774485552644891999}
   - component: {fileID: -5628424398251226775}
   - component: {fileID: 8133745978180932833}
+  - component: {fileID: 6925055856829225223}
   - component: {fileID: 1283900843643561603}
   - component: {fileID: 6417554506276214341}
   m_Layer: 0
@@ -131,7 +132,7 @@ LODGroup:
   - screenRelativeHeight: 0.004
     fadeTransitionWidth: 0
     renderers: []
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!114 &962698826226479150
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -176,8 +177,8 @@ MonoBehaviour:
   UnitStandardHealth: 100
   UnitAttackType: 0
   UnitAttack: 10
-  UnitRange: 4
-  UnitRateOfFire: 3
+  UnitRange: 5
+  UnitRateOfFire: 1.8
   IsAttackAnimated: 1
 --- !u!114 &-1774485552644891999
 MonoBehaviour:
@@ -222,6 +223,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Species: 0
+--- !u!114 &6925055856829225223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 392048310712016098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e02c4cbb5a5416c94cb12f6bc84b2d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  entityType: 1
 --- !u!114 &1283900843643561603
 MonoBehaviour:
   m_ObjectHideFlags: 0

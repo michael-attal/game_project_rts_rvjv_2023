@@ -10,7 +10,7 @@ internal partial struct GlassCannonUpgradeSystem : ISystem
         state.RequireForUpdate<Config>();
         state.RequireForUpdate<Game>();
         state.RequireForUpdate<UnitAttack>();
-        state.RequireForUpdate<UnitDamage>();
+        state.RequireForUpdate<Damage>();
         state.RequireForUpdate<GlassCannonUpgrade>();
     }
 
@@ -44,7 +44,7 @@ public partial struct GlassCannonUpgradeJob : IJobEntity
 {
     public EntityCommandBuffer.ParallelWriter ECB;
 
-    private void Execute(Entity entity, RefRW<UnitDamage> unitDamage, RefRW<UnitAttack> unitAttack, [ChunkIndexInQuery] int chunkIndex)
+    private void Execute(Entity entity, RefRW<Damage> unitDamage, RefRW<UnitAttack> unitAttack, [ChunkIndexInQuery] int chunkIndex)
     {
         unitAttack.ValueRW.Strength *= 2;
         unitDamage.ValueRW.Health /= 2;

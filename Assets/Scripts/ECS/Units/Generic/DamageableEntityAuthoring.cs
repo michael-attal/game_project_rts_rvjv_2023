@@ -10,8 +10,8 @@ public class DamageableEntityAuthoring : MonoBehaviour
         public override void Bake(DamageableEntityAuthoring authoring)
         {
             var entity = GetEntity(TransformUsageFlags.Dynamic);
-            
-            AddComponent(entity, new UnitDamage()
+
+            AddComponent(entity, new Damage
             {
                 Health = authoring.EntityBaseHealth
             });

@@ -32,6 +32,7 @@ public class ConfigAuthoring : MonoBehaviour
     [SerializeField] private bool activateMouseManagerSystem;
     [SerializeField] private bool activateAiManagerSystem;
     [SerializeField] private bool activatePlayerManagerSystem;
+    [SerializeField] private bool activateSoundManagerSystem;
 
     private class Baker : Baker<ConfigAuthoring>
     {
@@ -67,7 +68,8 @@ public class ConfigAuthoring : MonoBehaviour
                 ActivateCameraManagerSystem = authoring.activateCameraManagerSystem,
                 ActivateMouseManagerSystem = authoring.activateMouseManagerSystem,
                 ActivateAiManagerSystem = authoring.activateAiManagerSystem,
-                ActivatePlayerManagerSystem = authoring.activatePlayerManagerSystem
+                ActivatePlayerManagerSystem = authoring.activatePlayerManagerSystem,
+                ActivateSoundManagerSystem = authoring.activateSoundManagerSystem
             });
         }
     }
@@ -102,4 +104,5 @@ public struct Config : IComponentData
     public bool ActivateMouseManagerSystem;
     public bool ActivateAiManagerSystem;
     public bool ActivatePlayerManagerSystem;
+    public bool ActivateSoundManagerSystem;
 }
