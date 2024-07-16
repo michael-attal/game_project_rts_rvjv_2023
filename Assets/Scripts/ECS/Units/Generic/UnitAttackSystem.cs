@@ -20,6 +20,7 @@ public partial struct UnitAttackSystem : ISystem
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<ParticleManager>();
         state.RequireForUpdate<Config>();
         state.RequireForUpdate<Game>();
         state.RequireForUpdate<UnitAttack>();
@@ -45,6 +46,7 @@ public partial struct UnitAttackSystem : ISystem
         if (gameManager.State == GameState.Paused)
             return;
 
+        var particleManager = SystemAPI.GetSingleton<ParticleManager>();
         var ecb = new EntityCommandBuffer(Allocator.Temp);
 
         foreach (var (attackerTransform, attackerSpecies, attackerAttack, attackerSound, entity) in SystemAPI.Query<RefRW<LocalTransform>, RefRO<SpeciesTag>, RefRW<UnitAttack>, RefRW<Sound>>().WithAll<UnitAttack>().WithDisabled<Sound>().WithEntityAccess())
@@ -59,12 +61,15 @@ public partial struct UnitAttackSystem : ISystem
             Entity? targetEntity = null;
             RefRW<Damage>? target = null;
             RefRW<Sound>? targetSound = null;
-            var attackablePos = float3.zero;
+            RefRO<LocalTransform>? targetTransform = null;
+            RefRO<EntityClassificationTag>? targetClassification = null;
+            var targetSpecies = attackerSpecies.ValueRO.Type == SpeciesType.Slime ? SpeciesType.Meca : SpeciesType.Slime;
+
             var minimumRange = attackerAttack.ValueRO.Range;
 
-            foreach (var (attackableTransform, attackableSpecies, attackableDamage, attackableSound, attackableEntity) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<SpeciesTag>, RefRW<Damage>, RefRW<Sound>>().WithAll<Damage>().WithDisabled<Sound>().WithEntityAccess())
+            foreach (var (attackableTransform, attackableSpecies, attackableDamage, attackableSound, attackableClassification, attackableEntity) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<SpeciesTag>, RefRW<Damage>, RefRW<Sound>, RefRO<EntityClassificationTag>>().WithAll<Damage>().WithDisabled<Sound>().WithEntityAccess())
             {
-                attackablePos = attackableTransform.ValueRO.Position;
+                var attackablePos = attackableTransform.ValueRO.Position;
 
                 var currentDistance = attackerPos.DistanceTo(attackablePos);
                 if (currentDistance <= minimumRange && attackerSpecies.ValueRO.Type != attackableSpecies.ValueRO.Type)
@@ -72,6 +77,8 @@ public partial struct UnitAttackSystem : ISystem
                     targetEntity = attackableEntity;
                     target = attackableDamage;
                     targetSound = attackableSound;
+                    targetTransform = attackableTransform;
+                    targetClassification = attackableClassification;
                     minimumRange = currentDistance;
                     break; // NOTE: When a target is find, exit the loop
                 }
@@ -105,7 +112,7 @@ public partial struct UnitAttackSystem : ISystem
                 {
                     ecb.SetComponent(entity, new WantsToThrowProjectile
                     {
-                        Destination = attackablePos
+                        Destination = targetTransform.Value.ValueRO.Position
                     });
                     ecb.SetComponentEnabled<WantsToThrowProjectile>(entity, true);
                 }
@@ -117,11 +124,43 @@ public partial struct UnitAttackSystem : ISystem
                     ecb.SetComponentEnabled<Sound>(entity, true);
                 }
 
-                var direction = math.normalize(new float3(attackablePos.x - attackerTransform.ValueRO.Position.x, 0, attackablePos.z - attackerTransform.ValueRO.Position.z));
+                var direction = math.normalize(new float3(targetTransform.Value.ValueRO.Position.x - attackerTransform.ValueRO.Position.x, 0, targetTransform.Value.ValueRO.Position.z - attackerTransform.ValueRO.Position.z));
                 ; // Rotate the attacker towards the enemy.
                 attackerTransform.ValueRW.Rotation = quaternion.LookRotationSafe(direction, math.up());
                 target.Value.ValueRW.Health -= attackerAttack.ValueRO.Strength;
                 attackerAttack.ValueRW.CurrentReloadTime = attackerAttack.ValueRO.RateOfFire;
+
+                // NOTE: We can remove this condition if we want to apply particles on all targeted units/buildings.
+                if (targetClassification.Value.ValueRO.Type == EntityClassification.Building)
+                {
+                    var particleGenerator = ecb.Instantiate(particleManager.ParticleGeneratorPrefab);
+                    var targetScale = targetTransform.Value.ValueRO.Scale;
+                    var colorParticles = new float4(0.3f, 0.3f, 0.3f, 0.5f);
+
+                    if (targetSpecies == SpeciesType.Slime)
+                    {
+                        colorParticles = new float4(0.2f, 0.2f, 1f, 0.5f);
+                    }
+
+                    ecb.SetComponent(particleGenerator, new ParticleGeneratorData
+                    {
+                        Rate = 50f,
+                        LifetimeOfGenerator = 0.5f,
+                        LifetimeOfParticle = 0.5f,
+                        Size = targetScale,
+                        Speed = 2f,
+                        Direction = new float3(0, 1, 0),
+                        Color = colorParticles,
+                        IsRandomPositionParticleSpawningActive = true,
+                        PositionRangeForRandomParticleSpawning = new float3(1f * targetScale, 1f * targetScale, 1f * targetScale)
+                    });
+                    ecb.SetComponent(particleGenerator, new LocalTransform
+                    {
+                        Position = targetTransform.Value.ValueRO.Position,
+                        Rotation = quaternion.identity,
+                        Scale = 1f
+                    });
+                }
 
                 if (configManager.ActivateSoundManagerSystem)
                 {
