@@ -1747,7 +1747,7 @@ MonoBehaviour:
   activateSelectedRendererSystem: 1
   activateProjectileRendererSystem: 1
   activateUnitAttackSystem: 1
-  activateUnitDamageSystem: 1
+  activateDamageSystem: 1
   activatePauseScreenSystem: 1
   activateWinConditions: 1
   activateBuildingScreenSystem: 1
@@ -1758,7 +1758,7 @@ MonoBehaviour:
   movementFormationType: 0
   activateCameraManagerSystem: 1
   activateMouseManagerSystem: 1
-  activateAiManagerSystem: 1
+  activateAIManagerSystem: 1
   activatePlayerManagerSystem: 1
   activateSoundManagerSystem: 1
 --- !u!4 &2095053050

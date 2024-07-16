@@ -39,8 +39,8 @@ public partial struct UpgradedUnitSpawnerSystem : ISystem
 
         var ecbJob = new EntityCommandBuffer(Allocator.TempJob);
 
-        foreach (var (transform, spawner, upgrades)
-                 in SystemAPI.Query<RefRO<LocalTransform>, RefRW<BaseSpawnerBuilding>, RefRO<SpawnerUpgradesRegister>>())
+        foreach (var (transform, spawner, upgrades, species)
+                 in SystemAPI.Query<RefRO<LocalTransform>, RefRW<BaseSpawnerBuilding>, RefRO<SpawnerUpgradesRegister>, RefRO<SpeciesTag>>())
         {
             if (spawner.ValueRO.TimeToNextGeneration > 0f)
             {
@@ -61,7 +61,8 @@ public partial struct UpgradedUnitSpawnerSystem : ISystem
                 TotalUnits = spawner.ValueRO.NbOfUnitPerBase,
                 UnitSpace = 2f, // NOTE: Default space to 2f for x and y axis
                 GroupUnitsBy = GroupUnitShape.Line,
-                UpgradesRegister = upgrades.ValueRO
+                UpgradesRegister = upgrades.ValueRO,
+                IsAIControlledUnit = GameManager.IsControlledByAI(gameManager.SpeciesToPlay, species.ValueRO.Type)
             };
             var unitSpawnJobHandler = unitSpawnJob.Schedule((int)spawner.ValueRO.NbOfUnitPerBase, 64, state.Dependency);
             state.Dependency = unitSpawnJobHandler;
@@ -87,6 +88,7 @@ public struct UpgradedUnitSpawnJob : IJobParallelFor
     public float UnitSpace;
     public GroupUnitShape GroupUnitsBy;
     public SpawnerUpgradesRegister UpgradesRegister;
+    public bool IsAIControlledUnit;
 
     public void Execute(int index)
     {
@@ -161,6 +163,12 @@ public struct UpgradedUnitSpawnJob : IJobParallelFor
             Rotation = UnitRotation,
             Scale = UnitScale
         });
+
+        if (IsAIControlledUnit)
+        {
+            CommandBuffer.AddComponent<AI>(index, instance);
+        }
+
         ApplyUpgrades(index, instance);
     }
 

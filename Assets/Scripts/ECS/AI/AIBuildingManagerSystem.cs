@@ -11,7 +11,7 @@ using SystemState = Unity.Entities.SystemState;
 
 // NOTE: This system manages AI building and upgrading logic.
 [UpdateInGroup(typeof(AISystemGroup))]
-public partial struct AiBuildingManagerSystem : ISystem
+public partial struct AIBuildingManagerSystem : ISystem
 {
     [BurstCompile]
     public void OnCreate(ref SystemState state)
@@ -27,7 +27,7 @@ public partial struct AiBuildingManagerSystem : ISystem
         var configManager = SystemAPI.GetSingleton<Config>();
         var gameManager = SystemAPI.GetSingleton<Game>();
 
-        if (!configManager.ActivateAiManagerSystem)
+        if (!configManager.ActivateAIManagerSystem)
         {
             state.Enabled = false;
             return;
@@ -39,8 +39,7 @@ public partial struct AiBuildingManagerSystem : ISystem
         if (!GameManager.IsAiPlaying(gameManager.SpeciesToPlay))
             return;
 
-        var playerSpecies = gameManager.SpeciesToPlay;
-        var aiSpecies = (SpeciesType)GameManager.GetAiSpecies(playerSpecies)!;
+        var aiSpecies = (SpeciesType)GameManager.GetAiSpecies(gameManager.SpeciesToPlay)!;
 
         var ecb = new EntityCommandBuffer(Allocator.Temp);
 
@@ -55,12 +54,9 @@ public partial struct AiBuildingManagerSystem : ISystem
         var spawnManager = SystemAPI.GetSingleton<SpawnManager>();
         var mecaBasicBaseSpawnerCount = 0;
 
-        foreach (var (transform, baseSpawner, speciesTag, entity) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<BaseSpawnerBuilding>, RefRO<SpeciesTag>>().WithNone<GlassCannonUpgrade, ArtilleryUpgrade>().WithNone<GatlingUpgrade, ScoutUpgrade>().WithEntityAccess()) // NOTE: Can't put 4 components in the same WithNone ... Idk why
+        foreach (var (transform, baseSpawner, speciesTag, entity) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<BaseSpawnerBuilding>, RefRO<SpeciesTag>>().WithAll<AI>().WithNone<GlassCannonUpgrade, ArtilleryUpgrade>().WithNone<GatlingUpgrade, ScoutUpgrade>().WithEntityAccess()) // NOTE: Can't put 4 components in the same WithNone ... Idk why
         {
-            if (GameManager.IsControlledByAI(gameManager.SpeciesToPlay, speciesTag.ValueRO.Type))
-            {
-                HandleBaseSpawnerBuilding(ref ecb, ref state, gameManager, aiSpecies, transform, entity, ref mecaBasicBaseSpawnerCount, spawnManager);
-            }
+            HandleBaseSpawnerBuildingAndUpgrading(ref ecb, ref state, gameManager, aiSpecies, transform, entity, ref mecaBasicBaseSpawnerCount, spawnManager);
         }
 
         // NOTE: If the game is not over, but there is only an upgraded base spawner, then first add a non-upgraded version in order to enter into the foreach loop.
@@ -71,7 +67,7 @@ public partial struct AiBuildingManagerSystem : ISystem
         }
     }
 
-    private void HandleBaseSpawnerBuilding(ref EntityCommandBuffer ecb, ref SystemState state, Game gameManager, SpeciesType aiSpecies, RefRO<LocalTransform> transform, Entity entity, ref int mecaBasicBaseSpawnerCount, SpawnManager spawnManager)
+    private void HandleBaseSpawnerBuildingAndUpgrading(ref EntityCommandBuffer ecb, ref SystemState state, Game gameManager, SpeciesType aiSpecies, RefRO<LocalTransform> transform, Entity entity, ref int mecaBasicBaseSpawnerCount, SpawnManager spawnManager)
     {
         if (aiSpecies == SpeciesType.Meca)
             mecaBasicBaseSpawnerCount++;
@@ -104,15 +100,17 @@ public partial struct AiBuildingManagerSystem : ISystem
             SystemAPI.SetSingleton(gameManager);
 
             // Instantiate the appropriate prefab based on the AI species
-            var newEntity = ecb.Instantiate(aiSpecies == SpeciesType.Slime ? spawnManager.SlimeBaseSpawnerBuildingPrefab : spawnManager.MecaBaseSpawnerBuildingPrefab);
+            var newBaseSpawner = ecb.Instantiate(aiSpecies == SpeciesType.Slime ? spawnManager.SlimeBaseSpawnerBuildingPrefab : spawnManager.MecaBaseSpawnerBuildingPrefab);
 
             // Set the position, rotation, and scale for the new base spawner
-            ecb.SetComponent(newEntity, new LocalTransform
+            ecb.SetComponent(newBaseSpawner, new LocalTransform
             {
                 Position = position,
                 Rotation = quaternion.identity,
                 Scale = scale
             });
+
+            ecb.AddComponent<AI>(newBaseSpawner);
         }
     }
 
