@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5319132817173205344}
   - component: {fileID: 2827318119268837707}
   - component: {fileID: 3719241484713871960}
+  - component: {fileID: -5699074356022327498}
   m_Layer: 0
   m_Name: SlimePlayerHand
   m_TagString: Untagged
@@ -98,7 +99,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerNumber: 0
-  playerSpecies: 0
   startPosition:
     x: 0
     y: 0
@@ -117,4 +117,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 215a509e331e45abb9f153c008d68a6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Species: 0
+  species: 0
+--- !u!114 &-5699074356022327498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6320164834673837995}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec8023bd06524fdca9b90c55cdd25fae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  classification: 4
