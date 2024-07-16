@@ -24,7 +24,7 @@ partial struct SelectedFusionInfoSystem : ISystem
         FusionInfo selectedFusionInfo = new FusionInfo();
         
         foreach (var merge in SystemAPI.Query<SlimeBasicUnitMerge>()
-                     .WithAll<UnitSelected>())
+                     .WithAll<Selected>())
             selectedFusionInfo += merge.FusionInfo;
 
         // Transfer it to the Game singleton entity
