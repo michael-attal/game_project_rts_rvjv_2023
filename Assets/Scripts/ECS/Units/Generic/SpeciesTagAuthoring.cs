@@ -3,7 +3,7 @@ using UnityEngine;
 
 internal class SpeciesTagAuthoring : MonoBehaviour
 {
-    [SerializeField] public SpeciesType Species;
+    [SerializeField] public SpeciesType species;
 
     private class Baker : Baker<SpeciesTagAuthoring>
     {
@@ -13,7 +13,7 @@ internal class SpeciesTagAuthoring : MonoBehaviour
 
             AddComponent(entity, new SpeciesTag
             {
-                Type = authoring.Species
+                Type = authoring.species
             });
         }
     }
