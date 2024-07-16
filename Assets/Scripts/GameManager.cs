@@ -28,7 +28,11 @@ public class GameManager : MonoBehaviour
             return Difficulty.Easy;
         if (DifficultyLevel == 1)
             return Difficulty.Medium;
-        return Difficulty.Hard;
+        if (DifficultyLevel == 2)
+            return Difficulty.Hard;
+        if (DifficultyLevel == 3)
+            return Difficulty.Nightmare;
+        return Difficulty.Medium;
     }
 
     public SpeciesToPlay GetSpeciesToPlay()

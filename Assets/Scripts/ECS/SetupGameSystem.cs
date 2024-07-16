@@ -140,20 +140,26 @@ public partial struct SetupGameSystem : ISystem
             {
                 var nbBaseSpawner = playerInfos.ValueRO.NbOfBaseSpawnerBuilding;
                 var isBuildingControlledByAI = GameManager.IsControlledByAI(gameManager.SpeciesToPlay, species.ValueRO.Type);
-                if (isBuildingControlledByAI)
-                {
-                    switch (difficulty)
-                    {
-                        case Difficulty.Easy:
-                            break;
-                        case Difficulty.Medium:
-                            nbBaseSpawner += 1;
-                            break;
-                        case Difficulty.Hard:
-                            nbBaseSpawner += 2;
-                            break;
-                    }
-                }
+
+                // if (isBuildingControlledByAI)
+                // {
+                //     switch (difficulty)
+                //     {
+                //         case Difficulty.Easy:
+                //             break;
+                //         case Difficulty.Medium:
+                //             nbBaseSpawner += 1;
+                //             break;
+                //         case Difficulty.Hard:
+                //             nbBaseSpawner += 2;
+                //             break;
+                //         case Difficulty.Nightmare:
+                //             nbBaseSpawner += 3;
+                //             break;
+                //     }
+                // }
+                if (isBuildingControlledByAI && difficulty == Difficulty.Nightmare)
+                    nbBaseSpawner += 2;
 
                 var scaleBaseSpawner = state.EntityManager.GetComponentData<LocalTransform>(playerInfos.ValueRO.BaseSpawnerBuildingPrefab).Scale;
                 var offsetMultiplier = 1.5f; // Multiplier for the offset based on the scale
@@ -241,7 +247,6 @@ public partial struct SetupGameSystem : ISystem
             gameManager.Difficulty = difficulty;
             gameManager.SpeciesToPlay = speciesToPlay;
             gameManager.GraphicQualityLevel = graphicQualityLevel;
-            gameManager.SoundVolume = soundVolume;
             gameManager.Language = language;
             SystemAPI.SetSingleton(gameManager);
         }
