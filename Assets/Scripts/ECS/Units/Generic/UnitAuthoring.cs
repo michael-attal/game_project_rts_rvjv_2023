@@ -83,6 +83,9 @@ public class UnitAuthoring : MonoBehaviour
             AddComponent<WantsToGatherRessource>(entity);
             SetComponentEnabled<WantsToGatherRessource>(entity, false);
 
+            AddComponent<IsAttackingTag>(entity);
+            SetComponentEnabled<IsAttackingTag>(entity, false);
+
             AddComponent(entity, new Damage
             {
                 Health = authoring.UnitStandardHealth
@@ -140,6 +143,10 @@ public struct WantsToMove : IComponentData, IEnableableComponent
 }
 
 public struct DestinationReached : IComponentData
+{
+}
+
+public struct IsAttackingTag : IComponentData, IEnableableComponent
 {
 }
 

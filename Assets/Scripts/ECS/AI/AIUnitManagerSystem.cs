@@ -12,7 +12,7 @@ using SystemState = Unity.Entities.SystemState;
 // NOTE: This system manages AI units, assigning them to gather resources or attack based on the game's state.
 [UpdateInGroup(typeof(AISystemGroup))]
 [UpdateAfter(typeof(SeekRessourceSystem))]
-public partial struct AiUnitManagerSystem : ISystem
+public partial struct AIUnitManagerSystem : ISystem
 {
     private int nbOfUnitsToAssignToGatherRessource; // NOTE: Number of units assigned to resource gathering
 
@@ -31,7 +31,7 @@ public partial struct AiUnitManagerSystem : ISystem
         var configManager = SystemAPI.GetSingleton<Config>();
         var gameManager = SystemAPI.GetSingleton<Game>();
 
-        if (!configManager.ActivateAiManagerSystem)
+        if (!configManager.ActivateAIManagerSystem)
         {
             state.Enabled = false;
             return;
@@ -47,32 +47,24 @@ public partial struct AiUnitManagerSystem : ISystem
 
         var ecb = new EntityCommandBuffer(Allocator.Temp);
 
-        var resourceSeekers = CountRessourceSeeker(ref ecb, ref state, playerSpecies);
+        var resourceSeekers = CountRessourceSeeker(ref ecb, ref state);
 
         // NOTE: Getting AI-controlled units
-        // TODO: Consider developing an AI component and iterating over it in the future for improved performance.
-        // TODO: Create an IsAttackingTag IEnable component to avoid changing every time the destination is reached with a new destination
-        foreach (var (transform, unit, unitTypeTag, speciesTag, entity) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<Unit>, RefRO<UnitTypeTag>, RefRO<SpeciesTag>>().WithAll<UnitTypeTag>().WithNone<WantsToMove, WantsToGatherRessource, GatheringIntent>().WithEntityAccess())
+        foreach (var (transform, unit, unitTypeTag, speciesTag, entity) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<Unit>, RefRO<UnitTypeTag>, RefRO<SpeciesTag>>().WithAll<UnitTypeTag, AI>().WithNone<WantsToMove, WantsToGatherRessource>().WithNone<GatheringIntent, IsAttackingTag>().WithEntityAccess())
         {
-            if (GameManager.IsControlledByAI(playerSpecies, speciesTag.ValueRO.Type))
-            {
-                HandleUnitAssignment(ref ecb, ref state, entity, unitTypeTag, speciesTag, transform, playerSpecies, resourceSeekers);
-            }
+            HandleUnitAssignment(ref ecb, ref state, entity, unitTypeTag, speciesTag, transform, playerSpecies, resourceSeekers);
         }
 
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
     }
 
-    private int CountRessourceSeeker(ref EntityCommandBuffer ecb, ref SystemState state, SpeciesToPlay playerSpecies)
+    private int CountRessourceSeeker(ref EntityCommandBuffer ecb, ref SystemState state)
     {
         var resourceSeekers = 0;
-        foreach (var (unitRessourceSeeker, species) in SystemAPI.Query<RefRO<GatheringIntent>, RefRO<SpeciesTag>>())
+        foreach (var (unitRessourceSeeker, species) in SystemAPI.Query<RefRO<GatheringIntent>, RefRO<SpeciesTag>>().WithAll<AI>())
         {
-            if (GameManager.IsControlledByAI(playerSpecies, species.ValueRO.Type))
-            {
-                resourceSeekers++;
-            }
+            resourceSeekers++;
         }
 
         return resourceSeekers;
@@ -101,8 +93,9 @@ public partial struct AiUnitManagerSystem : ISystem
             ecb.SetComponentEnabled<WantsToMerge>(entity, true);
         }
 
+        // TODO: Adjust this depending of the difficulty 
         // NOTE: Now set attack logic for other units (80/20)
-        var nearestEnemyUnitPos = GetNearestEnemyPosition(ref state, transform, true, playerSpecies);
+        var nearestEnemyUnitPos = GetNearestEnemyPosition(ref state, transform, true);
 
         if (Random.value >= 0.2f && !nearestEnemyUnitPos.AreFloat3Equal(new float3(float.MaxValue, float.MaxValue, float.MaxValue)))
         {
@@ -112,38 +105,32 @@ public partial struct AiUnitManagerSystem : ISystem
         else
         {
             // NOTE: 20% of units attack the nearest building
-            var nearestEnemyBuildingPos = GetNearestEnemyPosition(ref state, transform, false, playerSpecies);
+            var nearestEnemyBuildingPos = GetNearestEnemyPosition(ref state, transform, false);
             SetAttackMove(ref ecb, ref state, entity, nearestEnemyBuildingPos);
         }
     }
 
-    private float3 GetNearestEnemyPosition(ref SystemState state, RefRO<LocalTransform> transform, bool isUnit, SpeciesToPlay playerSpecies)
+    private float3 GetNearestEnemyPosition(ref SystemState state, RefRO<LocalTransform> transform, bool isUnit)
     {
         var nearestEnemyPos = new float3(float.MaxValue, float.MaxValue, float.MaxValue);
 
         if (isUnit)
         {
-            foreach (var (unitLt, species) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<SpeciesTag>>().WithAll<Unit>())
+            foreach (var (unitLt, species) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<SpeciesTag>>().WithAll<Unit>().WithNone<AI>())
             {
-                if (GameManager.IsControlledByCurrentPlayer(playerSpecies, species.ValueRO.Type))
+                if (transform.ValueRO.Position.DistanceTo(unitLt.ValueRO.Position) < transform.ValueRO.Position.DistanceTo(nearestEnemyPos))
                 {
-                    if (transform.ValueRO.Position.DistanceTo(unitLt.ValueRO.Position) < transform.ValueRO.Position.DistanceTo(nearestEnemyPos))
-                    {
-                        nearestEnemyPos = unitLt.ValueRO.Position;
-                    }
+                    nearestEnemyPos = unitLt.ValueRO.Position;
                 }
             }
         }
         else
         {
-            foreach (var (buildingLt, species) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<SpeciesTag>>().WithAll<BaseSpawnerBuilding>())
+            foreach (var (buildingLt, species) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<SpeciesTag>>().WithAll<BaseSpawnerBuilding>().WithNone<AI>())
             {
-                if (GameManager.IsControlledByCurrentPlayer(playerSpecies, species.ValueRO.Type))
+                if (transform.ValueRO.Position.DistanceTo(buildingLt.ValueRO.Position) < transform.ValueRO.Position.DistanceTo(nearestEnemyPos))
                 {
-                    if (transform.ValueRO.Position.DistanceTo(buildingLt.ValueRO.Position) < transform.ValueRO.Position.DistanceTo(nearestEnemyPos))
-                    {
-                        nearestEnemyPos = buildingLt.ValueRO.Position;
-                    }
+                    nearestEnemyPos = buildingLt.ValueRO.Position;
                 }
             }
         }
