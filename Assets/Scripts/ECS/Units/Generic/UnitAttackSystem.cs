@@ -5,6 +5,9 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using ISystem = Unity.Entities.ISystem;
+using SystemAPI = Unity.Entities.SystemAPI;
+using SystemState = Unity.Entities.SystemState;
 
 [UpdateBefore(typeof(MovementSystemGroup))]
 [BurstCompile]
@@ -44,7 +47,7 @@ public partial struct UnitAttackSystem : ISystem
 
         var ecb = new EntityCommandBuffer(Allocator.Temp);
 
-        foreach (var (attackerTransform, attackerSpecies, attackerAttack, entity) in SystemAPI.Query<RefRW<LocalTransform>, RefRO<SpeciesTag>, RefRW<UnitAttack>>().WithAll<UnitAttack>().WithEntityAccess())
+        foreach (var (attackerTransform, attackerSpecies, attackerAttack, attackerSound, entity) in SystemAPI.Query<RefRW<LocalTransform>, RefRO<SpeciesTag>, RefRW<UnitAttack>, RefRW<Sound>>().WithAll<UnitAttack>().WithDisabled<Sound>().WithEntityAccess())
         {
             if (attackerAttack.ValueRO.CurrentReloadTime > 0f)
             {
@@ -53,18 +56,22 @@ public partial struct UnitAttackSystem : ISystem
             }
 
             var attackerPos = attackerTransform.ValueRO.Position;
-            RefRW<UnitDamage>? target = null;
+            Entity? targetEntity = null;
+            RefRW<Damage>? target = null;
+            RefRW<Sound>? targetSound = null;
             var attackablePos = float3.zero;
             var minimumRange = attackerAttack.ValueRO.Range;
 
-            foreach (var (attackableTransform, attackableSpecies, attackableDamage) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<SpeciesTag>, RefRW<UnitDamage>>().WithAll<UnitDamage>())
+            foreach (var (attackableTransform, attackableSpecies, attackableDamage, attackableSound, attackableEntity) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<SpeciesTag>, RefRW<Damage>, RefRW<Sound>>().WithAll<Damage>().WithDisabled<Sound>().WithEntityAccess())
             {
                 attackablePos = attackableTransform.ValueRO.Position;
 
                 var currentDistance = attackerPos.DistanceTo(attackablePos);
                 if (currentDistance <= minimumRange && attackerSpecies.ValueRO.Type != attackableSpecies.ValueRO.Type)
                 {
+                    targetEntity = attackableEntity;
                     target = attackableDamage;
+                    targetSound = attackableSound;
                     minimumRange = currentDistance;
                     break; // NOTE: When a target is find, exit the loop
                 }
@@ -103,11 +110,35 @@ public partial struct UnitAttackSystem : ISystem
                     ecb.SetComponentEnabled<WantsToThrowProjectile>(entity, true);
                 }
 
+                // NOTE: Play sound for each attack
+                if (configManager.ActivateSoundManagerSystem)
+                {
+                    attackerSound.ValueRW.SoundToPlay = SoundType.Attack;
+                    ecb.SetComponentEnabled<Sound>(entity, true);
+                }
+
                 var direction = math.normalize(new float3(attackablePos.x - attackerTransform.ValueRO.Position.x, 0, attackablePos.z - attackerTransform.ValueRO.Position.z));
                 ; // Rotate the attacker towards the enemy.
                 attackerTransform.ValueRW.Rotation = quaternion.LookRotationSafe(direction, math.up());
                 target.Value.ValueRW.Health -= attackerAttack.ValueRO.Strength;
                 attackerAttack.ValueRW.CurrentReloadTime = attackerAttack.ValueRO.RateOfFire;
+
+                if (configManager.ActivateSoundManagerSystem)
+                {
+                    if (target.Value.ValueRO.Health <= 0)
+                    {
+                        // NOTE: Play death sound before destroying the entity in DamageSystem
+                        targetSound.Value.ValueRW.SoundToPlay = SoundType.Death;
+                        ecb.SetComponentEnabled<Sound>(targetEntity.Value, true);
+                    }
+                    // else
+                    // {
+                    // NOTE: Currently deactivated but possible, just have to find some good damage audio assets
+                    // targetSound.Value.ValueRW.SoundToPlay = SoundType.Damage;
+                    // }
+
+                    // ecb.SetComponentEnabled<Sound>(targetEntity.Value, true);
+                }
             }
             else
             {

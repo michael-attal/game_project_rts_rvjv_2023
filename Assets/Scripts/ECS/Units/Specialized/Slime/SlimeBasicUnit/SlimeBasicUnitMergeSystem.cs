@@ -72,6 +72,7 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
             Entities = entities,
             Positions = positions,
             GroupCount = groupCount,
+            PlayerSpecies = gameManager.SpeciesToPlay,
             FusionInfo = fusionInfo,
             SlimeRecipes = new NativeArray<FusionRecipeData>(slimeRecipes.Length, Allocator.TempJob),
             ParticleGeneratorPrefab = particleManager.ParticleGeneratorPrefab,
@@ -108,6 +109,7 @@ public struct MergeUnitsJob : IJobParallelFor
     [DeallocateOnJobCompletion] [ReadOnly] public NativeArray<Entity> Entities;
     [DeallocateOnJobCompletion] [ReadOnly] public NativeArray<LocalToWorld> Positions;
     public int GroupCount;
+    public SpeciesToPlay PlayerSpecies;
     public FusionInfo FusionInfo;
     [ReadOnly] public NativeArray<FusionRecipeData> SlimeRecipes;
     public Entity ParticleGeneratorPrefab;
@@ -141,6 +143,11 @@ public struct MergeUnitsJob : IJobParallelFor
                     Rotation = quaternion.identity,
                     Scale = 1f
                 });
+
+                if (GameManager.IsControlledByCurrentPlayer(PlayerSpecies, SpeciesType.Slime))
+                {
+                    ECB.SetComponentEnabled<Selected>(index, newEntity, true);
+                }
 
                 var particleGenerator = ECB.Instantiate(index, ParticleGeneratorPrefab);
                 ECB.SetComponent(index, particleGenerator, new ParticleGeneratorData

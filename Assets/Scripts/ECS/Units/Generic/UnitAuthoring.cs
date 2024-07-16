@@ -83,7 +83,7 @@ public class UnitAuthoring : MonoBehaviour
             AddComponent<WantsToGatherRessource>(entity);
             SetComponentEnabled<WantsToGatherRessource>(entity, false);
 
-            AddComponent(entity, new UnitDamage
+            AddComponent(entity, new Damage
             {
                 Health = authoring.UnitStandardHealth
             });
@@ -143,7 +143,7 @@ public struct DestinationReached : IComponentData
 {
 }
 
-public struct UnitDamage : IComponentData
+public struct Damage : IComponentData
 {
     public float Health;
 }

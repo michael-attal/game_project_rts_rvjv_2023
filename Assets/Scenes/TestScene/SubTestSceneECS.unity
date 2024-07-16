@@ -1692,6 +1692,7 @@ GameObject:
   - component: {fileID: 2095053050}
   - component: {fileID: 2095053049}
   - component: {fileID: 2095053051}
+  - component: {fileID: 2095053052}
   - component: {fileID: 2095053048}
   m_Layer: 0
   m_Name: GameInfo
@@ -1759,6 +1760,7 @@ MonoBehaviour:
   activateMouseManagerSystem: 1
   activateAiManagerSystem: 1
   activatePlayerManagerSystem: 1
+  activateSoundManagerSystem: 1
 --- !u!4 &2095053050
 Transform:
   m_ObjectHideFlags: 0
@@ -1803,6 +1805,19 @@ MonoBehaviour:
   mecaPlayerHandPrefab: {fileID: 1259044049793980661, guid: 2b27e280aca8e4416bf77212c6bd837d, type: 3}
   slimeBaseSpawnerBuildingPrefab: {fileID: 2216618471874645061, guid: 888243f85db11483baf93363ac285d84, type: 3}
   mecaBaseSpawnerBuildingPrefab: {fileID: 6851779870681047773, guid: c11a9cb22bf814101a676687080166dd, type: 3}
+--- !u!114 &2095053052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2095053047}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcf9c2cac75504ed69424829270fe716, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  volume: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
