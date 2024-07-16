@@ -10,7 +10,7 @@ internal partial struct GatlingUpgradeSystem : ISystem
         state.RequireForUpdate<Config>();
         state.RequireForUpdate<Game>();
         state.RequireForUpdate<UnitAttack>();
-        state.RequireForUpdate<UnitDamage>();
+        state.RequireForUpdate<Damage>();
         state.RequireForUpdate<GatlingUpgrade>();
     }
 
