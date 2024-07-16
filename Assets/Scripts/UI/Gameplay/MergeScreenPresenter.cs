@@ -10,10 +10,17 @@ public class MergeScreenPresenter : MonoBehaviour
     [SerializeField] private SlimeMergeGraph mergeGraph;
 
     private List<FusionItemPresenter> items = new List<FusionItemPresenter>();
+    private EntityQuery selectedEntitiesQuery;
     
     // Start is called before the first frame update
     void Start()
     {
+        var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+        selectedEntitiesQuery = new EntityQueryBuilder(Allocator.Persistent)
+            .WithAll<Selected, SlimeBasicUnitMerge>()
+            .WithPresent<WantsToMerge>()
+            .Build(entityManager);
+        
         foreach (var recipe in mergeGraph.GetRecipes())
         {
             var newItem = Instantiate(itemPresenter, container);
@@ -23,14 +30,19 @@ public class MergeScreenPresenter : MonoBehaviour
         }
     }
 
-    private static void OnButtonClick(FusionRecipe recipe)
+    private void OnButtonClick(FusionRecipe recipe)
     {
         var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
         var gameEntity = entityManager.CreateEntityQuery(ComponentType.ReadOnly<Game>()).GetSingletonEntity();
-        entityManager.AddComponentData(gameEntity, new FusionOrder(recipe.ToData()));
 
-        var selectedEntitiesQuery = entityManager.CreateEntityQuery(ComponentType.ReadOnly<Selected>());
-        entityManager.SetComponentEnabled<WantsToMerge>(selectedEntitiesQuery, true);
+        int amountOrdered = Input.GetKey(KeyCode.LeftShift) ? 5 : 1;
+        
+        entityManager.AddComponentData(gameEntity, new FusionOrder(amountOrdered, recipe.ToData()));
+
+        foreach (var entity in selectedEntitiesQuery.ToEntityArray(Allocator.Temp))
+        {
+            entityManager.SetComponentEnabled<WantsToMerge>(entity, true);
+        }
     }
 
     private void Update()
@@ -50,5 +62,6 @@ public class MergeScreenPresenter : MonoBehaviour
             }
             item.ChangeAvailableAmount(possibleAmount);
         }
+        
     }
 }
