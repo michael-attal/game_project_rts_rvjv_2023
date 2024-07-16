@@ -15,6 +15,9 @@ using SystemState = Unity.Entities.SystemState;
 public partial struct AIUnitManagerSystem : ISystem
 {
     private int nbOfUnitsToAssignToGatherRessource; // NOTE: Number of units assigned to resource gathering
+    private int countAIUnits;
+    private int maximumNbOfUnitsActive;
+    private int nbOfUnitsActive;
 
     [BurstCompile]
     public void OnCreate(ref SystemState state)
@@ -23,6 +26,9 @@ public partial struct AIUnitManagerSystem : ISystem
         state.RequireForUpdate<Config>();
 
         nbOfUnitsToAssignToGatherRessource = 10;
+        countAIUnits = 0;
+        maximumNbOfUnitsActive = 0;
+        nbOfUnitsActive = 0;
     }
 
     [BurstCompile]
@@ -43,16 +49,40 @@ public partial struct AIUnitManagerSystem : ISystem
         if (!GameManager.IsAiPlaying(gameManager.SpeciesToPlay))
             return;
 
-        var playerSpecies = gameManager.SpeciesToPlay;
-
         var ecb = new EntityCommandBuffer(Allocator.Temp);
 
         var resourceSeekers = CountRessourceSeeker(ref ecb, ref state);
 
-        // NOTE: Getting AI-controlled units
-        foreach (var (transform, unit, unitTypeTag, speciesTag, entity) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<Unit>, RefRO<UnitTypeTag>, RefRO<SpeciesTag>>().WithAll<UnitTypeTag, AI>().WithNone<WantsToMove, WantsToGatherRessource>().WithNone<GatheringIntent, IsAttackingTag>().WithEntityAccess())
+        // Count AI units for the active unit limitation (depending on difficulty)
+        countAIUnits = SystemAPI.QueryBuilder().WithAll<UnitTypeTag, AI>().Build().CalculateEntityCount();
+
+        switch (gameManager.Difficulty)
         {
-            HandleUnitAssignment(ref ecb, ref state, entity, unitTypeTag, speciesTag, transform, playerSpecies, resourceSeekers);
+            case Difficulty.Easy:
+                maximumNbOfUnitsActive = (int)(countAIUnits * 0.5f); // NOTE: Allow 50% of units to be active (attacking)
+                break;
+            case Difficulty.Medium:
+                maximumNbOfUnitsActive = (int)(countAIUnits * 0.2f); // 20%
+                break;
+            case Difficulty.Hard:
+                maximumNbOfUnitsActive = countAIUnits; // Full
+                break;
+            case Difficulty.Nightmare:
+                maximumNbOfUnitsActive = countAIUnits;
+                break;
+        }
+
+        // Count actual active units
+        nbOfUnitsActive = SystemAPI.QueryBuilder()
+            .WithAll<UnitTypeTag, AI>()
+            .WithAny<WantsToMove, WantsToGatherRessource, GatheringIntent, IsAttackingTag>()
+            .Build()
+            .CalculateEntityCount();
+
+        // NOTE: Getting AI-controlled units
+        foreach (var (transform, unit, unitTypeTag, speciesTag, entity) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<Unit>, RefRO<UnitTypeTag>, RefRO<SpeciesTag>>().WithAll<AI>().WithNone<WantsToMove, WantsToGatherRessource>().WithNone<GatheringIntent, IsAttackingTag>().WithEntityAccess())
+        {
+            HandleUnitAssignment(ref ecb, ref state, entity, unitTypeTag, speciesTag, transform, gameManager, resourceSeekers);
         }
 
         ecb.Playback(state.EntityManager);
@@ -70,22 +100,22 @@ public partial struct AIUnitManagerSystem : ISystem
         return resourceSeekers;
     }
 
-    private void HandleUnitAssignment(ref EntityCommandBuffer ecb, ref SystemState state, Entity entity, RefRO<UnitTypeTag> unitTypeTag, RefRO<SpeciesTag> speciesTag, RefRO<LocalTransform> transform, SpeciesToPlay playerSpecies, int resourceSeekers)
+    private void HandleUnitAssignment(ref EntityCommandBuffer ecb, ref SystemState state, Entity entity, RefRO<UnitTypeTag> unitTypeTag, RefRO<SpeciesTag> speciesTag, RefRO<LocalTransform> transform, Game gameManager, int resourceSeekers)
     {
         // NOTE: Separation of units into resource units and attack units
         if (resourceSeekers < nbOfUnitsToAssignToGatherRessource)
         {
-            // Always allocate the first 10 units to collecting resources.
-            // TODO: Allocate 10 units per building
+            // Always allocate the first XX units to collecting resources.
+            // TODO: Allocate XX units per building
             ecb.SetComponentEnabled<WantsToGatherRessource>(entity, true);
         }
         else
         {
-            HandleAttackUnits(ref ecb, ref state, entity, unitTypeTag, speciesTag, transform, playerSpecies);
+            HandleAttackUnits(ref ecb, ref state, entity, unitTypeTag, speciesTag, transform, gameManager);
         }
     }
 
-    private void HandleAttackUnits(ref EntityCommandBuffer ecb, ref SystemState state, Entity entity, RefRO<UnitTypeTag> unitTypeTag, RefRO<SpeciesTag> speciesTag, RefRO<LocalTransform> transform, SpeciesToPlay playerSpecies)
+    private void HandleAttackUnits(ref EntityCommandBuffer ecb, ref SystemState state, Entity entity, RefRO<UnitTypeTag> unitTypeTag, RefRO<SpeciesTag> speciesTag, RefRO<LocalTransform> transform, Game gameManager)
     {
         // NOTE: 50% of units are merged if the AI plays the slime game
         if (Random.value > 0.5f && speciesTag.ValueRO.Type == SpeciesType.Slime && unitTypeTag.ValueRO.Type == UnitType.SlimeBasicWaterUnit)
@@ -93,20 +123,24 @@ public partial struct AIUnitManagerSystem : ISystem
             ecb.SetComponentEnabled<WantsToMerge>(entity, true);
         }
 
-        // TODO: Adjust this depending of the difficulty 
         // NOTE: Now set attack logic for other units (80/20)
         var nearestEnemyUnitPos = GetNearestEnemyPosition(ref state, transform, true);
 
-        if (Random.value >= 0.2f && !nearestEnemyUnitPos.AreFloat3Equal(new float3(float.MaxValue, float.MaxValue, float.MaxValue)))
+        if (nbOfUnitsActive < maximumNbOfUnitsActive)
         {
-            // NOTE: 80% of units attack the nearest enemy unit
-            SetAttackMove(ref ecb, ref state, entity, nearestEnemyUnitPos);
-        }
-        else
-        {
-            // NOTE: 20% of units attack the nearest building
-            var nearestEnemyBuildingPos = GetNearestEnemyPosition(ref state, transform, false);
-            SetAttackMove(ref ecb, ref state, entity, nearestEnemyBuildingPos);
+            if (Random.value >= 0.2f && !nearestEnemyUnitPos.AreFloat3Equal(new float3(float.MaxValue, float.MaxValue, float.MaxValue)))
+            {
+                // NOTE: 80% of units attack the nearest enemy unit
+                SetAttackMove(ref ecb, ref state, entity, nearestEnemyUnitPos);
+            }
+            else
+            {
+                // NOTE: 20% of units attack the nearest building
+                var nearestEnemyBuildingPos = GetNearestEnemyPosition(ref state, transform, false);
+                SetAttackMove(ref ecb, ref state, entity, nearestEnemyBuildingPos);
+            }
+
+            nbOfUnitsActive++;
         }
     }
 
@@ -116,6 +150,7 @@ public partial struct AIUnitManagerSystem : ISystem
 
         if (isUnit)
         {
+            // NOTE: Maybe target the most powerful unit first ?
             foreach (var (unitLt, species) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<SpeciesTag>>().WithAll<Unit>().WithNone<AI>())
             {
                 if (transform.ValueRO.Position.DistanceTo(unitLt.ValueRO.Position) < transform.ValueRO.Position.DistanceTo(nearestEnemyPos))

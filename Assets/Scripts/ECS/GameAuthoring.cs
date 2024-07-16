@@ -90,7 +90,8 @@ public enum Difficulty
 {
     Easy,
     Medium,
-    Hard
+    Hard,
+    Nightmare
 }
 
 public enum SpeciesToPlay
@@ -114,8 +115,6 @@ public struct Game : IComponentData
     public SpeciesToPlay SpeciesToPlay;
     public FixedString32Bytes PlayerName;
     public GraphicQuality GraphicQualityLevel;
-    public float SoundVolume;
-    public float SoundBackgroundVolume;
     public Language Language;
     public int Score;
     public int RessourceCount;
