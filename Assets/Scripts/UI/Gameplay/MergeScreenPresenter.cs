@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
@@ -17,8 +18,19 @@ public class MergeScreenPresenter : MonoBehaviour
         {
             var newItem = Instantiate(itemPresenter, container);
             newItem.Present(recipe.fusionInfo);
+            newItem.Button.onClick.AddListener(() => OnButtonClick(recipe));
             items.Add(newItem);
         }
+    }
+
+    private static void OnButtonClick(FusionRecipe recipe)
+    {
+        var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+        var gameEntity = entityManager.CreateEntityQuery(ComponentType.ReadOnly<Game>()).GetSingletonEntity();
+        entityManager.AddComponentData(gameEntity, new FusionOrder(recipe.ToData()));
+
+        var selectedEntitiesQuery = entityManager.CreateEntityQuery(ComponentType.ReadOnly<Selected>());
+        entityManager.SetComponentEnabled<WantsToMerge>(selectedEntitiesQuery, true);
     }
 
     private void Update()

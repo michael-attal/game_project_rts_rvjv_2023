@@ -1,4 +1,5 @@
 using TMPro;
+using Unity.Entities;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,6 +12,8 @@ public class FusionItemPresenter : MonoBehaviour
 
     public FusionInfo CurrentFusionInfo
         => currentDescriptor.FusionInfo;
+
+    public Button Button => button;
     
     private FusionDescriptor currentDescriptor;
 
@@ -22,8 +25,6 @@ public class FusionItemPresenter : MonoBehaviour
             nameText.text = newDescriptor.DisplayName;
         if (image && newDescriptor.DisplayImage)
             image.sprite = newDescriptor.DisplayImage;
-        if (button)
-            button.onClick.AddListener(OnClick);
     }
 
     public void ChangeAvailableAmount(int amount)
@@ -38,10 +39,5 @@ public class FusionItemPresenter : MonoBehaviour
         {
             gameObject.SetActive(false);
         }
-    }
-
-    private void OnClick()
-    {
-        Debug.Log("TODO: FUSE!");
     }
 }
