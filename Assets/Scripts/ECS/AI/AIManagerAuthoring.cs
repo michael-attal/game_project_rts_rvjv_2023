@@ -7,22 +7,24 @@ using UnityEngine.Scripting;
 // From the others, 80% will attack the closer unit and 20% others will attack (move) to the close building.
 // Every time a resource seeker gets enough resources to build a base spawner it builds it.
 // For the meca and slime, we randomly fuse or upgrade units.
-public class AiManagerAuthoring : MonoBehaviour
+public class AIManagerAuthoring : MonoBehaviour
 {
-    private class Baker : Baker<AiManagerAuthoring>
+    private class Baker : Baker<AIManagerAuthoring>
     {
-        public override void Bake(AiManagerAuthoring authoring)
+        public override void Bake(AIManagerAuthoring authoring)
         {
             var entity = GetEntity(TransformUsageFlags.None);
 
-
-            AddComponent(entity, new AI());
+            AddComponent(entity, new AIManager());
         }
     }
 }
 
-
 public struct AI : IComponentData
+{
+}
+
+public struct AIManager : IComponentData
 {
 }
 
