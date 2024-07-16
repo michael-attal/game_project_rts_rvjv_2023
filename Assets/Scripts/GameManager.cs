@@ -7,16 +7,7 @@ public class GameManager : MonoBehaviour
     public int DifficultyLevel { get; set; }
     public string PlayerName { get; set; }
     public int GraphicQualityLevel { get; set; }
-    public float SoundLevel { get; set; }
     public string SelectedLanguage { get; set; }
-
-    private void Start()
-    {
-    }
-
-    private void Update()
-    {
-    }
 
     public GraphicQuality GetGraphicQualityLevel()
     {
@@ -29,11 +20,6 @@ public class GameManager : MonoBehaviour
         if (GraphicQualityLevel == 3)
             return GraphicQuality.Ultra;
         return GraphicQuality.Default;
-    }
-
-    public float GetSoundLevel()
-    {
-        return SoundLevel;
     }
 
     public Difficulty GetDifficulty()

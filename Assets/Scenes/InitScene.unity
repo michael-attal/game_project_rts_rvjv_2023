@@ -135,6 +135,7 @@ GameObject:
   - component: {fileID: 177039092}
   - component: {fileID: 177039093}
   - component: {fileID: 177039094}
+  - component: {fileID: 177039095}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -196,6 +197,45 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneToLoad: 1
+--- !u!114 &177039095
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 177039090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c6f02442c11d486faf4b93b57b0ceaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioClipsList:
+  - title: SlimeBasicWaterUnitAttack
+    clip: {fileID: 8300000, guid: c5e9344c0e9924c70ab5d6fd561a53d0, type: 3}
+  - title: SlimeBasicWaterUnitDeath
+    clip: {fileID: 8300000, guid: e459f2e72e3a346cbb148454b4d4b2bf, type: 3}
+  - title: SlimeStrongerWaterUnitAttack
+    clip: {fileID: 8300000, guid: dba739997ad77455bbe46f4f4faf40c2, type: 3}
+  - title: SlimeStrongerWaterUnitDeath
+    clip: {fileID: 8300000, guid: ef5f9f09c61d44e96b91cc9899798094, type: 3}
+  - title: SlimeBaseSpawnerDeath
+    clip: {fileID: 8300000, guid: 8a2c09f4ef61c480b8acccf79da828df, type: 3}
+  - title: MecaBasicUnitAttack
+    clip: {fileID: 8300000, guid: fef3ddc3f2907423aa7f799ce06e503b, type: 3}
+  - title: MecaBasicUnitDeath
+    clip: {fileID: 8300000, guid: 2bc6dde358312424285fd3897b04b84b, type: 3}
+  - title: MecaBaseSpawnerDeath
+    clip: {fileID: 8300000, guid: 8a2c09f4ef61c480b8acccf79da828df, type: 3}
+  - title: UIMenu
+    clip: {fileID: 8300000, guid: 34c37dd889b4a4c249a9f08283e68269, type: 3}
+  - title: UIBattlefield
+    clip: {fileID: 8300000, guid: 97cf8cf3ec0e74e71a32202098a5f5a9, type: 3}
+  - title: UIVictory
+    clip: {fileID: 8300000, guid: 99726797798c64714b9660575677c784, type: 3}
+  - title: UILost
+    clip: {fileID: 8300000, guid: 13a6e6882a03949c8a45dcbc7543acd1, type: 3}
+  Volume: 1
+  BackgroundVolume: 0.3
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

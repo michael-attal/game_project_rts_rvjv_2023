@@ -16,6 +16,7 @@ public partial struct SetupGameSystem : ISystem
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<SoundManager>();
         state.RequireForUpdate<SpawnManager>();
         state.RequireForUpdate<Game>();
         state.RequireForUpdate<Config>();
@@ -27,6 +28,7 @@ public partial struct SetupGameSystem : ISystem
     {
         var configManager = SystemAPI.GetSingleton<Config>();
         var gameManager = SystemAPI.GetSingleton<Game>();
+        var soundManager = SystemAPI.GetSingleton<SoundManager>();
 
         if (!configManager.ActivateSetupGameSystem)
         {
@@ -41,19 +43,31 @@ public partial struct SetupGameSystem : ISystem
             var playerName = new FixedString32Bytes("Mika");
             var graphicQualityLevel = GraphicQuality.Default;
             var language = Language.English;
-            var soundLevel = 1f;
+            var soundVolume = 1f;
+            var soundBackgroundVolume = 0.3f;
 
             var gameManagerGameObject = GameObject.Find("GameManager");
 
             if (gameManagerGameObject != null)
             {
                 var gameManagerFromMonobehaviour = gameManagerGameObject.GetComponent<GameManager>();
-                difficulty = gameManagerFromMonobehaviour.GetDifficulty();
-                speciesToPlay = gameManagerFromMonobehaviour.GetSpeciesToPlay();
-                playerName = gameManagerFromMonobehaviour.GetPlayerNameAsFixedString();
-                graphicQualityLevel = gameManagerFromMonobehaviour.GetGraphicQualityLevel();
-                language = gameManagerFromMonobehaviour.GetLanguage();
-                soundLevel = gameManagerFromMonobehaviour.GetSoundLevel();
+                if (gameManagerFromMonobehaviour != null)
+                {
+                    difficulty = gameManagerFromMonobehaviour.GetDifficulty();
+                    speciesToPlay = gameManagerFromMonobehaviour.GetSpeciesToPlay();
+                    playerName = gameManagerFromMonobehaviour.GetPlayerNameAsFixedString();
+                    graphicQualityLevel = gameManagerFromMonobehaviour.GetGraphicQualityLevel();
+                    language = gameManagerFromMonobehaviour.GetLanguage();
+                }
+
+                var soundManagerFromMonobehaviour = gameManagerGameObject.GetComponent<SoundManagerMono>();
+                if (soundManagerFromMonobehaviour != null)
+                {
+                    soundVolume = soundManagerFromMonobehaviour.Volume;
+                    soundBackgroundVolume = soundManagerFromMonobehaviour.BackgroundVolume;
+                    // NOTE: Switch to battlefield theme sound when launching game
+                    soundManagerFromMonobehaviour.PlayBackgroundMusic("UIBattlefield");
+                }
             }
 
             Debug.Log($"Player Name: {playerName}");
@@ -61,7 +75,8 @@ public partial struct SetupGameSystem : ISystem
             Debug.Log($"Species To Play: {speciesToPlay}");
             Debug.Log($"Graphic Quality Level: {graphicQualityLevel}");
             Debug.Log($"Language: {language}");
-            Debug.Log($"SoundLevel: {soundLevel}");
+            Debug.Log($"Sound Volume: {soundVolume}");
+            Debug.Log($"Sound Background Volume: {soundBackgroundVolume}");
 
             Debug.Log("Starting now");
 
@@ -207,6 +222,10 @@ public partial struct SetupGameSystem : ISystem
                 Debug.Log("Setting graphic quality done.");
             }
 
+            soundManager.Volume = soundVolume;
+            soundManager.BackgroundVolume = soundBackgroundVolume;
+            SystemAPI.SetSingleton(soundManager);
+
             // NOTE: Start the game
             gameManager.State = GameState.Running;
             gameManager.RessourceCount = 0;
@@ -214,7 +233,7 @@ public partial struct SetupGameSystem : ISystem
             gameManager.Difficulty = difficulty;
             gameManager.SpeciesToPlay = speciesToPlay;
             gameManager.GraphicQualityLevel = graphicQualityLevel;
-            gameManager.SoundLevel = soundLevel;
+            gameManager.SoundVolume = soundVolume;
             gameManager.Language = language;
             SystemAPI.SetSingleton(gameManager);
         }
