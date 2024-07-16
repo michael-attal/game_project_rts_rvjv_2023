@@ -13,6 +13,7 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<FusionOrder>();
         state.RequireForUpdate<ParticleManager>();
         state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<Config>();
@@ -41,15 +42,27 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
         // ONLY CONTINUE IF FUSION IS ORDERED
         if (!SystemAPI.TryGetSingleton(out FusionOrder fusionOrder))
             return;
-        
+
+
+        if (fusionOrder.Amount > 1)
+        {
+            fusionOrder.Amount -= 1;
+            SystemAPI.SetSingleton(fusionOrder);
+        }
+        else
+        {
+            state.EntityManager.RemoveComponent<FusionOrder>(SystemAPI.GetSingletonEntity<FusionOrder>());
+        }
+
         var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
         
         // GET FUSING SLIMES
         var entities = query.ToEntityArray(Allocator.Temp);
+
         var positions = query.ToComponentDataArray<LocalToWorld>(Allocator.Temp);
         var mergeInfos = query.ToComponentDataArray<SlimeBasicUnitMerge>(Allocator.Temp);
-        
+
         var buffer = SystemAPI.GetBuffer<InstantiatableEntityData>(SystemAPI.GetSingletonEntity<Game>());
         var particleManager = SystemAPI.GetSingleton<ParticleManager>();
 
@@ -73,8 +86,8 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
         }
         
         // SELECT REQUIRED SLIMES
-        NativeList<Entity> selectedEntities = new NativeList<Entity>(Allocator.TempJob);
-        NativeList<LocalToWorld> selectedPositions = new NativeList<LocalToWorld>(Allocator.TempJob);
+        NativeList<Entity> selectedEntities = new NativeList<Entity>(Allocator.Temp);
+        NativeList<LocalToWorld> selectedPositions = new NativeList<LocalToWorld>(Allocator.Temp);
         
         FusionInfo reachedCost = new FusionInfo();
         FusionInfo cost = fusionOrder.Data.Cost;
@@ -89,21 +102,28 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
             }
             ++index;
         }
+
+        entities.Dispose();
+        positions.Dispose();
+        mergeInfos.Dispose();
         
         // MERGE SELECTED SLIMES
         var mergeUnitsJob = new MergeUnitsJob
         {
             ECB = ecb,
-            Entities = selectedEntities,
-            Positions = positions,
+            Entities = selectedEntities.ToArray(Allocator.TempJob),
+            Positions = selectedPositions.ToArray(Allocator.TempJob),
             EntitiesCount = selectedEntities.Length,
             SlimeRecipe = fusionOrder.Data,
             ParticleGeneratorPrefab = particleManager.ParticleGeneratorPrefab,
             InstantiatableEntities = buffer.ToNativeArray(Allocator.TempJob)
         };
 
-        var handle = mergeUnitsJob.Schedule(selectedEntities.Length, 1, state.Dependency);
+        var handle = mergeUnitsJob.Schedule(1, 1, state.Dependency);
         state.Dependency = handle;
+
+        selectedEntities.Dispose();
+        selectedPositions.Dispose();
 
         // Command Buffer final for playback
         var finalEcb = new EntityCommandBuffer(Allocator.TempJob);
@@ -194,8 +214,16 @@ public struct FusionOrder : IComponentData
 {
     public FusionOrder(FusionRecipeData data)
     {
+        Amount = 1;
         Data = data;
     }
-    
+
+    public FusionOrder(int amount, FusionRecipeData data)
+    {
+        Amount = amount;
+        Data = data;
+    }
+
+    public int Amount;
     public FusionRecipeData Data;
 }
