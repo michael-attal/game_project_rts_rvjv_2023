@@ -19,7 +19,7 @@ public class ConfigAuthoring : MonoBehaviour
     [SerializeField] private bool activateSelectedRendererSystem;
     [SerializeField] private bool activateProjectileRendererSystem;
     [SerializeField] private bool activateUnitAttackSystem;
-    [SerializeField] private bool activateUnitDamageSystem;
+    [SerializeField] private bool activateDamageSystem;
     [SerializeField] private bool activatePauseScreenSystem;
     [SerializeField] private bool activateWinConditions;
     [SerializeField] private bool activateBuildingScreenSystem;
@@ -30,7 +30,7 @@ public class ConfigAuthoring : MonoBehaviour
     [SerializeField] private FormationType movementFormationType;
     [SerializeField] private bool activateCameraManagerSystem;
     [SerializeField] private bool activateMouseManagerSystem;
-    [SerializeField] private bool activateAiManagerSystem;
+    [SerializeField] private bool activateAIManagerSystem;
     [SerializeField] private bool activatePlayerManagerSystem;
     [SerializeField] private bool activateSoundManagerSystem;
 
@@ -53,7 +53,7 @@ public class ConfigAuthoring : MonoBehaviour
                 ActivateSelectedRendererSystem = authoring.activateSelectedRendererSystem,
                 ActivateProjectileRendererSystem = authoring.activateProjectileRendererSystem,
                 ActivateUnitAttackSystem = authoring.activateUnitAttackSystem,
-                ActivateUnitDamageSystem = authoring.activateUnitDamageSystem,
+                ActivateDamageSystem = authoring.activateDamageSystem,
                 ActivatePauseScreenSystem = authoring.activatePauseScreenSystem,
                 ActivateWinConditions = authoring.activateWinConditions,
                 ActivateBuildingScreenSystem = authoring.activateBuildingScreenSystem,
@@ -67,7 +67,7 @@ public class ConfigAuthoring : MonoBehaviour
                 MovementFormationType = authoring.movementFormationType,
                 ActivateCameraManagerSystem = authoring.activateCameraManagerSystem,
                 ActivateMouseManagerSystem = authoring.activateMouseManagerSystem,
-                ActivateAiManagerSystem = authoring.activateAiManagerSystem,
+                ActivateAIManagerSystem = authoring.activateAIManagerSystem,
                 ActivatePlayerManagerSystem = authoring.activatePlayerManagerSystem,
                 ActivateSoundManagerSystem = authoring.activateSoundManagerSystem
             });
@@ -91,7 +91,7 @@ public struct Config : IComponentData
     public bool ActivateSelectedRendererSystem;
     public bool ActivateProjectileRendererSystem;
     public bool ActivateUnitAttackSystem;
-    public bool ActivateUnitDamageSystem;
+    public bool ActivateDamageSystem;
     public bool ActivatePauseScreenSystem;
     public bool ActivateWinConditions;
     public bool ActivateBuildingScreenSystem;
@@ -102,7 +102,7 @@ public struct Config : IComponentData
     public FormationType MovementFormationType;
     public bool ActivateCameraManagerSystem;
     public bool ActivateMouseManagerSystem;
-    public bool ActivateAiManagerSystem;
+    public bool ActivateAIManagerSystem;
     public bool ActivatePlayerManagerSystem;
     public bool ActivateSoundManagerSystem;
 }

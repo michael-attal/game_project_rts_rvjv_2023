@@ -20,7 +20,7 @@ public partial struct DamageSystem : ISystem
         var configManager = SystemAPI.GetSingleton<Config>();
         var gameManager = SystemAPI.GetSingleton<Game>();
 
-        if (!configManager.ActivateUnitDamageSystem)
+        if (!configManager.ActivateDamageSystem)
         {
             state.Enabled = false;
             return;

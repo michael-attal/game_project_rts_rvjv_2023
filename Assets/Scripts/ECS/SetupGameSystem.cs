@@ -16,6 +16,7 @@ public partial struct SetupGameSystem : ISystem
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<SoundManager>();
         state.RequireForUpdate<SpawnManager>();
         state.RequireForUpdate<Game>();
@@ -131,6 +132,8 @@ public partial struct SetupGameSystem : ISystem
 
             Debug.Log("Players successfully created!");
 
+            var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
+
             foreach (var (playerInfos, species) in
                      SystemAPI.Query<RefRO<Player>, RefRO<SpeciesTag>>()
                          .WithAll<Player>())
@@ -186,6 +189,11 @@ public partial struct SetupGameSystem : ISystem
                         Scale = scaleBaseSpawner,
                         Rotation = quaternion.identity
                     });
+
+                    if (isBuildingControlledByAI)
+                    {
+                        ecbSingleton.AddComponent<AI>(baseSpawnerPlayer);
+                    }
                 }
             }
 

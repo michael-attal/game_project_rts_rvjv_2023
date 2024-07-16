@@ -51,6 +51,9 @@ public partial struct UnitAttackSystem : ISystem
 
         foreach (var (attackerTransform, attackerSpecies, attackerAttack, attackerSound, entity) in SystemAPI.Query<RefRW<LocalTransform>, RefRO<SpeciesTag>, RefRW<UnitAttack>, RefRW<Sound>>().WithAll<UnitAttack>().WithDisabled<Sound>().WithEntityAccess())
         {
+            // First remove IsAttackingTag
+            ecb.SetComponentEnabled<IsAttackingTag>(entity, false);
+
             if (attackerAttack.ValueRO.CurrentReloadTime > 0f)
             {
                 attackerAttack.ValueRW.CurrentReloadTime -= SystemAPI.Time.DeltaTime;
@@ -129,6 +132,8 @@ public partial struct UnitAttackSystem : ISystem
                 attackerTransform.ValueRW.Rotation = quaternion.LookRotationSafe(direction, math.up());
                 target.Value.ValueRW.Health -= attackerAttack.ValueRO.Strength;
                 attackerAttack.ValueRW.CurrentReloadTime = attackerAttack.ValueRO.RateOfFire;
+                // NOTE: Put back IsAttackingTag
+                ecb.SetComponentEnabled<IsAttackingTag>(entity, true);
 
                 // NOTE: We can remove this condition if we want to apply particles on all targeted units/buildings.
                 if (targetClassification.Value.ValueRO.Type == EntityClassification.Building)

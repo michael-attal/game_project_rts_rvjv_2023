@@ -39,8 +39,8 @@ public partial struct UnitSpawnerSystem : ISystem
 
         var ecbJob = new EntityCommandBuffer(Allocator.TempJob);
 
-        foreach (var (transform, spawner)
-                 in SystemAPI.Query<RefRO<LocalTransform>, RefRW<BaseSpawnerBuilding>>()
+        foreach (var (transform, spawner, species)
+                 in SystemAPI.Query<RefRO<LocalTransform>, RefRW<BaseSpawnerBuilding>, RefRO<SpeciesTag>>()
                      .WithNone<SpawnerUpgradesRegister>())
         {
             if (spawner.ValueRO.TimeToNextGeneration > 0f)
@@ -61,7 +61,8 @@ public partial struct UnitSpawnerSystem : ISystem
                 BasePosition = transform.ValueRO.Position, // Spawn a unit, position it at near the base spawner player's location
                 TotalUnits = spawner.ValueRO.NbOfUnitPerBase,
                 UnitSpace = 2f, // NOTE: Default space to 2f for x and y axis
-                GroupUnitsBy = GroupUnitShape.Line
+                GroupUnitsBy = GroupUnitShape.Line,
+                IsUnitControlledByAI = GameManager.IsControlledByAI(gameManager.SpeciesToPlay, species.ValueRO.Type)
             };
             var unitSpawnJobHandler = unitSpawnJob.Schedule((int)spawner.ValueRO.NbOfUnitPerBase, 64, state.Dependency);
             state.Dependency = unitSpawnJobHandler;
@@ -93,6 +94,7 @@ public struct UnitSpawnJob : IJobParallelFor
     public uint TotalUnits;
     public float UnitSpace;
     public GroupUnitShape GroupUnitsBy;
+    public bool IsUnitControlledByAI;
 
     public void Execute(int index)
     {
@@ -167,5 +169,10 @@ public struct UnitSpawnJob : IJobParallelFor
             Rotation = UnitRotation,
             Scale = UnitScale
         });
+
+        if (IsUnitControlledByAI)
+        {
+            CommandBuffer.AddComponent<AI>(index, instance);
+        }
     }
 }
