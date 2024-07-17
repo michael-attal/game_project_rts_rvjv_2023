@@ -208,6 +208,7 @@ public struct MouseManager : IComponentData
     public bool IsRightClickUp;
     public bool IsMiddleClickDown;
     public bool IsMiddleClickUp;
+    public bool IgnoreNextClick;
 }
 
 
