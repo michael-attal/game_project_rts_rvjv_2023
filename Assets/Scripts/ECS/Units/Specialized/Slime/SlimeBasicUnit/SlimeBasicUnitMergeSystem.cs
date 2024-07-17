@@ -6,7 +6,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 
 [BurstCompile]
-[UpdateBefore(typeof(TransformSystemGroup))]
+[UpdateBefore(typeof(UnitAttackSystem))]
 public partial struct SlimeBasicUnitMergeSystem : ISystem
 {
     private EntityQuery query;
@@ -56,7 +56,7 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
 
         var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
-        
+
         // GET FUSING SLIMES
         var entities = query.ToEntityArray(Allocator.Temp);
 
@@ -67,11 +67,11 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
         var particleManager = SystemAPI.GetSingleton<ParticleManager>();
 
         // SORT SLIMES BY FUSION INFO
-        for (int i = 0; i < mergeInfos.Length; ++i)
+        for (var i = 0; i < mergeInfos.Length; ++i)
         {
-            FusionInfo minInfo = mergeInfos[i].FusionInfo;
-            int minIndex = i;
-            for (int j = i; j < mergeInfos.Length; ++j)
+            var minInfo = mergeInfos[i].FusionInfo;
+            var minIndex = i;
+            for (var j = i; j < mergeInfos.Length; ++j)
             {
                 if (mergeInfos[j].FusionInfo <= minInfo)
                 {
@@ -84,14 +84,14 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
             (positions[i], positions[minIndex]) = (positions[minIndex], positions[i]);
             (mergeInfos[i], mergeInfos[minIndex]) = (mergeInfos[minIndex], mergeInfos[i]);
         }
-        
+
         // SELECT REQUIRED SLIMES
-        NativeList<Entity> selectedEntities = new NativeList<Entity>(Allocator.Temp);
-        NativeList<LocalToWorld> selectedPositions = new NativeList<LocalToWorld>(Allocator.Temp);
-        
-        FusionInfo reachedCost = new FusionInfo();
-        FusionInfo cost = fusionOrder.Data.Cost;
-        int index = 0;
+        var selectedEntities = new NativeList<Entity>(Allocator.Temp);
+        var selectedPositions = new NativeList<LocalToWorld>(Allocator.Temp);
+
+        var reachedCost = new FusionInfo();
+        var cost = fusionOrder.Data.Cost;
+        var index = 0;
         while (index < entities.Length && reachedCost <= cost)
         {
             if (mergeInfos[index].FusionInfo <= cost)
@@ -100,13 +100,14 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
                 selectedPositions.Add(positions[index]);
                 reachedCost += mergeInfos[index].FusionInfo;
             }
+
             ++index;
         }
 
         entities.Dispose();
         positions.Dispose();
         mergeInfos.Dispose();
-        
+
         // MERGE SELECTED SLIMES
         var mergeUnitsJob = new MergeUnitsJob
         {
@@ -116,7 +117,8 @@ public partial struct SlimeBasicUnitMergeSystem : ISystem
             EntitiesCount = selectedEntities.Length,
             SlimeRecipe = fusionOrder.Data,
             ParticleGeneratorPrefab = particleManager.ParticleGeneratorPrefab,
-            InstantiatableEntities = buffer.ToNativeArray(Allocator.TempJob)
+            InstantiatableEntities = buffer.ToNativeArray(Allocator.TempJob),
+            IsUnitControlledByAI = GameManager.IsControlledByAI(gameManager.SpeciesToPlay, SpeciesType.Slime)
         };
 
         var handle = mergeUnitsJob.Schedule(1, 1, state.Dependency);
@@ -148,6 +150,7 @@ public struct MergeUnitsJob : IJobParallelFor
     [ReadOnly] public FusionRecipeData SlimeRecipe;
     public Entity ParticleGeneratorPrefab;
     [ReadOnly] public NativeArray<InstantiatableEntityData> InstantiatableEntities;
+    public bool IsUnitControlledByAI;
 
     public void Execute(int index)
     {
@@ -163,7 +166,7 @@ public struct MergeUnitsJob : IJobParallelFor
         {
             ECB.DestroyEntity(index, Entities[i]);
         }
-        
+
         InstantiateEntity(index, ECB, SlimeRecipe.PrefabId, averagePosition);
         GenerateParticles(index, averagePosition);
     }
@@ -204,7 +207,15 @@ public struct MergeUnitsJob : IJobParallelFor
                     Rotation = quaternion.identity,
                     Scale = 1f
                 });
-                ECB.SetComponentEnabled<Selected>(index, newEntity, true);
+                if (IsUnitControlledByAI)
+                {
+                    ECB.AddComponent<AI>(index, newEntity);
+                }
+                else
+                {
+                    ECB.SetComponentEnabled<Selected>(index, newEntity, true);
+                }
+
                 return;
             }
         }

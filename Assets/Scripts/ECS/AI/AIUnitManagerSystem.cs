@@ -117,12 +117,6 @@ public partial struct AIUnitManagerSystem : ISystem
 
     private void HandleAttackUnits(ref EntityCommandBuffer ecb, ref SystemState state, Entity entity, RefRO<UnitTypeTag> unitTypeTag, RefRO<SpeciesTag> speciesTag, RefRO<LocalTransform> transform, Game gameManager)
     {
-        // NOTE: 50% of units are merged if the AI plays the slime game
-        if (Random.value > 0.5f && speciesTag.ValueRO.Type == SpeciesType.Slime && unitTypeTag.ValueRO.Type == UnitType.SlimeBasicWaterUnit)
-        {
-            ecb.SetComponentEnabled<WantsToMerge>(entity, true);
-        }
-
         // NOTE: Now set attack logic for other units (80/20)
         var nearestEnemyUnitPos = GetNearestEnemyPosition(ref state, transform, true);
 
