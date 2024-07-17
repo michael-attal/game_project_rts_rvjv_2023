@@ -25,8 +25,26 @@ public enum EntityType
 {
     None,
     SlimeBasicWaterUnit,
+    SlimeBasicFireUnit,
+    SlimeBasicEarthUnit,
+    SlimeBasicAirUnit,
     SlimeStrongerWaterUnit,
+    SlimeStrongerMudUnit,
+    SlimeStrongerFirestormUnit,
+    SlimeStrongerHydrostormUnit,
+    SlimeStrongerMagmaUnit,
+    SlimeBasicWaterUnitBaseSpawner,
+    SlimeBasicFireUnitBaseSpawner,
+    SlimeBasicEarthUnitBaseSpawner,
+    SlimeBasicAirUnitBaseSpawner,
     MecaBasicUnit,
+    MecaGlassCannonUnit,
+    MecaArtilleryUnit,
+    MecaGatlingUnit,
+    MecaScoutUnit,
+    MecaBasicUnitBaseSpawner,
+
+    // NOTE: Generic
     SlimeBaseSpawner,
     MecaBaseSpawner,
     UI
