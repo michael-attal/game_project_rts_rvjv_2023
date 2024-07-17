@@ -19,7 +19,7 @@ GameObject:
   - component: {fileID: -8617636178741980495}
   - component: {fileID: -4845259642583762107}
   m_Layer: 0
-  m_Name: ForTestingOnlySlimePrefab
+  m_Name: ForTestingOnlyMecaPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -113,11 +113,11 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 0
-  UnitStandardHealth: 100
+  UnitStandardHealth: 200
   UnitAttackType: 0
-  UnitAttack: 10
-  UnitRange: 3
-  UnitRateOfFire: 10
+  UnitAttack: 20
+  UnitRange: 4
+  UnitRateOfFire: 3
   IsAttackAnimated: 0
 --- !u!114 &5193666818599641803
 MonoBehaviour:
@@ -131,7 +131,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 215a509e331e45abb9f153c008d68a6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  species: 0
+  species: 1
 --- !u!114 &-5147556080042869704
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -157,7 +157,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e02c4cbb5a5416c94cb12f6bc84b2d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  entityType: 1
+  entityType: 14
 --- !u!114 &-9025495112062019839
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -170,7 +170,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e211a1d24cf5a4d3b90fe0065a4cd6af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  typeOfUnit: 0
+  typeOfUnit: 9
 --- !u!114 &-8617636178741980495
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -236,8 +236,8 @@ MonoBehaviour:
       m_Value:
         Category00: 0
         Category01: 0
-        Category02: 1
-        Category03: 0
+        Category02: 0
+        Category03: 1
         Category04: 0
         Category05: 0
         Category06: 0

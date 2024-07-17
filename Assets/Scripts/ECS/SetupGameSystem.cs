@@ -88,18 +88,14 @@ public partial struct SetupGameSystem : ISystem
             {
                 // TODO: Instantiate the hand entity for each player (the hand will replace the cursor of the mouse for more immersion).
                 var playerSpecies = i == 1
-                    ? spawnManager.PlayerOneSpecies
-                    : spawnManager.PlayerTwoSpecies;
+                    ? SpeciesType.Slime
+                    : SpeciesType.Meca;
 
                 var playerHandPrefab = playerSpecies == SpeciesType.Slime
                     ? spawnManager.SlimePlayerHandPrefab
                     : spawnManager.MecaPlayerHandPrefab;
 
-                var baseSpawnerBuildingPrefab = playerSpecies == SpeciesType.Slime
-                    ? spawnManager.SlimeBaseSpawnerBuildingPrefab
-                    : spawnManager.MecaBaseSpawnerBuildingPrefab;
-
-                var numberOfBaseSpawner = i == 1
+                var numberOfBaseSpawnerAtStart = i == 1
                     ? spawnManager.NumberOfStartingBaseSpawnerForSlime
                     : spawnManager.NumberOfStartingBaseSpawnerForMeca;
 
@@ -124,9 +120,8 @@ public partial struct SetupGameSystem : ISystem
                 state.EntityManager.SetComponentData(playerHand, new Player
                 {
                     PlayerNumber = i,
-                    NbOfBaseSpawnerBuilding = numberOfBaseSpawner,
-                    StartPosition = startPosition,
-                    BaseSpawnerBuildingPrefab = baseSpawnerBuildingPrefab
+                    StartNbOfBaseSpawnerBuilding = numberOfBaseSpawnerAtStart,
+                    StartPosition = startPosition
                 });
             }
 
@@ -138,7 +133,7 @@ public partial struct SetupGameSystem : ISystem
                      SystemAPI.Query<RefRO<Player>, RefRO<SpeciesTag>>()
                          .WithAll<Player>())
             {
-                var nbBaseSpawner = playerInfos.ValueRO.NbOfBaseSpawnerBuilding;
+                var nbBaseSpawner = playerInfos.ValueRO.StartNbOfBaseSpawnerBuilding;
                 var isBuildingControlledByAI = GameManager.IsControlledByAI(gameManager.SpeciesToPlay, species.ValueRO.Type);
 
                 // if (isBuildingControlledByAI)
@@ -161,12 +156,16 @@ public partial struct SetupGameSystem : ISystem
                 if (isBuildingControlledByAI && difficulty == Difficulty.Nightmare)
                     nbBaseSpawner += 2;
 
-                var scaleBaseSpawner = state.EntityManager.GetComponentData<LocalTransform>(playerInfos.ValueRO.BaseSpawnerBuildingPrefab).Scale;
-                var offsetMultiplier = 1.5f; // Multiplier for the offset based on the scale
+                var offsetMultiplier = 2f; // Multiplier for the offset based on the scale
 
                 Debug.Log($"nbBaseSpawner: {nbBaseSpawner}");
+
+                // TODO & FIXME: Continue here
                 for (var i = 0; i < nbBaseSpawner; i++)
                 {
+                    var baseSpawnerBuildingPrefab = species.ValueRO.Type == SpeciesType.Slime ? spawnManager.SlimeBasicWaterUnitBaseSpawnerBuildingPrefab : spawnManager.MecaBaseSpawnerBuildingPrefab;
+                    var ltBaseSpawner = state.EntityManager.GetComponentData<LocalTransform>(baseSpawnerBuildingPrefab);
+
                     float positionOffset;
 
                     if (i == 0)
@@ -176,7 +175,7 @@ public partial struct SetupGameSystem : ISystem
                     else
                     {
                         // Calculate the offset for subsequent spawners
-                        var offset = (i + 1) / 2 * offsetMultiplier * scaleBaseSpawner;
+                        var offset = (i + 1) / 2 * offsetMultiplier * ltBaseSpawner.Scale;
                         var direction = i % 2 == 0 ? 1 : -1; // Alternate direction: right for even, left for odd
                         positionOffset = offset * direction;
                     }
@@ -187,13 +186,13 @@ public partial struct SetupGameSystem : ISystem
                         playerInfos.ValueRO.StartPosition.z
                     );
 
-                    var baseSpawnerPlayer = state.EntityManager.Instantiate(playerInfos.ValueRO.BaseSpawnerBuildingPrefab);
+                    var baseSpawnerPlayer = state.EntityManager.Instantiate(baseSpawnerBuildingPrefab);
 
                     state.EntityManager.SetComponentData(baseSpawnerPlayer, new LocalTransform
                     {
-                        Position = position,
-                        Scale = scaleBaseSpawner,
-                        Rotation = quaternion.identity
+                        Position = position + ltBaseSpawner.Position, // NOTE: Add a offset position
+                        Scale = ltBaseSpawner.Scale,
+                        Rotation = ltBaseSpawner.Rotation
                     });
 
                     if (isBuildingControlledByAI)

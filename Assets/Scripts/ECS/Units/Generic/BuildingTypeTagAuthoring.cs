@@ -3,7 +3,7 @@ using UnityEngine;
 
 internal class BuildingTypeTagAuthoring : MonoBehaviour
 {
-    [SerializeField] public BuildingType Species;
+    [SerializeField] public BuildingType typeOfBuilding;
 
     private class Baker : Baker<BuildingTypeTagAuthoring>
     {
@@ -13,7 +13,7 @@ internal class BuildingTypeTagAuthoring : MonoBehaviour
 
             AddComponent(entity, new BuildingTypeTag
             {
-                Type = authoring.Species
+                Type = authoring.typeOfBuilding
             });
         }
     }
@@ -21,8 +21,12 @@ internal class BuildingTypeTagAuthoring : MonoBehaviour
 
 public enum BuildingType
 {
-    SlimeBaseSpawner,
-    MecaBaseSpawner
+    SlimeBasicWaterUnitBaseSpawner,
+    SlimeBasicFireUnitBaseSpawner,
+    SlimeBasicEarthUnitBaseSpawner,
+    SlimeBasicAirUnitBaseSpawner,
+
+    MecaBasicUnitBaseSpawner
 }
 
 public struct BuildingTypeTag : IComponentData
