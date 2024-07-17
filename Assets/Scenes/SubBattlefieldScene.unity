@@ -940,8 +940,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   instantiatableEntities:
-  - entityID: ECS_SLIME_BASE_SPAWNER
-    entity: {fileID: 2216618471874645061, guid: 888243f85db11483baf93363ac285d84, type: 3}
+  - entityID: ECS_SLIME_WATER_BASE_SPAWNER
+    entity: {fileID: 3791485875952171710, guid: 248f3e1a2448141408f372627e0827e7, type: 3}
+  - entityID: ECS_SLIME_FIRE_BASE_SPAWNER
+    entity: {fileID: 8873345686660974788, guid: 76ac27d56b3b944399803bdd5eadac26, type: 3}
   - entityID: ECS_SLIME_UNIT
     entity: {fileID: 392048310712016098, guid: fce1ec0bc862144ba9b48c79a2f70711, type: 3}
   - entityID: ECS_SUPER_SLIME_UNIT
@@ -1014,8 +1016,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ff3e3e8297294047b532fc7eaf4ad22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerOneSpecies: 0
-  playerTwoSpecies: 1
   startPositionBaseSpawnerSlime:
     x: 0
     y: 0
@@ -1031,6 +1031,14 @@ MonoBehaviour:
   mecaPlayerHandPrefab: {fileID: 1259044049793980661, guid: 2b27e280aca8e4416bf77212c6bd837d, type: 3}
   slimeBaseSpawnerBuildingPrefab: {fileID: 2216618471874645061, guid: 888243f85db11483baf93363ac285d84, type: 3}
   mecaBaseSpawnerBuildingPrefab: {fileID: 6851779870681047773, guid: c11a9cb22bf814101a676687080166dd, type: 3}
+  slimeBasicWaterUnitBaseSpawnerBuildingPrefab: {fileID: 3791485875952171710, guid: 248f3e1a2448141408f372627e0827e7, type: 3}
+  slimeBasicFireUnitBaseSpawnerBuildingPrefab: {fileID: 8873345686660974788, guid: 76ac27d56b3b944399803bdd5eadac26, type: 3}
+  slimeBasicEarthUnitBaseSpawnerBuildingPrefab: {fileID: 0}
+  slimeBasicAirUnitBaseSpawnerBuildingPrefab: {fileID: 0}
+  mecaGlassCannonUnitPrefab: {fileID: 7603524137904975307, guid: c3e5b7c6f2eb145c49a9c42446468a3e, type: 3}
+  mecaArtilleryUnitPrefab: {fileID: 7603524137904975307, guid: c3e5b7c6f2eb145c49a9c42446468a3e, type: 3}
+  mecaGatlingUnitPrefab: {fileID: 7603524137904975307, guid: c3e5b7c6f2eb145c49a9c42446468a3e, type: 3}
+  mecaScoutUnitPrefab: {fileID: 7603524137904975307, guid: c3e5b7c6f2eb145c49a9c42446468a3e, type: 3}
 --- !u!114 &1732016750
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1182,8 +1190,8 @@ Transform:
   m_GameObject: {fileID: 1802175981}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -1, z: 0}
-  m_LocalScale: {x: 2000, y: 2, z: 2000}
+  m_LocalPosition: {x: 0, y: -4, z: 0}
+  m_LocalScale: {x: 2000, y: 8, z: 2000}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}

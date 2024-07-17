@@ -214,6 +214,10 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: c5e9344c0e9924c70ab5d6fd561a53d0, type: 3}
   - title: SlimeBasicWaterUnitDeath
     clip: {fileID: 8300000, guid: e459f2e72e3a346cbb148454b4d4b2bf, type: 3}
+  - title: SlimeBasicFireUnitAttack
+    clip: {fileID: 8300000, guid: c5e9344c0e9924c70ab5d6fd561a53d0, type: 3}
+  - title: SlimeBasicFireUnitDeath
+    clip: {fileID: 8300000, guid: e459f2e72e3a346cbb148454b4d4b2bf, type: 3}
   - title: SlimeStrongerWaterUnitAttack
     clip: {fileID: 8300000, guid: dba739997ad77455bbe46f4f4faf40c2, type: 3}
   - title: SlimeStrongerWaterUnitDeath
@@ -221,6 +225,8 @@ MonoBehaviour:
   - title: SlimeBaseSpawnerDeath
     clip: {fileID: 8300000, guid: 8a2c09f4ef61c480b8acccf79da828df, type: 3}
   - title: MecaBasicUnitAttack
+    clip: {fileID: 8300000, guid: fef3ddc3f2907423aa7f799ce06e503b, type: 3}
+  - title: MecaScoutUnitAttack
     clip: {fileID: 8300000, guid: fef3ddc3f2907423aa7f799ce06e503b, type: 3}
   - title: MecaBasicUnitDeath
     clip: {fileID: 8300000, guid: 2bc6dde358312424285fd3897b04b84b, type: 3}
