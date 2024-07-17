@@ -23,7 +23,7 @@ public class GameAuthoring : MonoBehaviour
                     return new FusionRecipeData
                     {
                         PrefabId = recipe.entityPrefab.GetHashCode(),
-                        Cost = recipe.cost
+                        Cost = recipe.fusionInfo.FusionInfo
                     };
                 })
                 .ToArray();
@@ -32,6 +32,11 @@ public class GameAuthoring : MonoBehaviour
             {
                 State = GameState.Starting,
                 SlimeRecipes = GetRecipeDataBlob(slimeRecipesData)
+            });
+            
+            AddComponent(entity, new SlimeBasicUnitMerge()
+            {
+                FusionInfo = new FusionInfo()
             });
 
             var buffer = AddBuffer<InstantiatableEntityData>(entity);
