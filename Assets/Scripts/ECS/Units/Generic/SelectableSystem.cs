@@ -43,6 +43,14 @@ public partial struct SelectableSystem : ISystem
 
         if (mouseManager.IsLeftClickUp)
         {
+            if (mouseManager.IgnoreNextClick)
+            {
+                Debug.Log("Ignoring click");
+                mouseManager.IgnoreNextClick = false;
+                SystemAPI.SetSingleton(mouseManager);
+                return;
+            }
+            
             var cameraManager = SystemAPI.GetSingleton<CameraManager>();
 
             var initialClickPosition = mouseManager.InitialClickPosition;
