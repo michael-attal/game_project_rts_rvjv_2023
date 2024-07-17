@@ -204,6 +204,7 @@ public struct MergeUnitsJob : IJobParallelFor
                     Rotation = quaternion.identity,
                     Scale = 1f
                 });
+                ECB.SetComponentEnabled<Selected>(index, newEntity, true);
                 return;
             }
         }

@@ -39,7 +39,6 @@ public class WinScreenPresenter : MonoBehaviour
         while (entityQuery.IsEmpty)
             yield return null;
 
-        Debug.Log("Allez on commence...");
         while (entityQuery.GetSingleton<Game>().State != GameState.Over)
             yield return null;
 
