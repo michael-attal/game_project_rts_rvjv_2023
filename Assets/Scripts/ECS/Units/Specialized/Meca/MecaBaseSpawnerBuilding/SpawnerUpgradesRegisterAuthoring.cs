@@ -4,14 +4,14 @@ using UnityEngine;
 public class SpawnerUpgradesRegisterAuthoring : MonoBehaviour
 {
     public bool debugGlassCannon;
-    
+
     private class Baker : Baker<SpawnerUpgradesRegisterAuthoring>
     {
         public override void Bake(SpawnerUpgradesRegisterAuthoring authoring)
         {
             var entity = GetEntity(TransformUsageFlags.Dynamic);
-            
-            AddComponent(entity, new SpawnerUpgradesRegister()
+
+            AddComponent(entity, new SpawnerUpgradesRegister
             {
                 HasGlassCannon = authoring.debugGlassCannon
             });

@@ -9,7 +9,7 @@ public class BaseSpawnerBuildingAuthoring : MonoBehaviour
     public uint NbOfUnitPerBase = 50; // NOTE: Put 50 by default for the moment
     public float GenerationInterval;
     public GameObject SpawnedUnitPrefab;
-    public float3 SpawnedUnitInitialPosition;
+    public float3 SpawnedUnitOffsetPosition;
     public quaternion SpawnedUnitInitialRotation;
     public float SpawnedUnitInitialScale;
 
@@ -27,7 +27,7 @@ public class BaseSpawnerBuildingAuthoring : MonoBehaviour
                 SpawnedUnitPrefab =
                     GetEntity(authoring.SpawnedUnitPrefab, TransformUsageFlags.Dynamic),
                 UnitInitialRotation = authoring.SpawnedUnitInitialRotation,
-                UnitInitialPosition = authoring.SpawnedUnitInitialPosition,
+                UnitOffsetPosition = authoring.SpawnedUnitOffsetPosition,
                 UnitInitialScale = authoring.SpawnedUnitInitialScale
             });
             AddComponent<Selected>(entity);
@@ -43,7 +43,7 @@ public struct BaseSpawnerBuilding : IComponentData
     public float GenerationInterval;
     public float TimeToNextGeneration;
     public Entity SpawnedUnitPrefab;
-    public float3 UnitInitialPosition;
+    public float3 UnitOffsetPosition;
     public Quaternion UnitInitialRotation;
     public float UnitInitialScale;
 }
