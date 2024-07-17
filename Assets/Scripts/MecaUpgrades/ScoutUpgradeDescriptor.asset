@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6dd5665ff1bf43846a6c10a1b6f62c2f, type: 3}
   m_Name: ScoutUpgradeDescriptor
   m_EditorClassIdentifier: 
-  image: {fileID: 0}
+  image: {fileID: 21300000, guid: 3618a979d4584284ab3cb48afd1da1fc, type: 3}
   title: "\xC9claireur"
   description: "Sacrifiez de l'attaque pour une meilleure vitesse de d\xE9placement!"
   upgrade: 3

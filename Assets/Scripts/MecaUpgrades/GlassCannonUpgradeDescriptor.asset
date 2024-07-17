@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6dd5665ff1bf43846a6c10a1b6f62c2f, type: 3}
   m_Name: GlassCannonUpgradeDescriptor
   m_EditorClassIdentifier: 
-  image: {fileID: 0}
+  image: {fileID: 21300000, guid: ba15a4a62433893468170e72a5b1e0eb, type: 3}
   title: Glass Cannon
   description: "Double l'attaque, mais r\xE9duit \xE9norm\xE9ment la d\xE9fense!"
   upgrade: 0

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6dd5665ff1bf43846a6c10a1b6f62c2f, type: 3}
   m_Name: ArtilleryUpgradeDescriptor
   m_EditorClassIdentifier: 
-  image: {fileID: 0}
+  image: {fileID: 21300000, guid: 95bcb51aaaf36eb4798feb3feb860bbe, type: 3}
   title: Artillery
   description: "Des attaques \xE0 grande port\xE9e, mais un mouvement tr\xE8s lent!"
   upgrade: 1
