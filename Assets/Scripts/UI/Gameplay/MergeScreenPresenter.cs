@@ -34,8 +34,14 @@ public class MergeScreenPresenter : MonoBehaviour
     {
         var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
         var gameEntity = entityManager.CreateEntityQuery(ComponentType.ReadOnly<Game>()).GetSingletonEntity();
-
+        
         int amountOrdered = Input.GetKey(KeyCode.LeftShift) ? 5 : 1;
+
+        // ENSURE THIS CLICK DOES NOT TRIGGER SELECTION
+        var mouseManagerEntity = entityManager.CreateEntityQuery(typeof(MouseManager)).GetSingletonEntity();
+        var mouseManager = entityManager.GetComponentData<MouseManager>(mouseManagerEntity);
+        mouseManager.IgnoreNextClick = true;
+        entityManager.SetComponentData(mouseManagerEntity, mouseManager);
         
         entityManager.AddComponentData(gameEntity, new FusionOrder(amountOrdered, recipe.ToData()));
 
