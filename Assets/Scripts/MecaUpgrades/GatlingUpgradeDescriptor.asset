@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6dd5665ff1bf43846a6c10a1b6f62c2f, type: 3}
   m_Name: GatlingUpgradeDescriptor
   m_EditorClassIdentifier: 
-  image: {fileID: 0}
+  image: {fileID: 21300000, guid: 5ba62cebab2a9c84ea42629fa3fb14f2, type: 3}
   title: Gatling
   description: "Vous attaquez sur la dur\xE9e!"
   upgrade: 2
