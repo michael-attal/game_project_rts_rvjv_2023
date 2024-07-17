@@ -27,6 +27,7 @@ public partial struct UpgradedUnitSpawnerSystem : ISystem
     {
         var configManager = SystemAPI.GetSingleton<Config>();
         var gameManager = SystemAPI.GetSingleton<Game>();
+        var spawnManager = SystemAPI.GetSingleton<SpawnManager>();
 
         if (!configManager.ActivateMecaBasicUnitUpgradeSystem)
         {
@@ -50,11 +51,13 @@ public partial struct UpgradedUnitSpawnerSystem : ISystem
 
             spawner.ValueRW.TimeToNextGeneration = spawner.ValueRO.GenerationInterval;
 
+            Debug.Log($"upgrades.ValueRO.HasScout : {upgrades.ValueRO.HasScout}");
+
             var unitSpawnJob = new UpgradedUnitSpawnJob
             {
                 CommandBuffer = ecbJob.AsParallelWriter(),
-                Prefab = spawner.ValueRO.SpawnedUnitPrefab,
-                UnitPosition = spawner.ValueRO.UnitInitialPosition,
+                Prefab = upgrades.ValueRO.HasGlassCannon ? spawnManager.MecaGlassCannonUnitPrefab : upgrades.ValueRO.HasArtillery ? spawnManager.MecaArtilleryUnitPrefab : upgrades.ValueRO.HasGatling ? spawnManager.MecaGatlingUnitPrefab : upgrades.ValueRO.HasScout ? spawnManager.MecaScoutUnitPrefab : spawner.ValueRO.SpawnedUnitPrefab,
+                UnitOffsetPosition = spawner.ValueRO.UnitOffsetPosition,
                 UnitRotation = spawner.ValueRO.UnitInitialRotation,
                 UnitScale = spawner.ValueRO.UnitInitialScale,
                 BasePosition = transform.ValueRO.Position, // Spawn a unit, position it at near the base spawner player's location
@@ -80,7 +83,7 @@ public struct UpgradedUnitSpawnJob : IJobParallelFor
 {
     public EntityCommandBuffer.ParallelWriter CommandBuffer;
     public Entity Prefab;
-    public float3 UnitPosition;
+    public float3 UnitOffsetPosition;
     public Quaternion UnitRotation;
     public float UnitScale;
     public float3 BasePosition;
@@ -159,7 +162,7 @@ public struct UpgradedUnitSpawnJob : IJobParallelFor
         var instance = CommandBuffer.Instantiate(index, Prefab);
         CommandBuffer.SetComponent(index, instance, new LocalTransform
         {
-            Position = position,
+            Position = position + UnitOffsetPosition,
             Rotation = UnitRotation,
             Scale = UnitScale
         });
