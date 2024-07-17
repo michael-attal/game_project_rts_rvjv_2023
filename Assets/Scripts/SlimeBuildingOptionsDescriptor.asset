@@ -13,6 +13,9 @@ MonoBehaviour:
   m_Name: SlimeBuildingOptionsDescriptor
   m_EditorClassIdentifier: 
   prefabsIdList:
-  - id: ECS_SLIME_BASE_SPAWNER
-    title: Slime Spawner
+  - id: ECS_SLIME_WATER_BASE_SPAWNER
+    title: Slime Water Spawner
+    image: {fileID: 0}
+  - id: ECS_SLIME_FIRE_BASE_SPAWNER
+    title: Slime Fire Spawner
     image: {fileID: 0}

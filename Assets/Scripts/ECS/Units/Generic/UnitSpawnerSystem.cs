@@ -55,7 +55,7 @@ public partial struct UnitSpawnerSystem : ISystem
             {
                 CommandBuffer = ecbJob.AsParallelWriter(),
                 Prefab = spawner.ValueRO.SpawnedUnitPrefab,
-                UnitPosition = spawner.ValueRO.UnitInitialPosition,
+                UnitOffsetPosition = spawner.ValueRO.UnitOffsetPosition,
                 UnitRotation = spawner.ValueRO.UnitInitialRotation,
                 UnitScale = spawner.ValueRO.UnitInitialScale,
                 BasePosition = transform.ValueRO.Position, // Spawn a unit, position it at near the base spawner player's location
@@ -87,7 +87,7 @@ public struct UnitSpawnJob : IJobParallelFor
 {
     public EntityCommandBuffer.ParallelWriter CommandBuffer;
     public Entity Prefab;
-    public float3 UnitPosition;
+    public float3 UnitOffsetPosition;
     public Quaternion UnitRotation;
     public float UnitScale;
     public float3 BasePosition;
@@ -165,10 +165,12 @@ public struct UnitSpawnJob : IJobParallelFor
         var instance = CommandBuffer.Instantiate(index, Prefab);
         CommandBuffer.SetComponent(index, instance, new LocalTransform
         {
-            Position = position,
+            Position = position + UnitOffsetPosition,
             Rotation = UnitRotation,
             Scale = UnitScale
         });
+
+        Debug.Log($"position: {position}");
 
         if (IsUnitControlledByAI)
         {

@@ -3,7 +3,7 @@ using UnityEngine;
 
 internal class UnitTypeTagAuthoring : MonoBehaviour
 {
-    [SerializeField] public UnitType Species;
+    [SerializeField] public UnitType typeOfUnit;
 
     private class Baker : Baker<UnitTypeTagAuthoring>
     {
@@ -13,7 +13,7 @@ internal class UnitTypeTagAuthoring : MonoBehaviour
 
             AddComponent(entity, new UnitTypeTag
             {
-                Type = authoring.Species
+                Type = authoring.typeOfUnit
             });
         }
     }
@@ -22,8 +22,19 @@ internal class UnitTypeTagAuthoring : MonoBehaviour
 public enum UnitType
 {
     SlimeBasicWaterUnit,
+    SlimeBasicFireUnit,
+    SlimeBasicEarthUnit,
+    SlimeBasicAirUnit,
     SlimeStrongerWaterUnit,
-    MecaBasicUnit
+    SlimeStrongerMudUnit,
+    SlimeStrongerFirestormUnit,
+    SlimeStrongerHydrostormUnit,
+    SlimeStrongerMagmaUnit,
+    MecaBasicUnit,
+    MecaGlassCannonUnit,
+    MecaArtilleryUnit,
+    MecaGatlingUnit,
+    MecaScoutUnit
 }
 
 public struct UnitTypeTag : IComponentData

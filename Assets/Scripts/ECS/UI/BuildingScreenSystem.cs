@@ -55,11 +55,13 @@ internal partial struct BuildingScreenSystem : ISystem
                 SystemAPI.SetSingleton(gameManager);
 
                 var newEntity = ecb.Instantiate(buffer[i].Entity);
+                var ltEntity = state.EntityManager.GetComponentData<LocalTransform>(buffer[i].Entity);
+
                 ecb.SetComponent(newEntity, new LocalTransform
                 {
-                    Position = clickWorldPosition,
-                    Rotation = quaternion.identity,
-                    Scale = state.EntityManager.GetComponentData<LocalTransform>(buffer[i].Entity).Scale
+                    Position = new float3(clickWorldPosition.x, 0, clickWorldPosition.z),
+                    Rotation = ltEntity.Rotation,
+                    Scale = ltEntity.Scale
                 });
             }
         }
