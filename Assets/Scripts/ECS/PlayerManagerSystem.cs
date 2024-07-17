@@ -42,18 +42,6 @@ internal partial struct PlayerManagerSystem : ISystem
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            foreach (var (speciesTag, entity) in
-                     SystemAPI.Query<RefRO<SpeciesTag>>()
-                         .WithAll<Selected, SlimeBasicUnitMerge>()
-                         .WithEntityAccess())
-            {
-                if (GameManager.IsControlledByCurrentPlayer(gameManager.SpeciesToPlay, speciesTag.ValueRO.Type))
-                    ecb.SetComponentEnabled<WantsToMerge>(entity, true);
-            }
-        }
-
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
     }

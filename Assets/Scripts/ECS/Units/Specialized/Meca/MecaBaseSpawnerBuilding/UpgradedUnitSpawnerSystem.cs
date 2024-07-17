@@ -62,7 +62,7 @@ public partial struct UpgradedUnitSpawnerSystem : ISystem
                 UnitSpace = 2f, // NOTE: Default space to 2f for x and y axis
                 GroupUnitsBy = GroupUnitShape.Line,
                 UpgradesRegister = upgrades.ValueRO,
-                IsAIControlledUnit = GameManager.IsControlledByAI(gameManager.SpeciesToPlay, species.ValueRO.Type)
+                IsUnitControlledByAI = GameManager.IsControlledByAI(gameManager.SpeciesToPlay, species.ValueRO.Type)
             };
             var unitSpawnJobHandler = unitSpawnJob.Schedule((int)spawner.ValueRO.NbOfUnitPerBase, 64, state.Dependency);
             state.Dependency = unitSpawnJobHandler;
@@ -88,7 +88,7 @@ public struct UpgradedUnitSpawnJob : IJobParallelFor
     public float UnitSpace;
     public GroupUnitShape GroupUnitsBy;
     public SpawnerUpgradesRegister UpgradesRegister;
-    public bool IsAIControlledUnit;
+    public bool IsUnitControlledByAI;
 
     public void Execute(int index)
     {
@@ -164,7 +164,7 @@ public struct UpgradedUnitSpawnJob : IJobParallelFor
             Scale = UnitScale
         });
 
-        if (IsAIControlledUnit)
+        if (IsUnitControlledByAI)
         {
             CommandBuffer.AddComponent<AI>(index, instance);
         }
