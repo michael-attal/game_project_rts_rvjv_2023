@@ -2,37 +2,50 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
-using UnityEngine;
 
-partial struct GatherRessourceOrderSystem : ISystem
+internal partial struct GatherRessourceOrderSystem : ISystem
 {
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<UnitSelectable>();
-        state.RequireForUpdate<UnitMovement>();
+        state.RequireForUpdate<Config>();
+        state.RequireForUpdate<Game>();
+        state.RequireForUpdate<WantsToGatherRessource>();
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        if (!Input.GetKeyDown(KeyCode.G))
+        var configManager = SystemAPI.GetSingleton<Config>();
+        var gameManager = SystemAPI.GetSingleton<Game>();
+
+        if (!configManager.ActivateGatheringSystem)
+        {
+            state.Enabled = false;
             return;
-        
+        }
+
+        if (gameManager.State == GameState.Paused)
+            return;
+
         var ecb = new EntityCommandBuffer(Allocator.Temp);
 
-        foreach (var (transform, entity) in 
+        foreach (var (transform, entity) in
                  SystemAPI.Query<RefRO<LocalTransform>>()
-                     .WithAll<UnitSelected, UnitMovement>()
+                     .WithAll<WantsToGatherRessource>()
                      .WithEntityAccess())
         {
+            ecb.SetComponentEnabled<WantsToGatherRessource>(entity, false); // NOTE: Order to gather resources is given below, we can safely disable it now.
+
             if (SystemAPI.HasComponent<GatheringIntent>(entity))
+            {
                 ecb.RemoveComponent<GatheringIntent>(entity);
+            }
             else
             {
-                float minDistance = float.MaxValue;
+                var minDistance = float.MaxValue;
                 Entity? minLocation = null;
-                foreach (var (gatherableTransform, gatherableEntity) in 
+                foreach (var (gatherableTransform, gatherableEntity) in
                          SystemAPI.Query<RefRO<LocalTransform>>()
                              .WithAll<GatherableSpot>()
                              .WithEntityAccess())
@@ -48,17 +61,17 @@ partial struct GatherRessourceOrderSystem : ISystem
 
                 if (minLocation.HasValue)
                 {
-                    ecb.AddComponent(entity, new GatheringIntent()
+                    ecb.AddComponent(entity, new GatheringIntent
                     {
                         AssignedSpot = minLocation.Value
                     });
-                    
+
                     if (SystemAPI.IsComponentEnabled<WantsToMove>(entity))
                         ecb.SetComponentEnabled<WantsToMove>(entity, false);
                 }
             }
         }
-        
+
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
     }

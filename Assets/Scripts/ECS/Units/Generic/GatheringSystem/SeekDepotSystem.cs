@@ -5,37 +5,60 @@ using Unity.Mathematics;
 using Unity.Transforms;
 
 [UpdateAfter(typeof(GatherRessourceSystem))]
-partial struct SeekDepotSystem : ISystem
+internal partial struct SeekDepotSystem : ISystem
 {
+    [BurstCompile]
+    public void OnCreate(ref SystemState state)
+    {
+        state.RequireForUpdate<Config>();
+        state.RequireForUpdate<Game>();
+    }
+
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
+        var configManager = SystemAPI.GetSingleton<Config>();
+        var gameManager = SystemAPI.GetSingleton<Game>();
+
+        if (!configManager.ActivateGatheringSystem)
+        {
+            state.Enabled = false;
+            return;
+        }
+
+        if (gameManager.State == GameState.Paused)
+            return;
+
         var ecb = new EntityCommandBuffer(Allocator.Temp);
-        
-        foreach (var (transform, entity) in
-                 SystemAPI.Query<RefRO<LocalTransform>>()
+
+        foreach (var (transform, unitSpeciesTag, entity) in
+                 SystemAPI.Query<RefRO<LocalTransform>, RefRO<SpeciesTag>>()
                      .WithAll<HasRessource, GatheringIntent>()
                      .WithNone<WantsToMove, DestinationReached>()
                      .WithEntityAccess())
         {
-            float minDistance = float.MaxValue;
+            var minDistance = float.MaxValue;
             float3? minLocation = null;
-            foreach (var (depositTransform, localToWorld) in 
-                     SystemAPI.Query<RefRO<LocalTransform>, RefRO<LocalToWorld>>()
+            foreach (var (depositTransform, localToWorld, depositSpeciesTag) in
+                     SystemAPI.Query<RefRO<LocalTransform>, RefRO<LocalToWorld>, RefRO<SpeciesTag>>()
                          .WithAll<DepositPoint>())
             {
-                var depositPosition = localToWorld.ValueRO.Value.TransformPoint(depositTransform.ValueRO.Position);
-                var distance = depositPosition.DistanceTo(transform.ValueRO.Position);
-                if (distance < minDistance)
+                // NOTE: Only seek ally deposit
+                if (depositSpeciesTag.ValueRO.Type == unitSpeciesTag.ValueRO.Type)
                 {
-                    minDistance = distance;
-                    minLocation = depositPosition;
+                    var depositPosition = localToWorld.ValueRO.Value.TransformPoint(depositTransform.ValueRO.Position);
+                    var distance = depositPosition.DistanceTo(transform.ValueRO.Position);
+                    if (distance < minDistance)
+                    {
+                        minDistance = distance;
+                        minLocation = depositPosition;
+                    }
                 }
             }
 
             if (minLocation.HasValue)
             {
-                ecb.SetComponent(entity, new WantsToMove()
+                ecb.SetComponent(entity, new WantsToMove
                 {
                     Destination = minLocation.Value
                 });
@@ -43,7 +66,7 @@ partial struct SeekDepotSystem : ISystem
                 ecb.RemoveComponent<DestinationReached>(entity);
             }
         }
-        
+
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
     }

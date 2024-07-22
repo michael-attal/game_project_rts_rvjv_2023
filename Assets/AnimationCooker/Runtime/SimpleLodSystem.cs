@@ -4,11 +4,11 @@
 // It also sets each entity's SimpleLodSkinData value, which can optionally be used
 // by other systems to know which LOD index is in use.
 
-using Unity.Entities;
 using Unity.Burst;
+using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Transforms;
 using Unity.Rendering;
+using Unity.Transforms;
 using UnityEngine.Rendering;
 
 namespace AnimCooker
@@ -17,9 +17,9 @@ namespace AnimCooker
     [BurstCompile]
     public partial struct SimpleLodSystem : ISystem
     {
-        UpdateTimer m_timer;
+        private UpdateTimer m_timer;
 
-        void OnCreate(ref SystemState state)
+        private void OnCreate(ref SystemState state)
         {
             m_timer = new UpdateTimer(999);
             state.RequireForUpdate<CamData>();
@@ -27,12 +27,21 @@ namespace AnimCooker
         }
 
         [BurstCompile]
-        void OnUpdate(ref SystemState state)
+        private void OnUpdate(ref SystemState state)
         {
-            if (m_timer.GetInterval() >= 888) { m_timer.SetInterval(SystemAPI.GetSingleton<SimpleLodOptsData>().TimerInterval); }
-            if (m_timer.IsNotReady(SystemAPI.Time.DeltaTime)) { return; }
-            SimpleLodJob job = new SimpleLodJob();
+            if (m_timer.GetInterval() >= 888)
+            {
+                m_timer.SetInterval(SystemAPI.GetSingleton<SimpleLodOptsData>().TimerInterval);
+            }
+
+            if (m_timer.IsNotReady(SystemAPI.Time.DeltaTime))
+            {
+                return;
+            }
+
+            var job = new SimpleLodJob();
             job.Cam = SystemAPI.GetSingleton<CamData>();
+            job.LodOptsData = SystemAPI.GetSingleton<SimpleLodOptsData>();
             state.Dependency = job.ScheduleParallel(state.Dependency);
         }
     }
@@ -42,26 +51,56 @@ namespace AnimCooker
     public partial struct SimpleLodJob : IJobEntity
     {
         public CamData Cam;
+        public SimpleLodOptsData LodOptsData;
 
         public void Execute(ref MaterialMeshInfo mmi, ref SimpleLodSkinData skin, in SimpleLodData lod, in LocalToWorld ltw, in SimpleLodInfoData lodInf)
         {
-            float dist = lodInf.WorldSpaceSize / (2f * lodInf.ScreenRelativeTransitionHeight0 * math.tan(Cam.FovRad * 0.5f));
-            float actualDistSq = math.distancesq(Cam.Pos, ltw.Position);
-            if (actualDistSq < (dist * dist)) {
+            if (LodOptsData.ForceLodHeightLevel == ForceLodHeightLevel.ZeroAliasBestQuality)
+            {
                 mmi.MaterialID = lod.MatId0;
                 mmi.MeshID = lod.MeshId0;
                 skin.SkinIndex = 0;
                 return;
             }
-            dist = lodInf.WorldSpaceSize / (2f * lodInf.ScreenRelativeTransitionHeight1 * math.tan(Cam.FovRad * 0.5f));
-            if (actualDistSq < (dist * dist)) {
+
+            if (LodOptsData.ForceLodHeightLevel == ForceLodHeightLevel.OneAliasMediumQuality)
+            {
                 mmi.MaterialID = lod.MatId1;
                 mmi.MeshID = lod.MeshId1;
                 skin.SkinIndex = 1;
                 return;
             }
+
+            if (LodOptsData.ForceLodHeightLevel == ForceLodHeightLevel.TwoAliasPoorQuality)
+            {
+                mmi.MaterialID = lod.MatId2;
+                mmi.MeshID = lod.MeshId2;
+                skin.SkinIndex = 2;
+                return;
+            }
+
+            var dist = lodInf.WorldSpaceSize / (2f * lodInf.ScreenRelativeTransitionHeight0 * math.tan(Cam.FovRad * 0.5f));
+            var actualDistSq = math.distancesq(Cam.Pos, ltw.Position);
+            if (actualDistSq < dist * dist)
+            {
+                mmi.MaterialID = lod.MatId0;
+                mmi.MeshID = lod.MeshId0;
+                skin.SkinIndex = 0;
+                return;
+            }
+
+            dist = lodInf.WorldSpaceSize / (2f * lodInf.ScreenRelativeTransitionHeight1 * math.tan(Cam.FovRad * 0.5f));
+            if (actualDistSq < dist * dist)
+            {
+                mmi.MaterialID = lod.MatId1;
+                mmi.MeshID = lod.MeshId1;
+                skin.SkinIndex = 1;
+                return;
+            }
+
             dist = lodInf.WorldSpaceSize / (2f * lodInf.ScreenRelativeTransitionHeight2 * math.tan(Cam.FovRad * 0.5f));
-            if (actualDistSq < (dist * dist)) {
+            if (actualDistSq < dist * dist)
+            {
                 mmi.MaterialID = lod.MatId2;
                 mmi.MeshID = lod.MeshId2;
                 skin.SkinIndex = 2;

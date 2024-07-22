@@ -1,35 +1,53 @@
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
-using UnityEngine;
 
 [UpdateAfter(typeof(SeekDepotSystem))]
-partial struct DepositRessourceSystem : ISystem
+internal partial struct DepositRessourceSystem : ISystem
 {
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<Config>();
         state.RequireForUpdate<Game>();
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
+        var configManager = SystemAPI.GetSingleton<Config>();
+        var gameManager = SystemAPI.GetSingleton<Game>();
+
+        if (!configManager.ActivateGatheringSystem)
+        {
+            state.Enabled = false;
+            return;
+        }
+
+        if (gameManager.State == GameState.Paused)
+            return;
+
         var ecb = new EntityCommandBuffer(Allocator.Temp);
-        
-        foreach (var (ressource, entity) in
-                 SystemAPI.Query<RefRO<HasRessource>>()
+
+        foreach (var (ressource, speciesTag, entity) in
+                 SystemAPI.Query<RefRO<HasRessource>, RefRO<SpeciesTag>>()
                      .WithAll<DestinationReached, GatheringIntent>()
                      .WithNone<WantsToMove>()
                      .WithEntityAccess())
         {
-            var game = SystemAPI.GetSingleton<Game>();
-            game.RessourceCount += ressource.ValueRO.CarriedRessources;
-            SystemAPI.SetSingleton(game);
+            // NOTE: It might be more efficient to refactor this and put RessourceCount into the Player component, but for simplicity, I have implemented it this way.
+            if (GameManager.IsControlledByCurrentPlayer(gameManager.SpeciesToPlay, speciesTag.ValueRO.Type))
+            {
+                gameManager.RessourceCount += ressource.ValueRO.CarriedRessources;
+            }
+            else
+            {
+                gameManager.RessourceCountAI += ressource.ValueRO.CarriedRessources;
+            }
 
-            var move = SystemAPI.GetComponent<WantsToMove>(entity);
-            Debug.Log($"Depot when destination is {move.Destination.x} {move.Destination.y} {move.Destination.z}");
-            
+
+            SystemAPI.SetSingleton(gameManager);
+
             ecb.RemoveComponent<HasRessource>(entity);
             ecb.SetComponentEnabled<WantsToMove>(entity, false);
             ecb.RemoveComponent<DestinationReached>(entity);
@@ -40,4 +58,6 @@ partial struct DepositRessourceSystem : ISystem
     }
 }
 
-public struct DepositPoint : IComponentData {}
+public struct DepositPoint : IComponentData
+{
+}

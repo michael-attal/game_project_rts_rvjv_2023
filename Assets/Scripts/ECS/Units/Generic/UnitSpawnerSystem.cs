@@ -10,14 +10,14 @@ using UnityEngine;
 // the correct position for the frame in which they're spawned.
 // If the unit spawning system differs significantly between units, we should implement a specialized system, such as MySlimeUnitSpawningSystem, instead of a generic one like this one.
 [BurstCompile]
-[UpdateBefore(typeof(TransformSystemGroup))]
+[UpdateBefore(typeof(DamageSystem))]
 public partial struct UnitSpawnerSystem : ISystem
 {
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<Game>();
         state.RequireForUpdate<Config>();
+        state.RequireForUpdate<Game>();
         state.RequireForUpdate<SpawnManager>();
         state.RequireForUpdate<BaseSpawnerBuilding>();
     }
@@ -26,6 +26,7 @@ public partial struct UnitSpawnerSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         var configManager = SystemAPI.GetSingleton<Config>();
+        var gameManager = SystemAPI.GetSingleton<Game>();
 
         if (!configManager.ActivateUnitSpawnerSystem)
         {
@@ -33,18 +34,14 @@ public partial struct UnitSpawnerSystem : ISystem
             return;
         }
 
-        var spawnManager = SystemAPI.GetSingleton<SpawnManager>();
-
-        if (spawnManager.SpawnUnitWhenPressEnter)
-        {
-            if (!Input.GetKeyDown(KeyCode.Return))
-                return;
-            Debug.Log("Enter detected! Spawning unit now!");
-        }
+        if (gameManager.State == GameState.Paused)
+            return;
 
         var ecbJob = new EntityCommandBuffer(Allocator.TempJob);
 
-        foreach (var (transform, spawner) in SystemAPI.Query<RefRO<LocalTransform>, RefRW<BaseSpawnerBuilding>>())
+        foreach (var (transform, spawner, species)
+                 in SystemAPI.Query<RefRO<LocalTransform>, RefRW<BaseSpawnerBuilding>, RefRO<SpeciesTag>>()
+                     .WithNone<SpawnerUpgradesRegister>())
         {
             if (spawner.ValueRO.TimeToNextGeneration > 0f)
             {
@@ -58,10 +55,14 @@ public partial struct UnitSpawnerSystem : ISystem
             {
                 CommandBuffer = ecbJob.AsParallelWriter(),
                 Prefab = spawner.ValueRO.SpawnedUnitPrefab,
+                UnitOffsetPosition = spawner.ValueRO.UnitOffsetPosition,
+                UnitRotation = spawner.ValueRO.UnitInitialRotation,
+                UnitScale = spawner.ValueRO.UnitInitialScale,
                 BasePosition = transform.ValueRO.Position, // Spawn a unit, position it at near the base spawner player's location
                 TotalUnits = spawner.ValueRO.NbOfUnitPerBase,
                 UnitSpace = 2f, // NOTE: Default space to 2f for x and y axis
-                GroupUnitsBy = GroupUnitShape.Line
+                GroupUnitsBy = GroupUnitShape.Line,
+                IsUnitControlledByAI = GameManager.IsControlledByAI(gameManager.SpeciesToPlay, species.ValueRO.Type)
             };
             var unitSpawnJobHandler = unitSpawnJob.Schedule((int)spawner.ValueRO.NbOfUnitPerBase, 64, state.Dependency);
             state.Dependency = unitSpawnJobHandler;
@@ -71,14 +72,6 @@ public partial struct UnitSpawnerSystem : ISystem
 
         ecbJob.Playback(state.EntityManager);
         ecbJob.Dispose();
-
-        // If this was the initial spawn wave, start the game
-        var singleton = SystemAPI.GetSingleton<Game>();
-        if (singleton.State == GameState.Starting)
-        {
-            singleton.State = GameState.Running;
-            SystemAPI.SetSingleton(singleton);
-        }
     }
 }
 
@@ -94,10 +87,14 @@ public struct UnitSpawnJob : IJobParallelFor
 {
     public EntityCommandBuffer.ParallelWriter CommandBuffer;
     public Entity Prefab;
+    public float3 UnitOffsetPosition;
+    public Quaternion UnitRotation;
+    public float UnitScale;
     public float3 BasePosition;
     public uint TotalUnits;
     public float UnitSpace;
     public GroupUnitShape GroupUnitsBy;
+    public bool IsUnitControlledByAI;
 
     public void Execute(int index)
     {
@@ -168,9 +165,14 @@ public struct UnitSpawnJob : IJobParallelFor
         var instance = CommandBuffer.Instantiate(index, Prefab);
         CommandBuffer.SetComponent(index, instance, new LocalTransform
         {
-            Position = position,
-            Rotation = quaternion.identity,
-            Scale = 1
+            Position = position + UnitOffsetPosition,
+            Rotation = UnitRotation,
+            Scale = UnitScale
         });
+
+        if (IsUnitControlledByAI)
+        {
+            CommandBuffer.AddComponent<AI>(index, instance);
+        }
     }
 }

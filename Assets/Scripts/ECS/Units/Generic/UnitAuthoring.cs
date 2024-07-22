@@ -1,20 +1,27 @@
-using Unity.Collections;
+using System;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
 public class UnitAuthoring : MonoBehaviour
 {
-    public SpeciesType SpeciesType;
-    public UnitType UnitType;
-    public string BakedPrefabName;
+    public bool IsMovementAnimated;
     public float UnitSpeed;
+    public MovementType MovementType;
+
+    [ConditionalHide("MovementType", (int)MovementType.PositionMotor)]
+    public float3 AxisBlockedForMovementPositionMotor;
+
+    [ConditionalHide("MovementType", (int)MovementType.PositionMotor)]
+    public float3 PerpendicularAxisForMovementPositionMotor;
 
     [Header("Combat")] public float UnitStandardHealth;
 
+    public UnitAttackType UnitAttackType;
     public float UnitAttack;
     public float UnitRange;
     public float UnitRateOfFire;
+    public bool IsAttackAnimated;
 
     private class Baker : Baker<UnitAuthoring>
     {
@@ -24,38 +31,74 @@ public class UnitAuthoring : MonoBehaviour
 
             AddComponent(entity, new Unit
             {
-                SpeciesType = authoring.SpeciesType,
-                UnitType = authoring.UnitType,
-                BakedPrefabName = new FixedString32Bytes(authoring.BakedPrefabName)
+                UnitSpeed = authoring.UnitSpeed
             });
 
-            AddComponent(entity, new UnitSelectable
+            AddComponent(entity, new Selectable
             {
                 ShouldBeSelected = false
             });
 
-            AddComponent<UnitSelected>(entity);
-            SetComponentEnabled<UnitSelected>(entity, false);
+            AddComponent<Selected>(entity);
+            SetComponentEnabled<Selected>(entity, false);
 
-            AddComponent(entity, new UnitMovement
+            switch (authoring.MovementType)
             {
-                Speed = authoring.UnitSpeed
-            });
+                case MovementType.Manual:
+                    AddComponent(entity, new MovementManual
+                    {
+                        Speed = authoring.UnitSpeed,
+                        IsMovementAnimated = authoring.IsMovementAnimated,
+                        IsMovementAnimationPlayed = false
+                    });
+                    break;
+                case MovementType.Velocity:
+                    AddComponent(entity, new MovementVelocity
+                    {
+                        Speed = authoring.UnitSpeed,
+                        IsMovementAnimated = authoring.IsMovementAnimated,
+                        IsMovementAnimationPlayed = false
+                    });
+                    break;
+                case MovementType.PositionMotor:
+                    AddComponent(entity, new MovementPositionMotor
+                    {
+                        Speed = authoring.UnitSpeed,
+                        IsMovementAnimated = authoring.IsMovementAnimated,
+                        IsMovementAnimationPlayed = false,
+                        AxisBlocked = authoring.AxisBlockedForMovementPositionMotor,
+                        PerpendicularAxis = authoring.PerpendicularAxisForMovementPositionMotor
+                    });
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            AddComponent<UnitInMovementTag>(entity);
+            SetComponentEnabled<UnitInMovementTag>(entity, false);
 
             AddComponent<WantsToMove>(entity);
             SetComponentEnabled<WantsToMove>(entity, false);
 
-            AddComponent(entity, new UnitDamage
+            AddComponent<WantsToGatherRessource>(entity);
+            SetComponentEnabled<WantsToGatherRessource>(entity, false);
+
+            AddComponent<IsAttackingTag>(entity);
+            SetComponentEnabled<IsAttackingTag>(entity, false);
+
+            AddComponent(entity, new Damage
             {
                 Health = authoring.UnitStandardHealth
             });
 
             AddComponent(entity, new UnitAttack
             {
+                UnitAttackType = authoring.UnitAttackType,
                 Strength = authoring.UnitAttack,
                 Range = authoring.UnitRange,
                 RateOfFire = authoring.UnitRateOfFire,
-                CurrentReloadTime = 0f
+                CurrentReloadTime = 0f,
+                IsAttackAnimated = authoring.IsAttackAnimated
             });
 
             AddComponent<Velocity>(entity);
@@ -63,37 +106,9 @@ public class UnitAuthoring : MonoBehaviour
     }
 }
 
-public enum SpeciesType
-{
-    Slime,
-    Meca
-}
-
-// NOTE: It's important that each prefab has the same order for the animations
-// TODO: Refactoring to make it more open and easy to modify
-public enum AnimationsType
-{
-    Idle,
-    Attack
-}
-
-public enum UnitType
-{
-    SlimeBasic,
-    MecaBasic,
-    SlimeStronger,
-    MecaStronger
-
-    // SlimeFire,
-    // SlimeWater,
-    // ...
-}
-
 public struct Unit : IComponentData
 {
-    public SpeciesType SpeciesType;
-    public UnitType UnitType;
-    public FixedString32Bytes BakedPrefabName;
+    public float UnitSpeed;
 }
 
 // A 2d velocity vector for the unit entities.
@@ -102,18 +117,24 @@ public struct Velocity : IComponentData
     public float2 Value;
 }
 
-public struct UnitSelectable : IComponentData
+public struct Selectable : IComponentData
 {
     public bool ShouldBeSelected; // If later we want to show an indicator on mouse hover unit
 }
 
-public struct UnitSelected : IComponentData, IEnableableComponent
+public struct Selected : IComponentData, IEnableableComponent
 {
 }
 
-public struct UnitMovement : IComponentData
+public enum MovementType
 {
-    public float Speed;
+    Manual,
+    Velocity,
+    PositionMotor
+}
+
+public struct UnitInMovementTag : IComponentData, IEnableableComponent
+{
 }
 
 public struct WantsToMove : IComponentData, IEnableableComponent
@@ -121,17 +142,31 @@ public struct WantsToMove : IComponentData, IEnableableComponent
     public float3 Destination;
 }
 
-public struct DestinationReached : IComponentData {}
+public struct DestinationReached : IComponentData
+{
+}
 
-public struct UnitDamage : IComponentData
+public struct IsAttackingTag : IComponentData, IEnableableComponent
+{
+}
+
+public struct Damage : IComponentData
 {
     public float Health;
 }
 
 public struct UnitAttack : IComponentData
 {
+    public UnitAttackType UnitAttackType;
     public float Strength;
     public float Range;
     public float RateOfFire;
     public float CurrentReloadTime;
+    public bool IsAttackAnimated;
+}
+
+public enum UnitAttackType
+{
+    Melee,
+    Ranged
 }

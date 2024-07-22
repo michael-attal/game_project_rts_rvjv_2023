@@ -1,32 +1,75 @@
+using System.Collections;
 using TMPro;
+using Unity.Entities;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class WinScreenPresenter : MonoBehaviour
 {
+    [SerializeField] private GameObject content;
+    [SerializeField] private GameObject bottomMenu;
     [SerializeField] private Image background;
     [SerializeField] private TMP_Text winText;
-    [SerializeField] private Button retryButton;
+    [SerializeField] private Button playAgainButton;
+    [SerializeField] private Button backToMenuButton;
     [SerializeField] private Button quitButton;
 
     [SerializeField] private Color slimeColor;
     [SerializeField] private Color mecaColor;
 
+    private EntityQuery entityQuery;
+
     private void Start()
     {
-        retryButton.onClick.AddListener(BackToMenu);
+        entityQuery =
+            World.DefaultGameObjectInjectionWorld.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<Game>());
+
+        playAgainButton.onClick.AddListener(PlayAgain);
+        backToMenuButton.onClick.AddListener(BackToMenu);
         quitButton.onClick.AddListener(Quit);
 
+        StartCoroutine(WaitForEnd());
+
         // Ensure WinScreen isn't shown at first
-        gameObject.SetActive(false);
+        content.SetActive(false);
     }
 
-    public void DeclareWinner(SpeciesType winner)
+    private IEnumerator WaitForEnd()
+    {
+        while (entityQuery.IsEmpty)
+            yield return null;
+
+        while (entityQuery.GetSingleton<Game>().State != GameState.Over)
+            yield return null;
+
+        DeclareWinner(entityQuery.GetSingleton<Game>().WinningSpecies);
+    }
+
+    private void DeclareWinner(SpeciesType winner)
     {
         winText.text = $"The {winner.ToString()}s have won!";
         background.color = winner == SpeciesType.Slime ? slimeColor : mecaColor;
 
-        gameObject.SetActive(true);
+        bottomMenu.SetActive(false);
+        content.SetActive(true);
+
+        // TODO: Send score to the api here with gameManager.playerName & score from the MonoBehaviour gameobject
+    }
+
+    private void PlayAgain()
+    {
+        var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+
+        var queryConfigManager = entityManager.CreateEntityQuery(ComponentType.ReadWrite<Game>());
+
+        var gameManagerECS = queryConfigManager.GetSingleton<Game>();
+        gameManagerECS.State = GameState.Starting;
+        queryConfigManager.SetSingleton(gameManagerECS);
+
+        bottomMenu.SetActive(true);
+        content.SetActive(false);
+
+        StartCoroutine(WaitForEnd());
     }
 
     private void BackToMenu()

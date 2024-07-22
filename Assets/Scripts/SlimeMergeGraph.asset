@@ -14,14 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   recipes:
   - entityPrefab: ECS_SUPER_SLIME_UNIT
-    cost:
-      EarthAmount: 0
-      FireAmount: 0
-      WaterAmount: 10
-      AirAmount: 0
-  - entityPrefab: ECS_SLIME_UNIT
-    cost:
-      EarthAmount: 0
-      FireAmount: 0
-      WaterAmount: 1
-      AirAmount: 0
+    fusionInfo: {fileID: 11400000, guid: 7754a91edd99ba4498053f58e731e810, type: 2}

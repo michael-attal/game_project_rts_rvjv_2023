@@ -9,7 +9,7 @@ public class GameAuthoring : MonoBehaviour
 {
     [SerializeField] private List<InstantiatableEntity> instantiatableEntities;
     [SerializeField] private SlimeMergeGraph mergeGraph;
-    
+
     private class Baker : Baker<GameAuthoring>
     {
         public override void Bake(GameAuthoring authoring)
@@ -20,25 +20,30 @@ public class GameAuthoring : MonoBehaviour
             var slimeRecipesData = slimeRecipes
                 .Select(recipe =>
                 {
-                    return new FusionRecipeData()
+                    return new FusionRecipeData
                     {
                         PrefabId = recipe.entityPrefab.GetHashCode(),
-                        Cost = recipe.cost
+                        Cost = recipe.fusionInfo.FusionInfo
                     };
                 })
                 .ToArray();
-            
-            AddComponent(entity, new Game()
+
+            AddComponent(entity, new Game
             {
                 State = GameState.Starting,
                 SlimeRecipes = GetRecipeDataBlob(slimeRecipesData)
             });
-
-            DynamicBuffer<InstantiatableEntityData> buffer = AddBuffer<InstantiatableEntityData>(entity);
-            buffer.Length = authoring.instantiatableEntities.Count;
-            for (int i = 0; i < authoring.instantiatableEntities.Count; ++i)
+            
+            AddComponent(entity, new SlimeBasicUnitMerge()
             {
-                InstantiatableEntity instantiatable = authoring.instantiatableEntities[i];
+                FusionInfo = new FusionInfo()
+            });
+
+            var buffer = AddBuffer<InstantiatableEntityData>(entity);
+            buffer.Length = authoring.instantiatableEntities.Count;
+            for (var i = 0; i < authoring.instantiatableEntities.Count; ++i)
+            {
+                var instantiatable = authoring.instantiatableEntities[i];
                 buffer[i] = new InstantiatableEntityData
                 {
                     EntityID = instantiatable.entityID.GetHashCode(),
@@ -50,18 +55,18 @@ public class GameAuthoring : MonoBehaviour
         private BlobAssetReference<FusionRecipeDataPool> GetRecipeDataBlob(IEnumerable<FusionRecipeData> recipeDatas)
         {
             var builder = new BlobBuilder(Allocator.Temp);
-            ref FusionRecipeDataPool recipeDataPool = ref builder.ConstructRoot<FusionRecipeDataPool>();
+            ref var recipeDataPool = ref builder.ConstructRoot<FusionRecipeDataPool>();
 
             var recipeDataArray = recipeDatas
                 .OrderByDescending(recipeData => recipeData.Cost)
                 .ToArray();
-            
+
             var arrayBuilder = builder.Allocate(
                 ref recipeDataPool.Data,
                 recipeDataArray.Length
             );
 
-            for (int i = 0; i < recipeDataArray.Length; ++i)
+            for (var i = 0; i < recipeDataArray.Length; ++i)
                 arrayBuilder[i] = recipeDataArray[i];
 
             var result = builder.CreateBlobAssetReference<FusionRecipeDataPool>(Allocator.Persistent);
@@ -69,8 +74,36 @@ public class GameAuthoring : MonoBehaviour
             return result;
         }
     }
+}
 
-    
+public enum Language
+{
+    English,
+    French
+}
+
+public enum GraphicQuality
+{
+    Default,
+    Low,
+    Medium,
+    High,
+    Ultra
+}
+
+public enum Difficulty
+{
+    Easy,
+    Medium,
+    Hard,
+    Nightmare
+}
+
+public enum SpeciesToPlay
+{
+    Slime,
+    Meca,
+    Both
 }
 
 public struct FusionRecipeDataPool
@@ -82,7 +115,16 @@ public struct Game : IComponentData
 {
     public BlobAssetReference<FusionRecipeDataPool> SlimeRecipes;
     public GameState State;
+    public SpeciesType WinningSpecies;
+    public Difficulty Difficulty;
+    public SpeciesToPlay SpeciesToPlay;
+    public FixedString32Bytes PlayerName;
+    public GraphicQuality GraphicQualityLevel;
+    public Language Language;
+    public int Score;
     public int RessourceCount;
+    public int RessourceCountAI;
+    public int ScoreAI;
 }
 
 [Serializable]

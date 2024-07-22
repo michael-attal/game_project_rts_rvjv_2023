@@ -4,7 +4,7 @@ using UnityEngine;
 public class SlimeBasicUnitAuthoring : MonoBehaviour
 {
     [SerializeField] private FusionInfo FusionInfo;
-    
+
     private class Baker : Baker<SlimeBasicUnitAuthoring>
     {
         public override void Bake(SlimeBasicUnitAuthoring authoring)
@@ -13,10 +13,13 @@ public class SlimeBasicUnitAuthoring : MonoBehaviour
 
             // A single authoring component can add multiple components to the entity.
             AddComponent<SlimeBasicUnit>(entity);
-            AddComponent(entity, new SlimeBasicUnitMerge()
+            AddComponent(entity, new SlimeBasicUnitMerge
             {
                 FusionInfo = authoring.FusionInfo
             });
+
+            AddComponent<WantsToMerge>(entity);
+            SetComponentEnabled<WantsToMerge>(entity, false);
         }
     }
 }
@@ -30,4 +33,8 @@ public struct SlimeBasicUnit : IComponentData
 public struct SlimeBasicUnitMerge : IComponentData
 {
     public FusionInfo FusionInfo;
+}
+
+public struct WantsToMerge : IComponentData, IEnableableComponent
+{
 }

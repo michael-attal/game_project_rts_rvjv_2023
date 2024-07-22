@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 3984589978726406436}
   - component: {fileID: 5319132817173205344}
   - component: {fileID: 2827318119268837707}
+  - component: {fileID: 3719241484713871960}
+  - component: {fileID: -5699074356022327498}
   m_Layer: 0
   m_Name: SlimePlayerHand
   m_TagString: Untagged
@@ -96,13 +98,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d28e04bdea3db4ce49e2c5ba3ccf73fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerNumber: 1
-  PlayerSpecies: 0
-  NbOfBaseSpawnerBuilding: 1
-  NbOfUnitPerBaseSpawnerBuilding: 1000
-  StartPosition:
+  playerNumber: 0
+  startPosition:
     x: 0
     y: 0
     z: 0
-  BaseSpawnerBuildingPrefab: {fileID: 2216618471874645061, guid: 888243f85db11483baf93363ac285d84, type: 3}
-  BasicUnitPrefab: {fileID: 7777260843569007679, guid: adb6e2e52870048caaf7c6964c3fb1b2, type: 3}
+  baseSpawnerBuildingPrefab: {fileID: 0}
+  nbOfBaseSpawnerBuilding: 1
+--- !u!114 &3719241484713871960
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6320164834673837995}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 215a509e331e45abb9f153c008d68a6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  species: 0
+--- !u!114 &-5699074356022327498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6320164834673837995}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec8023bd06524fdca9b90c55cdd25fae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  classification: 4

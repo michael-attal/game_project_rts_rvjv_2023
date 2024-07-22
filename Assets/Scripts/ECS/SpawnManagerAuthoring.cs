@@ -6,27 +6,28 @@ public class SpawnManagerAuthoring : MonoBehaviour
 {
     // The SpawnManager component will be used as a singleton.
     // It stores a grab bag of game parameters plus the entity prefabs that we'll instantiate at runtime.
-    public SpeciesType PlayerOneSpecies;
-    public SpeciesType PlayerTwoSpecies;
-    public float3 StartPositionBaseSpawnerPlayerOne;
-    public float3 StartPositionBaseSpawnerPlayerTwo;
+    [SerializeField] private float3 startPositionBaseSpawnerSlime;
+    [SerializeField] private float3 startPositionBaseSpawnerMeca;
 
-    public bool SpawnUnitWhenPressEnter;
-    public GroupUnitShape GroupUnitsBy;
+    [SerializeField] private uint numberOfStartingBaseSpawnerForSlime;
+    [SerializeField] private uint numberOfStartingBaseSpawnerForMeca;
 
-    public uint NumberOfBaseSpawnerForPlayerOne;
-    public uint NumberOfBaseSpawnerForPlayerTwo;
-    public uint NumberOfSlimeUnitPerSlimeBaseSpawner;
-    public uint NumberOfMecaUnitPerMecaBaseSpawner;
+    [SerializeField] private GameObject selectionCirclePrefab;
 
-    public GameObject SlimePlayerHandPrefab;
-    public GameObject SlimeBaseSpawnerBuildingPrefab;
-    public GameObject SlimeBasicUnitPrefab;
-    public GameObject SlimeStrongerUnitPrefab;
+    [SerializeField] private GameObject slimePlayerHandPrefab;
+    [SerializeField] private GameObject mecaPlayerHandPrefab;
 
-    public GameObject MecaPlayerHandPrefab;
-    public GameObject MecaBaseSpawnerBuildingPrefab;
-    public GameObject MecaBasicUnitPrefab;
+    [SerializeField] private GameObject mecaBasicUnitBaseSpawnerBuildingPrefab;
+
+    [SerializeField] private GameObject slimeBasicWaterUnitBaseSpawnerBuildingPrefab;
+    [SerializeField] private GameObject slimeBasicFireUnitBaseSpawnerBuildingPrefab;
+    [SerializeField] private GameObject slimeBasicEarthUnitBaseSpawnerBuildingPrefab;
+    [SerializeField] private GameObject slimeBasicAirUnitBaseSpawnerBuildingPrefab;
+
+    [SerializeField] private GameObject mecaGlassCannonUnitPrefab;
+    [SerializeField] private GameObject mecaArtilleryUnitPrefab;
+    [SerializeField] private GameObject mecaGatlingUnitPrefab;
+    [SerializeField] private GameObject mecaScoutUnitPrefab;
 
     private class Baker : Baker<SpawnManagerAuthoring>
     {
@@ -37,33 +38,28 @@ public class SpawnManagerAuthoring : MonoBehaviour
             // Each authoring field corresponds to a component field of the same name.
             AddComponent(entity, new SpawnManager
             {
-                PlayerOneSpecies = authoring.PlayerOneSpecies,
-                PlayerTwoSpecies = authoring.PlayerTwoSpecies,
-                StartPositionBaseSpawnerPlayerOne = authoring.StartPositionBaseSpawnerPlayerOne,
-                StartPositionBaseSpawnerPlayerTwo = authoring.StartPositionBaseSpawnerPlayerTwo,
+                StartPositionBaseSpawnerSlime = authoring.startPositionBaseSpawnerSlime,
+                StartPositionBaseSpawnerMeca = authoring.startPositionBaseSpawnerMeca,
 
-                SpawnUnitWhenPressEnter = authoring.SpawnUnitWhenPressEnter,
-                GroupUnitsBy = authoring.GroupUnitsBy,
+                NumberOfStartingBaseSpawnerForSlime = authoring.numberOfStartingBaseSpawnerForSlime,
+                NumberOfStartingBaseSpawnerForMeca = authoring.numberOfStartingBaseSpawnerForMeca,
 
-                NumberOfBaseSpawnerForPlayerOne = authoring.NumberOfBaseSpawnerForPlayerOne,
-                NumberOfBaseSpawnerForPlayerTwo = authoring.NumberOfBaseSpawnerForPlayerTwo,
-                NumberOfSlimeUnitPerSlimeBaseSpawner = authoring.NumberOfSlimeUnitPerSlimeBaseSpawner,
-                NumberOfMecaUnitPerMecaBaseSpawner = authoring.NumberOfMecaUnitPerMecaBaseSpawner,
+                SelectionCirclePrefab = GetEntity(authoring.selectionCirclePrefab, TransformUsageFlags.Dynamic),
 
-                // SlimeBasicUnitSpeed = authoring.SlimeBasicUnitSpeed,
-                // SlimeBasicUnitAttack = authoring.SlimeBasicUnitAttack,
-                // MecaBasicUnitSpeed = authoring.MecaBasicUnitSpeed,
-                // MecaBasicUnitAttack = authoring.MecaBasicUnitAttack,
+                SlimePlayerHandPrefab = GetEntity(authoring.slimePlayerHandPrefab, TransformUsageFlags.Dynamic),
+                MecaPlayerHandPrefab = GetEntity(authoring.mecaPlayerHandPrefab, TransformUsageFlags.Dynamic),
 
-                // GetEntity() bakes a GameObject prefab into its entity equivalent.
-                SlimePlayerHandPrefab = GetEntity(authoring.SlimePlayerHandPrefab, TransformUsageFlags.Dynamic),
-                SlimeBaseSpawnerBuildingPrefab = GetEntity(authoring.SlimeBaseSpawnerBuildingPrefab, TransformUsageFlags.Dynamic),
-                SlimeBasicUnitPrefab = GetEntity(authoring.SlimeBasicUnitPrefab, TransformUsageFlags.Dynamic),
-                SlimeStrongerUnitPrefab = GetEntity(authoring.SlimeStrongerUnitPrefab, TransformUsageFlags.Dynamic),
+                MecaBasicUnitBaseSpawnerBuildingPrefab = GetEntity(authoring.mecaBasicUnitBaseSpawnerBuildingPrefab, TransformUsageFlags.Dynamic),
 
-                MecaPlayerHandPrefab = GetEntity(authoring.MecaPlayerHandPrefab, TransformUsageFlags.Dynamic),
-                MecaBaseSpawnerBuildingPrefab = GetEntity(authoring.MecaBaseSpawnerBuildingPrefab, TransformUsageFlags.Dynamic),
-                MecaBasicUnitPrefab = GetEntity(authoring.MecaBasicUnitPrefab, TransformUsageFlags.Dynamic)
+                SlimeBasicWaterUnitBaseSpawnerBuildingPrefab = GetEntity(authoring.slimeBasicWaterUnitBaseSpawnerBuildingPrefab, TransformUsageFlags.Dynamic),
+                SlimeBasicFireUnitBaseSpawnerBuildingPrefab = GetEntity(authoring.slimeBasicFireUnitBaseSpawnerBuildingPrefab, TransformUsageFlags.Dynamic),
+                SlimeBasicEarthUnitBaseSpawnerBuildingPrefab = GetEntity(authoring.slimeBasicEarthUnitBaseSpawnerBuildingPrefab, TransformUsageFlags.Dynamic),
+                SlimeBasicAirUnitBaseSpawnerBuildingPrefab = GetEntity(authoring.slimeBasicAirUnitBaseSpawnerBuildingPrefab, TransformUsageFlags.Dynamic),
+
+                MecaGlassCannonUnitPrefab = GetEntity(authoring.mecaGlassCannonUnitPrefab, TransformUsageFlags.Dynamic),
+                MecaArtilleryUnitPrefab = GetEntity(authoring.mecaArtilleryUnitPrefab, TransformUsageFlags.Dynamic),
+                MecaGatlingUnitPrefab = GetEntity(authoring.mecaGatlingUnitPrefab, TransformUsageFlags.Dynamic),
+                MecaScoutUnitPrefab = GetEntity(authoring.mecaScoutUnitPrefab, TransformUsageFlags.Dynamic)
             });
         }
     }
@@ -71,31 +67,28 @@ public class SpawnManagerAuthoring : MonoBehaviour
 
 public struct SpawnManager : IComponentData
 {
-    public GroupUnitShape GroupUnitsBy;
-    public Entity MecaBaseSpawnerBuildingPrefab;
-    public float MecaBasicUnitAttack;
-    public Entity MecaBasicUnitPrefab;
-    public float MecaBasicUnitSpeed;
-
-    public Entity MecaPlayerHandPrefab;
-
-    public uint NumberOfBaseSpawnerForPlayerOne;
-    public uint NumberOfBaseSpawnerForPlayerTwo;
-    public uint NumberOfMecaUnitPerMecaBaseSpawner;
-    public uint NumberOfSlimeUnitPerSlimeBaseSpawner;
-    public SpeciesType PlayerOneSpecies;
-    public SpeciesType PlayerTwoSpecies;
-    public Entity SlimeBaseSpawnerBuildingPrefab;
-    public float SlimeBasicUnitAttack; // Amount of damage dealt by the slime
-    public Entity SlimeBasicUnitPrefab;
-
-    public float SlimeBasicUnitSpeed; // meters per second
-    // SlimeBasicUnitLife, MecaBasicUnitLife ...
+    public Entity SelectionCirclePrefab;
 
     public Entity SlimePlayerHandPrefab;
-    public Entity SlimeStrongerUnitPrefab;
+    public Entity MecaPlayerHandPrefab;
 
-    public bool SpawnUnitWhenPressEnter;
-    public float3 StartPositionBaseSpawnerPlayerOne;
-    public float3 StartPositionBaseSpawnerPlayerTwo;
+    public uint NumberOfStartingBaseSpawnerForSlime;
+    public uint NumberOfStartingBaseSpawnerForMeca;
+
+    public float3 StartPositionBaseSpawnerSlime;
+    public float3 StartPositionBaseSpawnerMeca;
+
+    public Entity MecaBasicUnitBaseSpawnerBuildingPrefab;
+
+    // NOTE: Slime specialized buildings
+    public Entity SlimeBasicWaterUnitBaseSpawnerBuildingPrefab;
+    public Entity SlimeBasicFireUnitBaseSpawnerBuildingPrefab;
+    public Entity SlimeBasicEarthUnitBaseSpawnerBuildingPrefab;
+    public Entity SlimeBasicAirUnitBaseSpawnerBuildingPrefab;
+
+    // NOTE: Meca specialized units
+    public Entity MecaGlassCannonUnitPrefab;
+    public Entity MecaArtilleryUnitPrefab;
+    public Entity MecaGatlingUnitPrefab;
+    public Entity MecaScoutUnitPrefab;
 }
