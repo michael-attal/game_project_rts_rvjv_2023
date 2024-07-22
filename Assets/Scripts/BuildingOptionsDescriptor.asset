@@ -10,12 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0f98bd2e82983984e9645ae3bd5b27db, type: 3}
-  m_Name: SlimeBuildingOptionsDescriptor
+  m_Name: BuildingOptionsDescriptor
   m_EditorClassIdentifier: 
   prefabsIdList:
   - id: ECS_SLIME_WATER_BASE_SPAWNER
     title: Slime Water Spawner
-    image: {fileID: 0}
+    image: {fileID: 21300000, guid: 48791420a675a4ad8856a61295ff3144, type: 3}
   - id: ECS_SLIME_FIRE_BASE_SPAWNER
     title: Slime Fire Spawner
-    image: {fileID: 0}
+    image: {fileID: 21300000, guid: adecb39e80da04b9e921b71fe06b2efb, type: 3}
+  - id: ECS_SLIME_AIR_BASE_SPAWNER
+    title: Slime AIR Spawner
+    image: {fileID: 21300000, guid: 1760292e3458f4b2b8edb8e4815fbbce, type: 3}
+  - id: ECS_MECA_BASE_SPAWNER
+    title: Meca Fire Spawner
+    image: {fileID: 21300000, guid: 28d43eb46db2e42f7a7babbb7ff129ed, type: 3}

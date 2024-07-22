@@ -8,7 +8,7 @@ using Unity.Transforms;
 // FIXME: DOESNT WORK ATM
 [BurstCompile]
 [UpdateInGroup(typeof(MovementSystemGroup))]
-[UpdateBefore(typeof(TransformSystemGroup))]
+[UpdateBefore(typeof(DamageSystem))]
 public partial struct MovementPositionMotorSystem : ISystem
 {
     [BurstCompile]

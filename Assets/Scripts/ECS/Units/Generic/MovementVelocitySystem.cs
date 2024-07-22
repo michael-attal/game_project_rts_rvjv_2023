@@ -7,7 +7,7 @@ using Unity.Transforms;
 
 [BurstCompile]
 [UpdateInGroup(typeof(MovementSystemGroup))]
-[UpdateBefore(typeof(TransformSystemGroup))]
+[UpdateBefore(typeof(DamageSystem))]
 public partial struct MovementVelocitySystem : ISystem
 {
     [BurstCompile]

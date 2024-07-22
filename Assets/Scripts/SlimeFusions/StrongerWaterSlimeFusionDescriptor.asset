@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: StrongerWaterSlimeFusionDescriptor
   m_EditorClassIdentifier: 
   DisplayName: Super Water
-  DisplayImage: {fileID: 0}
+  DisplayImage: {fileID: 21300000, guid: cafde61a49956412bb5c0fe0c66b2d23, type: 3}
   FusionInfo:
     EarthAmount: 0
     FireAmount: 0
