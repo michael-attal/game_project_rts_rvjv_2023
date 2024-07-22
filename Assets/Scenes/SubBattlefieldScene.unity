@@ -944,6 +944,8 @@ MonoBehaviour:
     entity: {fileID: 3791485875952171710, guid: 248f3e1a2448141408f372627e0827e7, type: 3}
   - entityID: ECS_SLIME_FIRE_BASE_SPAWNER
     entity: {fileID: 8873345686660974788, guid: 76ac27d56b3b944399803bdd5eadac26, type: 3}
+  - entityID: ECS_SLIME_AIR_BASE_SPAWNER
+    entity: {fileID: 7663477860348367566, guid: ca8f25c7766324adc96599243ddd66fc, type: 3}
   - entityID: ECS_SLIME_UNIT
     entity: {fileID: 392048310712016098, guid: fce1ec0bc862144ba9b48c79a2f70711, type: 3}
   - entityID: ECS_SUPER_SLIME_UNIT
@@ -1029,16 +1031,15 @@ MonoBehaviour:
   selectionCirclePrefab: {fileID: 7370947266852994130, guid: d15410bcecb664ca69f6b97c5d3bf07d, type: 3}
   slimePlayerHandPrefab: {fileID: 6320164834673837995, guid: f571fa7df0f264f0a866e82fe099d7b5, type: 3}
   mecaPlayerHandPrefab: {fileID: 1259044049793980661, guid: 2b27e280aca8e4416bf77212c6bd837d, type: 3}
-  slimeBaseSpawnerBuildingPrefab: {fileID: 2216618471874645061, guid: 888243f85db11483baf93363ac285d84, type: 3}
-  mecaBaseSpawnerBuildingPrefab: {fileID: 6851779870681047773, guid: c11a9cb22bf814101a676687080166dd, type: 3}
+  mecaBasicUnitBaseSpawnerBuildingPrefab: {fileID: 8916015853017890490, guid: eda3a3acc83c44441a50b84c0f0dd09b, type: 3}
   slimeBasicWaterUnitBaseSpawnerBuildingPrefab: {fileID: 3791485875952171710, guid: 248f3e1a2448141408f372627e0827e7, type: 3}
   slimeBasicFireUnitBaseSpawnerBuildingPrefab: {fileID: 8873345686660974788, guid: 76ac27d56b3b944399803bdd5eadac26, type: 3}
   slimeBasicEarthUnitBaseSpawnerBuildingPrefab: {fileID: 0}
-  slimeBasicAirUnitBaseSpawnerBuildingPrefab: {fileID: 0}
-  mecaGlassCannonUnitPrefab: {fileID: 7603524137904975307, guid: c3e5b7c6f2eb145c49a9c42446468a3e, type: 3}
-  mecaArtilleryUnitPrefab: {fileID: 7603524137904975307, guid: c3e5b7c6f2eb145c49a9c42446468a3e, type: 3}
-  mecaGatlingUnitPrefab: {fileID: 7603524137904975307, guid: c3e5b7c6f2eb145c49a9c42446468a3e, type: 3}
-  mecaScoutUnitPrefab: {fileID: 7603524137904975307, guid: c3e5b7c6f2eb145c49a9c42446468a3e, type: 3}
+  slimeBasicAirUnitBaseSpawnerBuildingPrefab: {fileID: 7663477860348367566, guid: ca8f25c7766324adc96599243ddd66fc, type: 3}
+  mecaGlassCannonUnitPrefab: {fileID: 7150071402212994571, guid: 8e8e2501918b547bab30d424bcff41dd, type: 3}
+  mecaArtilleryUnitPrefab: {fileID: 7150071402212994571, guid: 8fe0072c2e2b84b9e95706ba15a6279b, type: 3}
+  mecaGatlingUnitPrefab: {fileID: 275867502565583354, guid: 36dae17802a4848519346c4a47614e5d, type: 3}
+  mecaScoutUnitPrefab: {fileID: 4943145755087674067, guid: 561944a452d6348529aa46ca6ca0d813, type: 3}
 --- !u!114 &1732016750
 MonoBehaviour:
   m_ObjectHideFlags: 0

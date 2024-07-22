@@ -17,8 +17,7 @@ public class SpawnManagerAuthoring : MonoBehaviour
     [SerializeField] private GameObject slimePlayerHandPrefab;
     [SerializeField] private GameObject mecaPlayerHandPrefab;
 
-    [SerializeField] private GameObject slimeBaseSpawnerBuildingPrefab;
-    [SerializeField] private GameObject mecaBaseSpawnerBuildingPrefab;
+    [SerializeField] private GameObject mecaBasicUnitBaseSpawnerBuildingPrefab;
 
     [SerializeField] private GameObject slimeBasicWaterUnitBaseSpawnerBuildingPrefab;
     [SerializeField] private GameObject slimeBasicFireUnitBaseSpawnerBuildingPrefab;
@@ -50,8 +49,7 @@ public class SpawnManagerAuthoring : MonoBehaviour
                 SlimePlayerHandPrefab = GetEntity(authoring.slimePlayerHandPrefab, TransformUsageFlags.Dynamic),
                 MecaPlayerHandPrefab = GetEntity(authoring.mecaPlayerHandPrefab, TransformUsageFlags.Dynamic),
 
-                SlimeBaseSpawnerBuildingPrefab = GetEntity(authoring.slimeBaseSpawnerBuildingPrefab, TransformUsageFlags.Dynamic),
-                MecaBaseSpawnerBuildingPrefab = GetEntity(authoring.mecaBaseSpawnerBuildingPrefab, TransformUsageFlags.Dynamic),
+                MecaBasicUnitBaseSpawnerBuildingPrefab = GetEntity(authoring.mecaBasicUnitBaseSpawnerBuildingPrefab, TransformUsageFlags.Dynamic),
 
                 SlimeBasicWaterUnitBaseSpawnerBuildingPrefab = GetEntity(authoring.slimeBasicWaterUnitBaseSpawnerBuildingPrefab, TransformUsageFlags.Dynamic),
                 SlimeBasicFireUnitBaseSpawnerBuildingPrefab = GetEntity(authoring.slimeBasicFireUnitBaseSpawnerBuildingPrefab, TransformUsageFlags.Dynamic),
@@ -74,14 +72,13 @@ public struct SpawnManager : IComponentData
     public Entity SlimePlayerHandPrefab;
     public Entity MecaPlayerHandPrefab;
 
-    public Entity SlimeBaseSpawnerBuildingPrefab;
-    public Entity MecaBaseSpawnerBuildingPrefab;
-
     public uint NumberOfStartingBaseSpawnerForSlime;
     public uint NumberOfStartingBaseSpawnerForMeca;
 
     public float3 StartPositionBaseSpawnerSlime;
     public float3 StartPositionBaseSpawnerMeca;
+
+    public Entity MecaBasicUnitBaseSpawnerBuildingPrefab;
 
     // NOTE: Slime specialized buildings
     public Entity SlimeBasicWaterUnitBaseSpawnerBuildingPrefab;

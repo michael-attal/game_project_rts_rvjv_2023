@@ -50,7 +50,7 @@ public partial struct SelectableSystem : ISystem
                 SystemAPI.SetSingleton(mouseManager);
                 return;
             }
-            
+
             var cameraManager = SystemAPI.GetSingleton<CameraManager>();
 
             var initialClickPosition = mouseManager.InitialClickPosition;

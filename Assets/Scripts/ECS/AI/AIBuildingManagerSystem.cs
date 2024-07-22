@@ -54,7 +54,7 @@ public partial struct AIBuildingManagerSystem : ISystem
         var spawnManager = SystemAPI.GetSingleton<SpawnManager>();
         var mecaBasicBaseSpawnerCount = 0;
 
-        foreach (var (transform, baseSpawner, speciesTag, entity) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<BaseSpawnerBuilding>, RefRO<SpeciesTag>>().WithAll<AI>().WithNone<GlassCannonUpgrade, ArtilleryUpgrade>().WithNone<GatlingUpgrade, ScoutUpgrade>().WithEntityAccess()) // NOTE: Can't put 4 components in the same WithNone ... Idk why
+        foreach (var (transform, baseSpawner, speciesTag, entity) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<BaseSpawnerBuilding>, RefRO<SpeciesTag>>().WithAll<AI>().WithNone<UpgradedBaseSpawnerTag>().WithEntityAccess()) // NOTE: Can't put 4 components in the same WithNone ... Idk why
         {
             HandleBaseSpawnerBuildingAndUpgrading(ref ecb, ref state, gameManager, aiSpecies, transform, entity, ref mecaBasicBaseSpawnerCount, spawnManager);
         }
@@ -62,7 +62,7 @@ public partial struct AIBuildingManagerSystem : ISystem
         // NOTE: If the game is not over, but there is only an upgraded base spawner, then first add a non-upgraded version in order to enter into the foreach loop.
         if (aiSpecies == SpeciesType.Meca && mecaBasicBaseSpawnerCount == 0 && gameManager.State == GameState.Running)
         {
-            var mecaBaseSpawnerBuildingTransform = state.EntityManager.GetComponentData<LocalTransform>(spawnManager.MecaBaseSpawnerBuildingPrefab);
+            var mecaBaseSpawnerBuildingTransform = state.EntityManager.GetComponentData<LocalTransform>(spawnManager.MecaBasicUnitBaseSpawnerBuildingPrefab);
             CreateBaseSpawner(ref ecb, ref state, gameManager, spawnManager, aiSpecies, GetNewBuildingPosition(mecaBaseSpawnerBuildingTransform.Position, mecaBaseSpawnerBuildingTransform.Scale), mecaBaseSpawnerBuildingTransform.Scale);
         }
     }
@@ -100,7 +100,8 @@ public partial struct AIBuildingManagerSystem : ISystem
             SystemAPI.SetSingleton(gameManager);
 
             // Instantiate the appropriate prefab based on the AI species
-            var newBaseSpawner = ecb.Instantiate(aiSpecies == SpeciesType.Slime ? spawnManager.SlimeBaseSpawnerBuildingPrefab : spawnManager.MecaBaseSpawnerBuildingPrefab);
+            var rdmValue = Random.value;
+            var newBaseSpawner = ecb.Instantiate(aiSpecies == SpeciesType.Slime ? rdmValue > 0.75f ? spawnManager.SlimeBasicWaterUnitBaseSpawnerBuildingPrefab : rdmValue > 0.50f ? spawnManager.SlimeBasicFireUnitBaseSpawnerBuildingPrefab : spawnManager.SlimeBasicAirUnitBaseSpawnerBuildingPrefab : spawnManager.MecaBasicUnitBaseSpawnerBuildingPrefab);
 
             // Set the position, rotation, and scale for the new base spawner
             ecb.SetComponent(newBaseSpawner, new LocalTransform
@@ -109,6 +110,11 @@ public partial struct AIBuildingManagerSystem : ISystem
                 Rotation = quaternion.identity,
                 Scale = scale
             });
+
+            if (aiSpecies == SpeciesType.Meca)
+            {
+                ecb.AddComponent<SpawnerUpgradesRegister>(newBaseSpawner);
+            }
 
             ecb.AddComponent<AI>(newBaseSpawner);
         }
@@ -126,21 +132,37 @@ public partial struct AIBuildingManagerSystem : ISystem
 
     private void AddRandomUpgrade(ref EntityCommandBuffer ecb, Entity entity)
     {
-        if (Random.value <= 0.25f)
+        var rdmValue = Random.value;
+
+        if (rdmValue <= 0.25f)
         {
-            ecb.AddComponent<GlassCannonUpgrade>(entity);
+            ecb.AddComponent(entity, new SpawnerUpgradesRegister
+            {
+                HasGlassCannon = true
+            });
         }
-        else if (Random.value <= 0.50f)
+        else if (rdmValue <= 0.50f)
         {
-            ecb.AddComponent<ArtilleryUpgrade>(entity);
+            ecb.AddComponent(entity, new SpawnerUpgradesRegister
+            {
+                HasArtillery = true
+            });
         }
-        else if (Random.value <= 0.75f)
+        else if (rdmValue <= 0.75f)
         {
-            ecb.AddComponent<GatlingUpgrade>(entity);
+            ecb.AddComponent(entity, new SpawnerUpgradesRegister
+            {
+                HasGatling = true
+            });
         }
         else
         {
-            ecb.AddComponent<ScoutUpgrade>(entity);
+            ecb.AddComponent(entity, new SpawnerUpgradesRegister
+            {
+                HasScout = true
+            });
         }
+
+        ecb.AddComponent(entity, new UpgradedBaseSpawnerTag());
     }
 }
