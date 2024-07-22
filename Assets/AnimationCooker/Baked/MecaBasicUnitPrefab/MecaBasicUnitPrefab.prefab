@@ -178,7 +178,7 @@ MonoBehaviour:
   UnitStandardHealth: 200
   UnitAttackType: 0
   UnitAttack: 20
-  UnitRange: 4
+  UnitRange: 5
   UnitRateOfFire: 3
   IsAttackAnimated: 1
 --- !u!114 &411724495636269892

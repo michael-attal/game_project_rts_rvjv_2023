@@ -15,7 +15,8 @@ public partial class MovementSystemGroup : ComponentSystemGroup
 }
 
 [UpdateInGroup(typeof(MovementSystemGroup))]
-[UpdateBefore(typeof(TransformSystemGroup))]
+[UpdateBefore(typeof(DamageSystem))]
+[UpdateBefore(typeof(UnitAttackSystem))]
 [BurstCompile]
 public partial struct MovementManualSystem : ISystem
 {
@@ -60,6 +61,8 @@ public partial struct MovementManualSystem : ISystem
 }
 
 [WithAll(typeof(MovementManual), typeof(WantsToMove))]
+[UpdateBefore(typeof(DamageSystem))]
+[UpdateBefore(typeof(UnitAttackSystem))]
 [BurstCompile]
 public partial struct MovementManualSystemJob : IJobEntity
 {

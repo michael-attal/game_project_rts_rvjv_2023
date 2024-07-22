@@ -161,9 +161,17 @@ public partial struct SetupGameSystem : ISystem
                 Debug.Log($"nbBaseSpawner: {nbBaseSpawner}");
 
                 // TODO & FIXME: Continue here
+                var baseSpawnerSlimeCount = 0;
+
                 for (var i = 0; i < nbBaseSpawner; i++)
                 {
-                    var baseSpawnerBuildingPrefab = species.ValueRO.Type == SpeciesType.Slime ? spawnManager.SlimeBasicWaterUnitBaseSpawnerBuildingPrefab : spawnManager.MecaBaseSpawnerBuildingPrefab;
+                    var baseSpawnerBuildingPrefab = species.ValueRO.Type == SpeciesType.Slime ? baseSpawnerSlimeCount == 0 ? spawnManager.SlimeBasicWaterUnitBaseSpawnerBuildingPrefab : baseSpawnerSlimeCount == 1 ? spawnManager.SlimeBasicFireUnitBaseSpawnerBuildingPrefab : spawnManager.SlimeBasicAirUnitBaseSpawnerBuildingPrefab : spawnManager.MecaBasicUnitBaseSpawnerBuildingPrefab;
+
+                    if (species.ValueRO.Type == SpeciesType.Slime)
+                    {
+                        baseSpawnerSlimeCount++;
+                    }
+
                     var ltBaseSpawner = state.EntityManager.GetComponentData<LocalTransform>(baseSpawnerBuildingPrefab);
 
                     float positionOffset;
