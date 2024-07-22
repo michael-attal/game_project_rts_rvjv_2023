@@ -10,7 +10,7 @@ using UnityEngine;
 // the correct position for the frame in which they're spawned.
 // If the unit spawning system differs significantly between units, we should implement a specialized system, such as MySlimeUnitSpawningSystem, instead of a generic one like this one.
 [BurstCompile]
-[UpdateBefore(typeof(TransformSystemGroup))]
+[UpdateBefore(typeof(DamageSystem))]
 public partial struct UnitSpawnerSystem : ISystem
 {
     [BurstCompile]
@@ -169,8 +169,6 @@ public struct UnitSpawnJob : IJobParallelFor
             Rotation = UnitRotation,
             Scale = UnitScale
         });
-
-        Debug.Log($"position: {position}");
 
         if (IsUnitControlledByAI)
         {

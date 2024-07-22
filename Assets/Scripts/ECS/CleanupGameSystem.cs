@@ -2,6 +2,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 
+[UpdateBefore(typeof(MovementSystemGroup))]
 [UpdateAfter(typeof(AISystemGroup))]
 [UpdateAfter(typeof(PlayerManagerSystem))]
 [UpdateAfter(typeof(WinScreenSystem))]

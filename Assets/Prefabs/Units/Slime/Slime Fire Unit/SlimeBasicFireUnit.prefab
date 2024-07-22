@@ -98,8 +98,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e78a1caba6414ba19e94e33beb5ecef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsMovementAnimated: 1
-  UnitSpeed: 10
+  IsMovementAnimated: 0
+  UnitSpeed: 7
   MovementType: 0
   AxisBlockedForMovementPositionMotor:
     x: 0
@@ -109,12 +109,12 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 0
-  UnitStandardHealth: 100
+  UnitStandardHealth: 150
   UnitAttackType: 0
-  UnitAttack: 10
+  UnitAttack: 15
   UnitRange: 5
   UnitRateOfFire: 1.8
-  IsAttackAnimated: 1
+  IsAttackAnimated: 0
 --- !u!114 &-4454644609727256649
 MonoBehaviour:
   m_ObjectHideFlags: 0

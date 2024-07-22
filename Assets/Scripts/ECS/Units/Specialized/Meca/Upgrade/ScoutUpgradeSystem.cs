@@ -46,7 +46,7 @@ public partial struct ScoutUpgradeJob : IJobEntity
 
     private void Execute(Entity entity, RefRW<MovementManual> unitInfo, RefRW<UnitAttack> unitAttack, [ChunkIndexInQuery] int chunkIndex)
     {
-        unitInfo.ValueRW.Speed *= 1.5f;
+        unitInfo.ValueRW.Speed *= 2f;
         unitAttack.ValueRW.Strength = 5;
         ECB.RemoveComponent<ScoutUpgrade>(chunkIndex, entity);
     }

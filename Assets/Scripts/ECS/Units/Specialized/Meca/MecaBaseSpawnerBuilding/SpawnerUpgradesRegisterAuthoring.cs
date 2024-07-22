@@ -26,3 +26,7 @@ public struct SpawnerUpgradesRegister : IComponentData
     public bool HasGatling;
     public bool HasScout;
 }
+
+public struct UpgradedBaseSpawnerTag : IComponentData
+{
+}
