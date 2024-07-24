@@ -258,6 +258,26 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 99726797798c64714b9660575677c784, type: 3}
   - title: UILost
     clip: {fileID: 8300000, guid: 13a6e6882a03949c8a45dcbc7543acd1, type: 3}
+  - title: SlimeBasicEarthUnitAttack
+    clip: {fileID: 8300000, guid: c5e9344c0e9924c70ab5d6fd561a53d0, type: 3}
+  - title: SlimeBasicEarthUnitDeath
+    clip: {fileID: 8300000, guid: e459f2e72e3a346cbb148454b4d4b2bf, type: 3}
+  - title: SlimeStrongerMagmaUnitAttack
+    clip: {fileID: 8300000, guid: dba739997ad77455bbe46f4f4faf40c2, type: 3}
+  - title: SlimeStrongerMagmaUnitDeath
+    clip: {fileID: 8300000, guid: e459f2e72e3a346cbb148454b4d4b2bf, type: 3}
+  - title: SlimeStrongerFirestormUnitAttack
+    clip: {fileID: 8300000, guid: c5e9344c0e9924c70ab5d6fd561a53d0, type: 3}
+  - title: SlimeStrongerFirestormUnitDeath
+    clip: {fileID: 8300000, guid: ef5f9f09c61d44e96b91cc9899798094, type: 3}
+  - title: SlimeStrongerHydrostormUnitAttack
+    clip: {fileID: 8300000, guid: c5e9344c0e9924c70ab5d6fd561a53d0, type: 3}
+  - title: SlimeStrongerHydrostormUnitDeath
+    clip: {fileID: 8300000, guid: ef5f9f09c61d44e96b91cc9899798094, type: 3}
+  - title: SlimeStrongerMudUnitAttack
+    clip: {fileID: 8300000, guid: c5e9344c0e9924c70ab5d6fd561a53d0, type: 3}
+  - title: SlimeStrongerMudUnitDeath
+    clip: {fileID: 8300000, guid: ef5f9f09c61d44e96b91cc9899798094, type: 3}
   Volume: 1
   BackgroundVolume: 0.3
 --- !u!1660057539 &9223372036854775807
