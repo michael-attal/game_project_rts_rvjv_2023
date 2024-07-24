@@ -996,7 +996,7 @@ MonoBehaviour:
   activateGatheringSystem: 1
   activateSlimeBasicUnitMergeSystem: 1
   activateMecaBasicUnitUpgradeSystem: 1
-  activateParticleSystems: 0
+  activateParticleSystems: 1
   movementFormationType: 0
   activateCameraManagerSystem: 1
   activateMouseManagerSystem: 1
