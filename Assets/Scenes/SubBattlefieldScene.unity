@@ -946,10 +946,22 @@ MonoBehaviour:
     entity: {fileID: 8873345686660974788, guid: 76ac27d56b3b944399803bdd5eadac26, type: 3}
   - entityID: ECS_SLIME_AIR_BASE_SPAWNER
     entity: {fileID: 7663477860348367566, guid: ca8f25c7766324adc96599243ddd66fc, type: 3}
+  - entityID: ECS_SLIME_EARTH_BASE_SPAWNER
+    entity: {fileID: 2216618471874645061, guid: 8803406f0212d4e4293f0e404da01110, type: 3}
   - entityID: ECS_SLIME_UNIT
+    entity: {fileID: 392048310712016098, guid: fce1ec0bc862144ba9b48c79a2f70711, type: 3}
+  - entityID: ECS_SLIME_WATER_UNIT
     entity: {fileID: 392048310712016098, guid: fce1ec0bc862144ba9b48c79a2f70711, type: 3}
   - entityID: ECS_SUPER_SLIME_UNIT
     entity: {fileID: 5786252611782199926, guid: f90f636104df74ba581f1be346a37db7, type: 3}
+  - entityID: ECS_MAGMA_SLIME_UNIT
+    entity: {fileID: 2672063971893984752, guid: dc13586132fbf4c8a9078b725f671329, type: 3}
+  - entityID: ECS_FIRESTORM_SLIME_UNIT
+    entity: {fileID: 2672063971893984752, guid: b6bd0fac91d2d423ba3eebfd2fcc13f7, type: 3}
+  - entityID: ECS_HYDROSTORM_SLIME_UNIT
+    entity: {fileID: 2672063971893984752, guid: 40235a6641e444d528e9bdd87b658c07, type: 3}
+  - entityID: ECS_MUD_SLIME_UNIT
+    entity: {fileID: 2672063971893984752, guid: ecf84e3ddc1974da68d80c52ef771285, type: 3}
   mergeGraph: {fileID: 11400000, guid: aad126b3c80ae9a488b2428a00ff8c0a, type: 2}
 --- !u!114 &1732016747
 MonoBehaviour:
@@ -984,7 +996,7 @@ MonoBehaviour:
   activateGatheringSystem: 1
   activateSlimeBasicUnitMergeSystem: 1
   activateMecaBasicUnitUpgradeSystem: 1
-  activateParticleSystems: 1
+  activateParticleSystems: 0
   movementFormationType: 0
   activateCameraManagerSystem: 1
   activateMouseManagerSystem: 1
