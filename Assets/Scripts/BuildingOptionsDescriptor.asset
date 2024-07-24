@@ -20,8 +20,11 @@ MonoBehaviour:
     title: Slime Fire Spawner
     image: {fileID: 21300000, guid: adecb39e80da04b9e921b71fe06b2efb, type: 3}
   - id: ECS_SLIME_AIR_BASE_SPAWNER
-    title: Slime AIR Spawner
+    title: Slime Air Spawner
     image: {fileID: 21300000, guid: 1760292e3458f4b2b8edb8e4815fbbce, type: 3}
+  - id: ECS_SLIME_EARTH_BASE_SPAWNER
+    title: Slime Earth Spawner
+    image: {fileID: 21300000, guid: 3b6e0497d0a7c4c65b200c4605e7df90, type: 3}
   - id: ECS_MECA_BASE_SPAWNER
     title: Meca Fire Spawner
     image: {fileID: 21300000, guid: 28d43eb46db2e42f7a7babbb7ff129ed, type: 3}
